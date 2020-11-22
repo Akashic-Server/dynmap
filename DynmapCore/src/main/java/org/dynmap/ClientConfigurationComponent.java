@@ -29,7 +29,7 @@ public class ClientConfigurationComponent extends Component {
                 s(t, "login-enabled", core.isLoginSupportEnabled());
                 String sn = core.getServer().getServerName();
                 if(sn.equals("Unknown Server"))
-                    sn = "Minecraft Dynamic Map";
+                    sn = "Akashic Server Map";
                 s(t, "title", c.getString("webpage-title", sn));
                 s(t, "msg-maptypes", c.getString("msg/maptypes", "Map Types"));
                 s(t, "msg-players", c.getString("msg/players", "Players"));
