@@ -1,4 +1,4 @@
-# All paths in this configuration file are relative to Dynmap's data-folder: minecraft_server/plugins/dynmap/
+# All paths in this configuration file are relative to Dynmap's data-folder: minecraft_server/dynmap/
 
 # All map templates are defined in the templates directory
 # To use the HDMap very-low-res (2 ppb) map templates as world defaults, set value to vlowres
@@ -15,7 +15,7 @@
 #   The definitions of these templates are in normal-hi_boost_xhi.txt, nether-hi_boost_xhi.txt, and the_end-hi_boost_xhi.txt
 deftemplatesuffix: hires
 
-# Map storage scheme: only uncomment one 'type' value
+# Map storage scheme: only uncommoent one 'type' value
 #  filetree: classic and default scheme: tree of files, with all map data under the directory indicated by 'tilespath' setting
 #  sqlite: single SQLite database file (this can get VERY BIG), located at 'dbfile' setting (default is file dynmap.db in data directory)
 #  mysql: MySQL database, at hostname:port in database, accessed via userid with password
@@ -25,7 +25,7 @@ storage:
   # SQLite db for map storage (uses dbfile as storage location)
   #type: sqlite
   #dbfile: dynmap.db
-  # MySQL DB for map storage (at 'hostname':'port' with flags "flags" in database 'database' using user 'userid' password 'password' and table prefix 'prefix')
+  # MySQL DB for map storage (at 'hostname':'port' in database 'database' using user 'userid' password 'password' and table prefix 'prefix'
   #type: mysql
   #hostname: localhost
   #port: 3306
@@ -33,8 +33,7 @@ storage:
   #userid: dynmap
   #password: dynmap
   #prefix: ""
-  #flags: "?allowReconnect=true"
-  
+
 components:
   - class: org.dynmap.ClientConfigurationComponent
   
@@ -126,7 +125,7 @@ components:
     spawnbedhidebydefault: true
     spawnbedminzoom: 0
     spawnbedformat: "%name%'s bed"
-    # (optional) show world border (vanilla 1.8+)
+    # (optional) Show world border (vanilla 1.8+)
     showworldborder: true
     worldborderlabel: "Border"
     
@@ -169,7 +168,7 @@ components:
   - class: org.dynmap.ClientComponent
     type: timeofdayclock
     showdigitalclock: true
-    showweather: true
+    #showweather: true
   # Mouse pointer world coordinate display
   - class: org.dynmap.ClientComponent
     type: coord
@@ -254,8 +253,8 @@ use-brightness-table: true
 block-alias:
 #    "minecraft:quartz_ore": "stone"
 #    "diamond_ore": "coal_ore"
-  
-# Default image format for HDMaps (png, jpg, jpg-q75, jpg-q80, jpg-q85, jpg-q90, jpg-q95, jpg-q100, webp, webp-q75, webp-q80, webp-q85, webp-q90, webp-q95, webp-q100, wepb-l),
+
+# Default image format for HDMaps (png, jpg, jpg-q75, jpg-q80, jpg-q85, jpg-q90, jpg-q95, jpg-q100, webp, webp-q75, webp-q80, webp-q85, webp-q90, webp-q95, webp-q100),
 # Note: any webp format requires the presence of the 'webp command line tools' (cwebp, dwebp) (https://developers.google.com/speed/webp/download)
 #
 # Has no effect on maps with explicit format settings
@@ -288,27 +287,20 @@ custom-colors-support: true
 # Customize URL used for fetching player skins (%player% is macro for name)
 skin-url: "http://skins.minecraft.net/MinecraftSkins/%player%.png"
 
-# Enable skins via SkinsRestorer plugin instead of internal legacy implementation (disabled by default)
-#skinsrestorer-integration: true
+# Control behavior for new (1.0+) compass orientation (sunrise moved 90 degrees: east is now what used to be south)
+#   default is 'newrose' (preserve pre-1.0 maps, rotate rose)
+#   'newnorth' is used to rotate maps and rose (requires fullrender of any HDMap map - same as 'newrose' for FlatMap or KzedMap)
+compass-mode: newnorth
 
+# Triggers for automatic updates : blockupdate-with-id is debug for breaking down updates by ID:meta
+# To disable, set just 'none' and comment/delete the rest
 render-triggers:
-  #- playermove
-  #- playerjoin
-  - blockplaced
-  - blockbreak
-  - leavesdecay
-  - blockburn
-  - chunkgenerated
-  - blockformed
-  - blockfaded
-  - blockspread
-  - pistonmoved
-  - explosion
-  #- blockfromto
-  #- blockphysics
-  - structuregrow
-  - blockgrow
-  #- blockredstone
+  - blockupdate
+  #- blockupdate-with-id
+  #- lightingupdate
+  - chunkpopulate
+  - chunkgenerate
+  #- none
 
 # Title for the web page - if not specified, defaults to the server's name (unless it is the default of 'Unknown Server')
 #webpage-title: "My Awesome Server Map"
@@ -378,11 +370,6 @@ showplayerfacesinmenu: true
 # Control whether players that are hidden or not on current map are grayed out (true=yes)
 grayplayerswhenhidden: true
 
-# Use player permissions to order player list: first to last, players are ordered by first permission listed that they have
-# That is, anyone with first listed permission goes before anyone with second, etc, with users with none of the nodes going last
-player-sort-permission-nodes:
-  - bukkit.command.op
-  
 # Set sidebaropened: 'true' to pin menu sidebar opened permanently, 'pinned' to default the sidebar to pinned, but allow it to unpin
 #sidebaropened: true
 
@@ -396,10 +383,8 @@ trusted-proxies:
   - "127.0.0.1"
   - "0:0:0:0:0:0:0:1"
   
-# Join/quit message format for web chat: set to "" to disable notice on web UI
 joinmessage: "%playername% joined"
 quitmessage: "%playername% quit"
-
 spammessage: "You may only chat once every %interval% seconds."
 # format for messages from web: %playername% substitutes sender ID (typically IP), %message% includes text
 webmsgformat: "&color;2[WEB] %playername%: &color;f%message%"
@@ -423,9 +408,6 @@ persist-ids-by-ip: true
 
 # If true, map text to cyrillic
 cyrillic-support: false
-
-# If true, coordinates will be rounded
-round-coordinates: true
 
 # Messages to customize
 msg:
@@ -452,16 +434,7 @@ url:
     #tiles: "tiles/"
     # markers base URL
     #markers: "tiles/"
-
-# Customization commands - allows scripts to be run before/after certain events
-custom-commands:
-    image-updates:
-        # Command run just before any image file is written or updated: run with single parameter with fully qualified file name
-        preupdatecommand: ""
-        # Command run just after any image file is written or updated: run with single parameter with fully qualified file name
-        postupdatecommand: ""
-
-# Snapshot cache size, in chunks
+    # Snapshot cache size, in chunks
 snapshotcachesize: 500
 # Snapshot cache uses soft references (true), else weak references (false)
 soft-ref-cache: true
@@ -480,7 +453,7 @@ soft-ref-cache: true
 #enterexitUseTitle: true
 # Set true if new enter messages should supercede pending exit messages (vs being queued in order), default false
 #enterReplacesExits: true
-
+    
 # Set to true to enable verbose startup messages - can help with debugging map configuration problems
 # Set to false for a much quieter startup log
 verbose: false
@@ -490,10 +463,3 @@ verbose: false
 #  - class: org.dynmap.debug.LogDebugger
 # Debug: dump blocks missing render data
 dump-missing-blocks: false
-
-# Have dynmap migrate old chunks to the new format for the current MC version (specifically, for migrating pre-1.13 chunks to 1.13 or 1.14).  This is needed
-# in order to render chunks on an upgraded server (due to various bugs/limitations in CB/spigot 1.13+).  This setting is NOT suggested to be enabled full time,
-# but only long enough to do a fullrender of a migrated world - it should be turned back off once worlds are migrated).  It is EXPERIMENTAL, so be sure to backup
-# your worlds before running with this setting enabled (set to true)
-#
-#migrate-chunks: true
