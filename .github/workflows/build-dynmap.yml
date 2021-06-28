@@ -31,7 +31,7 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build with Gradle
-      run: ./gradlew clean build install
+      run: ./gradlew clean build
 
     - uses: actions/upload-artifact@v2
       with:
