@@ -169,7 +169,7 @@ public class ChunkSnapshot
                         CompoundTag prop = tc.getCompound("Properties");
                         for (String pid : prop.getAllKeys()) {
                             if (statestr.length() > 0) statestr.append(',');
-                            statestr.append(pid).append('=').append(prop.get(pid).toString());
+                            statestr.append(pid).append('=').append(prop.get(pid).getAsString());
                         }
                         palette[pi] = DynmapBlockState.getStateByNameAndState(pname, statestr.toString());
                     }
