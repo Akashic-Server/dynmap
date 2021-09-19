@@ -1,59 +1,306 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
+    <meta charset="utf-8">
+    <link rel="preload" href="https://fonts.gstatic.com/s/raleway/v14/1Ptug8zYS_SKggPNyC0ITw.woff2" as="font" crossorigin="anonymous">
 
-	<title>Akashic Server Map</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
 
-	<meta charset="utf-8" />
-	<meta name="keywords" content="akashic, minecraft, map, server" />
-	<meta name="description" content="Akashic Server Map" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-	<!-- These 2 lines make us fullscreen on apple mobile products - remove if you don't like that -->
 	<meta name="apple-mobile-web-app-capable" content="yes" />
-	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />	
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-	<link rel="icon" href="images/dynmap.ico" type="image/ico" />
+    <meta name="theme-color" content="#222222">
+	<link rel="manifest" href="./live-atlas/favicons/site.webmanifest">
+	<link rel="icon" href="./live-atlas/favicons/favicon.svg">
+    <link rel=”mask-icon” href="./live-atlas/favicons/mask.svg" color="#cccccc">
+    <link rel="apple-touch-icon" sizes="180x180" href="./live-atlas/favicons/apple-touch-icon.png">
 
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8002893407715793" crossorigin="anonymous"></script>
+    <meta name="keywords" content="minecraft, map, dynamic, liveatlas" />
+	<meta name="description" content="Minecraft Dynamic Map" />
 
-	<script type="text/javascript" src="js/jquery-3.5.1.js?_=${version}-${buildnumber}"></script>
-	<link rel="stylesheet" type="text/css" href="css/leaflet.css?_=${version}-${buildnumber}" />
-	<script type="text/javascript" src="js/leaflet.js?_=${version}-${buildnumber}"></script>
+    <title>Akashic Server Map</title>
 
-	<script type="text/javascript" src="js/custommarker.js?_=${version}-${buildnumber}"></script>
+    <!-- Remove this if you are using multiple servers in the config below -->
+    <script src="./standalone/config.js"></script>
 
-	<script type="text/javascript" src="js/dynmaputils.js?_=${version}-${buildnumber}"></script>
-	<script type="text/javascript" src="js/sidebarutils.js?_=${version}-${buildnumber}"></script>
+    <script>
+        window.liveAtlasConfig = {
+        	// Server URLS can be defined here instead of using the standalone/config.js file.
+            // Multiple servers are supported, see https://github.com/JLyne/LiveAtlas/wiki/Configuring-Multiple-Servers.
+            // servers: {
+            //     creative: {
+            //     	label: 'Creative',
+            //         dynmap: {
+            //             configuration: 'http://dynmap.local/creative/MySQL_configuration.php',
+            //             update: 'http://dynmap.local/creative/MySQL_update.php?world={world}&ts={timestamp}',
+            //             sendmessage: 'http://dynmap.local/creative/MySQL_sendmessage.php',
+            //             login: 'http://dynmap.local/creative/MySQL_login.php',
+            //             register: 'http://dynmap.local/creative/MySQL_register.php',
+            //             tiles: 'http://dynmap.local/creative/MySQL_tiles.php?tile=',
+            //             markers: 'http://dynmap.local/creative/MySQL_markers.php?marker='
+            //         }
+            //     },
+            //     survival: {
+            //     	label: 'Survival',
+            //         dynmap: {
+            //             configuration: 'http://dynmap.local/survival/MySQL_configuration.php',
+            //             update: 'http://dynmap.local/survival/MySQL_update.php?world={world}&ts={timestamp}',
+            //             sendmessage: 'http://dynmap.local/survival/MySQL_sendmessage.php',
+            //             login: 'http://dynmap.local/survival/MySQL_login.php',
+            //             register: 'http://dynmap.local/survival/MySQL_register.php',
+            //             tiles: 'http://dynmap.local/survival/MySQL_tiles.php?tile=',
+            //             markers: 'http://dynmap.local/survival/MySQL_markers.php?marker='
+            //         }
+            //     },
+            // },
 
-	<!--<link rel="stylesheet" type="text/css" href="css/embedded.css" media="screen" />-->
-	<link rel="stylesheet" type="text/css" href="css/standalone.css?_=${version}-${buildnumber}" media="screen" />
-	<link rel="stylesheet" type="text/css" href="css/dynmap_style.css?_=${version}-${buildnumber}" media="screen" />
-	<!-- <link rel="stylesheet" type="text/css" href="css/override.css" media="screen" /> -->
+            // These messages are used throughout LiveAtlas and can be translated here
+            // If a message you want to translate isn't here, it is likely controlled by dynmap itself
+            // see https://github.com/webbukkit/dynmap/wiki/Configuration.txt
+            messages: {
+            	chatNoMessages: '目前没有聊天消息...',
+                chatTitle: '聊天',
+                chatLogin: '请 {{link}} 从而开始聊天',
+                chatLoginLink: '登录',
+                chatSend: '发送',
+                chatPlaceholder: '在这里输入你的消息...',
+                chatErrorUnknown: '发送消息时发生未知错误',
+                chatErrorDisabled: '聊天功能为开启',
+            	serversHeading: '服务器',
+                worldsSkeleton: '未配置任何地图',
+                playersSkeleton: '目前没有玩家在线',
+                playersTitle: '单击使玩家位于中心\n双击追踪玩家',
+                playersTitleHidden: '此玩家当前在地图上被隐藏\n当他变得可见后，双击追踪玩家',
+                playersTitleOtherWorld: '此玩家在另一个世界\n单击使玩家位于中心\n双击追踪玩家',
+                playersSearchPlaceholder: '搜索玩家...',
+                playersSearchSkeleton: '未找到玩家',
+                followingHeading: '追踪中',
+                followingUnfollow: '取消追踪',
+                followingTitleUnfollow: '取消追踪此玩家',
+                followingHidden: '当前正在被隐藏',
+                linkTitle: '复制指向此位置的链接',
+                loadingTitle: '加载中...',
+                locationRegion: 'Region',
+                locationChunk: 'Chunk',
+                contextMenuCopyLink: '复制位置分享链接',
+                contextMenuCenterHere: '以此为中心',
+                toggleTitle: 'Click to toggle this section',
+                mapTitle: 'Map - Use the arrow keys to pan the map',
+                layersTitle: 'Layers',
+                copyToClipboardSuccess: '已复制到剪贴板',
+                copyToClipboardError: '无法复制到剪贴板',
+            },
 
-	<script type="text/javascript" src="version.js?_=${version}-${buildnumber}"></script>
-	<script type="text/javascript" src="js/jquery.json.js?_=${version}-${buildnumber}"></script>
-	<script type="text/javascript" src="js/jquery.mousewheel.js?_=${version}-${buildnumber}"></script>
-	<script type="text/javascript" src="js/minecraft.js?_=${version}-${buildnumber}"></script>
-	<script type="text/javascript" src="js/map.js?_=${version}-${buildnumber}"></script>
-	<script type="text/javascript" src="js/hdmap.js?_=${version}-${buildnumber}"></script>
-	<script type="text/javascript" src="standalone/config.js?_=${version}-${buildnumber}"></script>
+            ui: {
+            	// If true, player markers will always be displayed in front of other marker types
+            	playersAboveMarkers: true,
 
-	<script type="text/javascript">
-			\$(document).ready(function() {
-				window.dynmap = new DynMap(\$.extend({
-					container: \$('#mcmap')
-				}, config));
-			});
-	</script>
+                // Whether to enable the player list search box
+                playersSearch: true
+            }
+        };
+    </script>
 
-</head>
-<body>
-<noscript>
- For full functionality of this site it is necessary to enable JavaScript.
- Here are the <a href="http://www.enable-javascript.com/" target="_blank">
- instructions how to enable JavaScript in your web browser</a>.
-</noscript>
+    <style>
+        /* Theme colours */
+        :root {
+            --background-base: #222222; /* Buttons/sidebar */
+            --background-dark: #121212; /* Body/map labels  */
+            --background-light: #333333; /* Scrollbars/inputs */
+            --background-error: #771616; /* Errors */
 
-	<div id="mcmap"></div>
-</body>
+            --background-disabled: #555555; /* Disabled controls */
+            --background-hover: #cccccc; /* Button :hover/selected */
+            --background-active: #eeeeee; /* Button :active */
+
+            --outline-focus: #eeeeee; /* Button :focus outline */
+
+            --border-radius: 1rem;
+            --border-color: #333333; /* Control borders */
+            --box-shadow: 2px 2px 0px #111111;
+
+            --text-base: #cccccc; /* Normal text */
+            --text-emphasis: #eeeeee; /* Chat messages/:focus inputs */
+            --text-subtle: #aaaaaa; /* Skeletons/secondary text */
+            --text-disabled: #999999; /* Disabled controls */
+
+            --text-hover: var(--background-base); /* Text in :hover/selected buttons */
+            --text-active: var(--background-dark); /* Text in :active buttons */
+
+            --text-night: #ddffff; /* Clock time at night */
+            --text-day: #ffdd33; /* Clock time in day */
+        }
+
+        @keyframes fade {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--background-light) transparent;
+        }
+
+        *:hover, *:focus-within {
+            scrollbar-color: var(--background-hover) transparent;
+        }
+
+        *::-webkit-scrollbar {
+            width: 0.7rem;
+        }
+
+        *::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        *::-webkit-scrollbar-thumb {
+            background-color: var(--background-light);
+            border: 2px solid #000000;
+            border-radius: 2rem;
+            transition: background 1s ease-in;
+            padding-right: 0.2rem;
+        }
+
+        *:hover::-webkit-scrollbar-thumb, *:focus-within::-webkit-scrollbar-thumb {
+          background-color: var(--background-hover);
+        }
+
+        *::-webkit-scrollbar-button {
+            display: none;
+        }
+
+        html, body {
+            background-color: var(--background-dark);
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+	        overscroll-behavior: none;
+        }
+
+        html {
+            font-size: 62.5%;
+        }
+
+        body {
+            font-family: Raleway, sans-serif;
+            color: var(--text-base);
+            text-shadow: 0.1rem 0.1rem #000000;
+            letter-spacing: 0.02rem;
+        }
+
+        noscript {
+            color: var(--text-base);
+            font-size: 1rem;
+            font-family: sans-serif;
+            text-align: center;
+            line-height: 1.25;
+        }
+
+        #splash, noscript {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            transition: 0.3s opacity linear;
+            z-index: 10000;
+            background-color: var(--background-dark);
+            cursor: wait;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            padding: 4rem;
+        }
+
+        #splash[hidden] {
+            display: none;
+        }
+
+        #splash__spinner {
+            margin-top: 4rem;
+            animation: fade 0.5s linear 1s;
+            animation-fill-mode: both;
+        }
+
+        #splash__error {
+            margin-top: 2rem;
+            transition: opacity 0.5s ease-in;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            max-width: 60rem;
+        }
+
+        #splash__error-message {
+            font-family: monospace;
+            background-color: var(--background-error);
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+        }
+
+        #splash__error[aria-hidden=true] {
+            opacity: 0;
+        }
+
+        #app {
+            height: 100%;
+        }
+    </style>
+    <script type="module" crossorigin src="./live-atlas/assets/index.55bcfbd0.js"></script>
+    <link rel="modulepreload" href="./live-atlas/assets/vendor.8071b1a5.js">
+    <link rel="stylesheet" href="./live-atlas/assets/index.0785adf2.css">
+  </head>
+  <body>
+    <div id="splash">
+        <svg id="splash__logo" width="200" height="200" viewBox="0 0 270.06 267.09" aria-hidden="true">
+            <g transform="translate(-.49951 -4.5791)">
+                <path transform="scale(.75)"
+                      d="m0.66602 9.7227v298.96c0.046934 2.8741 0.25213 2.6741 2.535 3.6641l110.65 47.987c3.8989 1.918 3.6147 1.7537 3.6147-2.3528v-297.68c-0.0605-3.8542 0.32855-4.1331-2.8087-5.4937l-110.14-47.768c-2.988-1.1299-3.8517-1.741-3.8517 2.6812zm65.271 177.53c19.088 0 34.562 15.922 34.562 35.562 2.2e-4 6.4076-1.6821 12.696-4.8691 18.201l-25.939 55.648c-1.8045 3.8714-3.0529 3.8185-5.0156-0.0742l-28.344-55.426c-0.68826-1.1762-1.3097-2.3924-1.8613-3.6426l-0.21875-0.42578 0.03711 8e-3c-1.9214-4.5044-2.9137-9.3701-2.9141-14.289 0-19.641 15.474-35.562 34.562-35.562zm0 20.625c-8.0178-6e-5 -14.518 6.6877-14.518 14.938s6.4998 14.938 14.518 14.938c8.0178 6e-5 14.518-6.6877 14.518-14.938s-6.4998-14.938-14.518-14.938z"
+                      fill="#cccccc"/>
+                <path transform="scale(.75)"
+                      d="m236.43 8.5914-86.609 38.801c-9.3133 4.1592-8.1971 3.54-8.1971 14.952v297.52c-0.0201 2.6943-0.30938 2.8029 2.1555 1.7437l97.364-41.839c2.3162-0.98051 2.0784-1.6006 2.0784-3.5142v-303.35c0.15129-9.1976 0.75524-7.3665-6.7914-4.3133zm-44.714 54.614c19.088 0 34.562 15.922 34.562 35.562-1.9e-4 6.4108-1.6846 12.702-4.875 18.209l-25.934 55.643c-1.8045 3.8714-3.0529 3.8185-5.0156-0.0742l-28.357-55.453c-0.6778-1.1591-1.2908-2.357-1.8359-3.5879l-0.23243-0.45508 0.0391 8e-3c-1.9214-4.5044-2.9136-9.3699-2.9141-14.289 0-19.641 15.474-35.562 34.562-35.562zm0 20.625c-8.0178-6e-5 -14.518 6.6877-14.518 14.938 0 8.2498 6.4998 14.938 14.518 14.938 8.0178 7e-5 14.518-6.6877 14.518-14.938 0-8.2498-6.4998-14.938-14.518-14.938z"
+                      fill="#cccccc"/>
+                <path d="m267.64 36.871-59.959-29.533c-6.555-3.2203-6.5798-4.161-6.4472 2.3579v225.51c-0.0251 3.9614 0.03 3.9662 3.1935 5.4609l62.579 29.567c3.8853 1.693 3.4322 1.9822 3.5316-1.5506v-224.87c0.0476-4.7459 0.23478-5.4796-2.8976-6.934z"
+                      fill="#cccccc"/>
+            </g>
+        </svg>
+
+        <svg id="splash__spinner" width="38" height="38" viewBox="0 0 38 38" stroke="#fff" aria-label="LiveAtlas is loading">
+            <g transform="translate(1 1)" stroke-width="2">
+                <circle stroke-opacity=".5" cx="18" cy="18" r="18" fill="transparent"/>
+                <path d="M36 18c0-9.94-8.06-18-18-18">
+                    <animateTransform
+                        attributeName="transform"
+                        type="rotate"
+                        from="0 18 18"
+                        to="360 18 18"
+                        dur="1s"
+                        repeatCount="indefinite"/>
+                </path>
+            </g>
+        </svg>
+
+        <div id="splash__error" aria-hidden="true">
+            <span id="splash__error-message" role="alert"></span>
+            <span id="splash__error-retry" aria-live="polite"></span>
+        </div>
+    </div>
+
+    <noscript>
+        <strong>在线地图需要 JavaScript.<br />请启用以继续.</strong>
+    </noscript>
+
+    <main id="app" aria-hidden="true"></main>
+    
+  </body>
 </html>
