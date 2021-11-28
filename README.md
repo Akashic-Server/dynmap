@@ -1,4 +1,4 @@
-# Dynmap™ - dynamic web maps for Minecraft servers
+# Dynmap®  - dynamic web maps for Minecraft servers
 
 # Jump around the README
 * [How to build](#how-to-build)
@@ -9,9 +9,9 @@
 * [Where to go for questions and discussions](#where-to-go-for-questions-and-discussions)
 * [Where to go to make donations](#where-to-go-to-make-donations)
 # How to build
-Dynmap 3.x+ uses Gradle for building support for all platforms, with all resulting artifacts produced in the /targets directory.  Due to Minecraft 1.17.x+ requirements, the developer's
-default JDK must be a JDK 16 (or later) versions - older versions will still be compiled
-to run on the default JDK for those platforms (JDK 8), as will all common libraries.
+Dynmap 3.x+ uses Gradle for building support for all platforms, with all resulting artifacts produced in the /targets directory.  Due to Minecraft 1.18.x+ requirements, the developer's
+default JDK must be a JDK 17 (or later) versions - older versions will still be compiled
+to run on the default JDK for those platforms (JDK 8, or JDK 16 for 1.17.x, and common libraries are built JDK 8.
 
 To build, run:
 
@@ -142,4 +142,4 @@ We also have a subreddit located at https://www.reddit.com/r/Dynmap/
 I've set up a coffee-fund jar (I believe in the theory that software developers are machines that turn caffeine into code), for anyone who wants to throw in some tips!  I've got a Patreon here - https://www.patreon.com/dynmap, and for folks just looking to for a one-time coffee buy, hit my Ko-Fi at https://ko-fi.com/michaelprimm !
 
 
-Dynmap is a trademark of  Michael Primm, TX USA.  All Rights Reserved.
+Dynmap is a registed trademark of  Michael Primm, TX USA.  All Rights Reserved.
