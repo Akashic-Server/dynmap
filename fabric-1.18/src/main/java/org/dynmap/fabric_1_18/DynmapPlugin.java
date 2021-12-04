@@ -307,7 +307,7 @@ public class DynmapPlugin {
 
     boolean hasPerm(PlayerEntity psender, String permission) {
         PermissionsHandler ph = PermissionsHandler.getHandler();
-        if ((psender != null) && ph.hasPermission(psender.getName().getString(), permission)) {
+        if ((ph != null) && (psender != null) && ph.hasPermission(psender.getName().getString(), permission)) {
             return true;
         }
         return permissions.has(psender, permission);
@@ -315,7 +315,7 @@ public class DynmapPlugin {
 
     boolean hasPermNode(PlayerEntity psender, String permission) {
         PermissionsHandler ph = PermissionsHandler.getHandler();
-        if ((psender != null) && ph.hasPermissionNode(psender.getName().getString(), permission)) {
+        if ((ph != null) && (psender != null) && ph.hasPermissionNode(psender.getName().getString(), permission)) {
             return true;
         }
         return permissions.hasPermissionNode(psender, permission);
@@ -754,7 +754,7 @@ public class DynmapPlugin {
             ServerChunkEvents.CHUNK_LOAD.register((world, chunk) -> worldTracker.handleChunkLoad(world, chunk));
             ServerChunkEvents.CHUNK_UNLOAD.register((world, chunk) -> worldTracker.handleChunkUnload(world, chunk));
             ChunkDataEvents.SAVE.register((world, chunk) -> worldTracker.handleChunkDataSave(world, chunk));
-            BlockEvents.EVENT.register((world, pos) -> worldTracker.handleBlockEvent(world, pos));
+            BlockEvents.BLOCK_EVENT.register((world, pos) -> worldTracker.handleBlockEvent(world, pos));
         }
         // Prime the known full chunks
         if (onchunkgenerate && (server.getWorlds() != null)) {
