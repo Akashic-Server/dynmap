@@ -40,6 +40,7 @@ import org.dynmap.common.BiomeMap;
 import org.dynmap.common.DynmapCommandSender;
 import org.dynmap.common.DynmapListenerManager;
 import org.dynmap.common.DynmapPlayer;
+import org.dynmap.common.chunk.GenericChunkCache;
 import org.dynmap.fabric_1_18.command.DmapCommand;
 import org.dynmap.fabric_1_18.command.DmarkerCommand;
 import org.dynmap.fabric_1_18.command.DynmapCommand;
@@ -66,7 +67,7 @@ public class DynmapPlugin {
     DynmapCore core;
     private PermissionProvider permissions;
     private boolean core_enabled;
-    public SnapshotCache sscache;
+    public GenericChunkCache sscache;
     public PlayerList playerList;
     MapManager mapManager;
     /**
@@ -381,12 +382,19 @@ public class DynmapPlugin {
                 int watermult = ((BiomeEffectsAccessor) bb.getEffects()).getWaterColor();
                 Log.verboseinfo("biome[" + i + "]: hum=" + hum + ", tmp=" + tmp + ", mult=" + Integer.toHexString(watermult));
 
-                BiomeMap bmap = BiomeMap.byBiomeID(i);
-                if ((rl != null) || bmap.isDefault()) {
-                    bmap = new BiomeMap(i, id, tmp, hum, rl);
+                BiomeMap bmap = BiomeMap.NULL;
+                if (rl != null) {	// If resource location, lookup by this
+                	bmap = BiomeMap.byBiomeResourceLocation(rl);
+                }
+                else {
+                	bmap = BiomeMap.byBiomeID(i);
+                }
+                if (bmap.isDefault() || (bmap == BiomeMap.NULL)) {
+                    bmap = new BiomeMap((rl != null) ? BiomeMap.NO_INDEX : i, id, tmp, hum, rl);
                     Log.verboseinfo("Add custom biome [" + bmap.toString() + "] (" + i + ")");
                     cnt++;
-                } else {
+                }
+                else {
                     bmap.setTemperature(tmp);
                     bmap.setRainfall(hum);
                 }
@@ -498,7 +506,7 @@ public class DynmapPlugin {
         }
 
         playerList = core.playerList;
-        sscache = new SnapshotCache(core.getSnapShotCacheSize(), core.useSoftRefInSnapShotCache());
+        sscache = new GenericChunkCache(core.getSnapShotCacheSize(), core.useSoftRefInSnapShotCache());
         /* Get map manager from core */
         mapManager = core.getMapManager();
 

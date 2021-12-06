@@ -95,6 +95,7 @@ import org.dynmap.common.DynmapCommandSender;
 import org.dynmap.common.DynmapPlayer;
 import org.dynmap.common.DynmapServerInterface;
 import org.dynmap.common.DynmapListenerManager.EventType;
+import org.dynmap.common.chunk.GenericChunkCache;
 import org.dynmap.forge_1_18.DmapCommand;
 import org.dynmap.forge_1_18.DmarkerCommand;
 import org.dynmap.forge_1_18.DynmapCommand;
@@ -128,7 +129,7 @@ public class DynmapPlugin
     private DynmapCore core;
     private PermissionProvider permissions;
     private boolean core_enabled;
-    public SnapshotCache sscache;
+    public GenericChunkCache sscache;
     public PlayerList playerList;
     private MapManager mapManager;
     private static net.minecraft.server.MinecraftServer server;
@@ -859,11 +860,6 @@ public class DynmapPlugin
                 c.setHiddenFillStyle(w.hiddenchunkstyle);
             }
 
-            if (c.setChunkDataTypes(blockdata, biome, highesty, rawbiome) == false)
-            {
-                Log.severe("CraftBukkit build does not support biome APIs");
-            }
-
             if (chunks.size() == 0)     /* No chunks to get? */
             {
                 c.loadChunks(0);
@@ -1400,9 +1396,15 @@ public class DynmapPlugin
                 int watermult = bb.getWaterColor();
                 Log.verboseinfo("biome[" + i + "]: hum=" + hum + ", tmp=" + tmp + ", mult=" + Integer.toHexString(watermult));
 
-                BiomeMap bmap = BiomeMap.byBiomeID(i);
-                if ((rl != null) || bmap.isDefault()) {
-                    bmap = new BiomeMap(i, id, tmp, hum, rl);
+                BiomeMap bmap = BiomeMap.NULL;
+                if (rl != null) {	// If resource location, lookup by this
+                	bmap = BiomeMap.byBiomeResourceLocation(rl);
+                }
+                else {
+                	bmap = BiomeMap.byBiomeID(i);
+                }
+                if (bmap.isDefault() || (bmap == BiomeMap.NULL)) {
+                    bmap = new BiomeMap((rl != null) ? BiomeMap.NO_INDEX : i, id, tmp, hum, rl);
                     Log.verboseinfo("Add custom biome [" + bmap.toString() + "] (" + i + ")");
                     cnt++;
                 }
@@ -1528,7 +1530,7 @@ public class DynmapPlugin
         }
 
         playerList = core.playerList;
-        sscache = new SnapshotCache(core.getSnapShotCacheSize(), core.useSoftRefInSnapShotCache());
+        sscache = new GenericChunkCache(core.getSnapShotCacheSize(), core.useSoftRefInSnapShotCache());
         /* Get map manager from core */
         mapManager = core.getMapManager();
 

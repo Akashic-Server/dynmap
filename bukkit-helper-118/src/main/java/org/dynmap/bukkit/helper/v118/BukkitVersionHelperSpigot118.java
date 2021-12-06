@@ -56,13 +56,16 @@ import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
  * Helper for isolation of bukkit version specific issues
  */
-public class BukkitVersionHelperSpigot118 extends BukkitVersionHelper {    
+public class BukkitVersionHelperSpigot118 extends BukkitVersionHelper { 
+		
     public BukkitVersionHelperSpigot118() {
+    	
     }
     
     /**
@@ -191,7 +194,7 @@ public class BukkitVersionHelperSpigot118 extends BukkitVersionHelper {
      */
     @Override
     public MapChunkCache getChunkCache(BukkitWorld dw, List<DynmapChunk> chunks) {
-        MapChunkCache118 c = new MapChunkCache118();
+        MapChunkCache118 c = new MapChunkCache118(gencache);
         c.setChunks(dw, chunks);
         return c;
     }
@@ -281,12 +284,7 @@ public class BukkitVersionHelperSpigot118 extends BukkitVersionHelper {
 	@Override
     /** Get ID string from biomebase */
     public String getBiomeBaseIDString(Object bb) {
-        String s = ((BiomeBase)bb).toString();
-        if (s != null) {
-        	String[] ss = s.split("\\.");
-        	return ss[ss.length-1];
-        }
-        return null;
+		return getBiomeReg().b((BiomeBase)bb).a();
     }
 	@Override
     public String getBiomeBaseResourceLocsation(Object bb) {
@@ -437,4 +435,9 @@ public class BukkitVersionHelperSpigot118 extends BukkitVersionHelper {
 		CraftWorld cw = (CraftWorld) w;
 		return cw.getMinHeight();
 	}
+	@Override
+    public boolean useGenericCache() {
+    	return true;
+    }
+
 }
