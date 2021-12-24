@@ -11,11 +11,15 @@ public class GenericChunk {
 	public final GenericChunkSection[] sections;
 	public final int cy_min;	// CY value of first section in sections list (index = (Y >> 4) - cy_min
 	public final long inhabitedTicks;
+	public final int dataVersion;	// Version of chunk data loaded
+	public final String chunkStatus;	// Chunk status of loaded chunk
 	
-	private GenericChunk(int cx, int cz, int cy_min, GenericChunkSection[] sections, long inhabTicks) {
+	private GenericChunk(int cx, int cz, int cy_min, GenericChunkSection[] sections, long inhabTicks, int dataversion, String chunkstatus) {
 		this.cx = cx;
 		this.cz = cz;
 		this.inhabitedTicks = inhabTicks;
+		this.dataVersion = dataversion;
+		this.chunkStatus = chunkstatus;
 		this.sections = new GenericChunkSection[sections.length + 2];	// Add one empty at top and bottom
 		this.cy_min = cy_min - 1;	// Include empty at bottom
 		Arrays.fill(this.sections, GenericChunkSection.EMPTY);	// Fill all spots with empty, including pad on bottom/top
@@ -69,7 +73,7 @@ public class GenericChunk {
 	}
 
     // Generic empty (coordinates are wrong, but safe otherwise
-    public static final GenericChunk EMPTY = new GenericChunk(0, 0, -4, new GenericChunkSection[24], 0);
+    public static final GenericChunk EMPTY = new GenericChunk(0, 0, -4, new GenericChunkSection[24], 0, 0, null);
     
     // Builder for fabricating finalized chunk
     public static class Builder {
@@ -78,6 +82,8 @@ public class GenericChunk {
     	int y_min;
     	GenericChunkSection[] sections;
     	long inhabTicks;
+    	String chunkstatus;
+    	int dataversion;
     	
     	public Builder(int world_ymin, int world_ymax) {
     		reset(world_ymin, world_ymax);
@@ -85,6 +91,8 @@ public class GenericChunk {
     	public void reset(int world_ymin, int world_ymax) {
     		x = 0; z = 0; 
     		y_min = world_ymin >> 4;
+    		dataversion = 0;
+    		chunkstatus = null;
     		int y_max = (world_ymax + 15) >> 4;	// Round up
     		sections = new GenericChunkSection[y_max - y_min];	// Range for all potential sections
     	}
@@ -106,9 +114,44 @@ public class GenericChunk {
     		this.z = sz;
     		return this;
     	}
+    	// Generate simple sky lighting (must be after all sections have been added)
+    	public Builder generateSky() {
+    		int sky[] = new int[256]; // ZX array
+    		Arrays.fill(sky, 15);	// Start fully lit at top
+    		GenericChunkSection.Builder bld = new GenericChunkSection.Builder();
+    		// Make light array for each section, start from top
+    		for (int i = (sections.length - 1); i >= 0; i--) {
+    			if (sections[i] == null) continue;
+    			byte[] ssky = new byte[2048];
+    			for (int x = 0; x < 16; x++) {
+    				for (int z = 0; z < 16; z++) {
+    					int idx = (z << 4) + x;
+    					for (int y = 15; y >= 0; y--) {
+    						DynmapBlockState bs = sections[i].blocks.getBlock(x, y, z);	// Get block
+    						int atten = bs.lightAttenuation;
+    						sky[idx] = (sky[idx] > atten) ? (sky[idx] - atten) : 0;
+    						ssky[(y << 7) | (z << 3) | (x >> 1)] |= (sky[idx] << (4 * (x & 1)));
+    					}
+    				}
+    			}
+    			// Replace section with new one with new lighting
+    			sections[i] = bld.buildFrom(sections[i], ssky);
+    		}
+    		return this;    		
+    	}
+    	// Set chunk status
+    	public Builder chunkStatus(String chunkstat) {
+    		this.chunkstatus = chunkstat;
+    		return this;
+    	}
+    	// Set data version
+    	public Builder dataVersion(int dataver) {
+    		this.dataversion = dataver;
+    		return this;
+    	}
     	// Build chunk
     	public GenericChunk build() {
-    		return new GenericChunk(x, z, y_min, sections, inhabTicks);
+    		return new GenericChunk(x, z, y_min, sections, inhabTicks, dataversion, chunkstatus);
     	}
     }
 }

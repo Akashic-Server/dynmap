@@ -7,6 +7,7 @@ import java.util.ListIterator;
 import org.dynmap.DynmapChunk;
 import org.dynmap.DynmapCore;
 import org.dynmap.DynmapWorld;
+import org.dynmap.Log;
 import org.dynmap.common.BiomeMap;
 import org.dynmap.common.chunk.GenericChunkCache.ChunkCacheRec;
 import org.dynmap.hdmap.HDBlockModels;
@@ -133,6 +134,7 @@ public abstract class GenericMapChunkCache extends MapChunkCache {
 				for (int dx = -1; dx <= 1; dx++) {
 					for (int dz = -1; dz <= 1; dz++) {
 						BiomeMap bm = getBiomeRel(dx, dz);
+						if (bm == BiomeMap.NULL) continue; 
 						int rmult = bm.getModifiedGrassMultiplier(colormap[bm.biomeLookup()]);
 						raccum += (rmult >> 16) & 0xFF;
 						gaccum += (rmult >> 8) & 0xFF;
@@ -140,6 +142,7 @@ public abstract class GenericMapChunkCache extends MapChunkCache {
 						cnt++;
 					}
 				}
+				cnt = (cnt > 0) ? cnt : 1;
 				mult = ((raccum / cnt) << 16) | ((gaccum / cnt) << 8) | (baccum / cnt);
 			} catch (Exception x) {
 				//Log.info("getSmoothGrassColorMultiplier() error: " + x);
@@ -162,6 +165,7 @@ public abstract class GenericMapChunkCache extends MapChunkCache {
 				for (int dx = -1; dx <= 1; dx++) {
 					for (int dz = -1; dz <= 1; dz++) {
 						BiomeMap bm = getBiomeRel(dx, dz);
+						if (bm == BiomeMap.NULL) continue; 
 						int rmult = bm.getModifiedFoliageMultiplier(colormap[bm.biomeLookup()]);
 						raccum += (rmult >> 16) & 0xFF;
 						gaccum += (rmult >> 8) & 0xFF;
@@ -169,10 +173,10 @@ public abstract class GenericMapChunkCache extends MapChunkCache {
 						cnt++;
 					}
 				}
+				cnt = (cnt > 0) ? cnt : 1;
 				mult = ((raccum / cnt) << 16) | ((gaccum / cnt) << 8) | (baccum / cnt);
 			} catch (Exception x) {
 				//Log.info("getSmoothFoliageColorMultiplier() error: " + x);
-				mult = 0xFFFFFF;
 			}
 			//Log.info(String.format("getSmoothFoliageColorMultiplier() at %d, %d = %X", x, z, mult));
 
@@ -191,6 +195,7 @@ public abstract class GenericMapChunkCache extends MapChunkCache {
 				for (int dx = -1; dx <= 1; dx++) {
 					for (int dz = -1; dz <= 1; dz++) {
 						BiomeMap bm = getBiomeRel(dx, dz);
+						if (bm == BiomeMap.NULL) continue; 
 						int rmult;
 						if (bm == BiomeMap.SWAMPLAND) {
 							rmult = swampmap[bm.biomeLookup()];
@@ -203,10 +208,10 @@ public abstract class GenericMapChunkCache extends MapChunkCache {
 						cnt++;
 					}
 				}
+				cnt = (cnt > 0) ? cnt : 1;
 				mult = ((raccum / cnt) << 16) | ((gaccum / cnt) << 8) | (baccum / cnt);
 			} catch (Exception x) {
 				//Log.info("getSmoothColorMultiplier() error: " + x);
-				mult = 0xFFFFFF;
 			}
 			//Log.info(String.format("getSmoothColorMultiplier() at %d, %d = %X", x, z, mult));
 
@@ -215,7 +220,7 @@ public abstract class GenericMapChunkCache extends MapChunkCache {
 
 		@Override
 		public final int getSmoothWaterColorMultiplier() {
-			int multv;
+			int multv = 0xFFFFFF;
 			try {
 				int raccum = 0;
 				int gaccum = 0;
@@ -224,6 +229,7 @@ public abstract class GenericMapChunkCache extends MapChunkCache {
 				for (int dx = -1; dx <= 1; dx++) {
 					for (int dz = -1; dz <= 1; dz++) {
 						BiomeMap bm = getBiomeRel(dx, dz);
+						if (bm == BiomeMap.NULL) continue; 
 						int rmult = bm.getWaterColorMult();
 						raccum += (rmult >> 16) & 0xFF;
 						gaccum += (rmult >> 8) & 0xFF;
@@ -231,11 +237,10 @@ public abstract class GenericMapChunkCache extends MapChunkCache {
 						cnt++;
 					}
 				}
+				cnt = (cnt > 0) ? cnt : 1;
 				multv = ((raccum / cnt) << 16) | ((gaccum / cnt) << 8) | (baccum / cnt);
 			} catch (Exception x) {
 				//Log.info("getSmoothWaterColorMultiplier(nomap) error: " + x);
-
-				multv = 0xFFFFFF;
 			}
 			//Log.info(String.format("getSmoothWaterColorMultiplier(nomap) at %d, %d = %X", x, z, multv));
 
@@ -254,6 +259,7 @@ public abstract class GenericMapChunkCache extends MapChunkCache {
 				for (int dx = -1; dx <= 1; dx++) {
 					for (int dz = -1; dz <= 1; dz++) {
 						BiomeMap bm = getBiomeRel(dx, dz);
+						if (bm == BiomeMap.NULL) continue; 
 						int rmult = colormap[bm.biomeLookup()];
 						raccum += (rmult >> 16) & 0xFF;
 						gaccum += (rmult >> 8) & 0xFF;
@@ -261,10 +267,10 @@ public abstract class GenericMapChunkCache extends MapChunkCache {
 						cnt++;
 					}
 				}
+				cnt = (cnt > 0) ? cnt : 1;
 				mult = ((raccum / cnt) << 16) | ((gaccum / cnt) << 8) | (baccum / cnt);
 			} catch (Exception x) {
 				//Log.info("getSmoothWaterColorMultiplier() error: " + x);
-				mult = 0xFFFFFF;
 			}
 			//Log.info(String.format("getSmoothWaterColorMultiplier() at %d, %d = %X", x, z, mult));
 
@@ -419,24 +425,7 @@ public abstract class GenericMapChunkCache extends MapChunkCache {
 
 		@Override
 		public final DynmapBlockState getBlockTypeAt(BlockStep s) {
-			if (s == BlockStep.Y_MINUS) {
-				if (y > ymin) {
-					return snap.getBlockType(bx, y - 1, bz);
-				}
-			} else if (s == BlockStep.Y_PLUS) {
-				if (y < (worldheight - 1)) {
-					return snap.getBlockType(bx, y + 1, bz);
-				}
-			} else {
-				BlockStep ls = laststep;
-				stepPosition(s);
-				DynmapBlockState tid = snap.getBlockType(bx, y, bz);
-				unstepPosition();
-				laststep = ls;
-				return tid;
-			}
-
-			return DynmapBlockState.AIR;
+			return getBlockTypeAt(s.xoff, s.yoff, s.zoff);
 		}
 
 		@Override
@@ -455,16 +444,6 @@ public abstract class GenericMapChunkCache extends MapChunkCache {
 		}
 
 		@Override
-		public final boolean isEmptySection() {
-	    	boolean[] flags = isSectionNotEmpty[chunkindex];
-	        if(flags == null) {
-				initSectionData(chunkindex);
-	            flags = isSectionNotEmpty[chunkindex];
-	        }
-	        return !flags[(y >> 4) + sectoff];
-		}
-
-		@Override
 		public final RenderPatchFactory getPatchFactory() {
 			return HDBlockModels.getPatchDefinitionFactory();
 		}
@@ -477,14 +456,14 @@ public abstract class GenericMapChunkCache extends MapChunkCache {
 
 		@Override
 		public final DynmapBlockState getBlockTypeAt(int xoff, int yoff, int zoff) {
-			int xx = this.x + xoff;
-			int yy = this.y + yoff;
-			int zz = this.z + zoff;
-			int idx = ((xx >> 4) - x_min) + (((zz >> 4) - z_min) * x_dim);
-			try {
-				return snaparray[idx].getBlockType(xx & 0xF, yy, zz & 0xF);
-			} catch (Exception x) {
+			int nx = x + xoff;
+			int ny = y + yoff;
+			int nz = z + zoff;
+			int nchunkindex = ((nx >> 4) - x_min) + (((nz >> 4) - z_min) * x_dim);
+			if ((nchunkindex >= snapcnt) || (nchunkindex < 0)) {
 				return DynmapBlockState.AIR;
+			} else {
+				return snaparray[nchunkindex].getBlockType(nx & 0xF, ny, nz & 0xF);
 			}
 		}
 
@@ -508,6 +487,16 @@ public abstract class GenericMapChunkCache extends MapChunkCache {
 				blk = snap.getBlockType(bx, y, bz);
 			}
 			return blk;
+		}
+
+		@Override
+		public int getDataVersion() {
+			return (snap != null) ? snap.dataVersion : 0;
+		}
+
+		@Override
+		public String getChunkStatus() {
+			return (snap != null) ? snap.chunkStatus : null;
 		}
 	}
 
@@ -896,16 +885,32 @@ public abstract class GenericMapChunkCache extends MapChunkCache {
 		return true;
 	}
 
-	public GenericChunk parseChunkFromNBT(GenericNBTCompound nbt) {
-		if ((nbt != null) && nbt.contains("Level")) {
+	private static final String litStates[] = { "light", "spawn", "heightmaps", "full" };
+	
+	public GenericChunk parseChunkFromNBT(GenericNBTCompound orignbt) {
+		GenericNBTCompound nbt = orignbt;
+		if ((nbt != null) && nbt.contains("Level", GenericNBTCompound.TAG_COMPOUND)) {
 			nbt = nbt.getCompound("Level");
 		}
 		if (nbt == null) return null;
+		String status = nbt.getString("Status");
+		int version = orignbt.getInt("DataVersion");
+
+		boolean hasLitState = false;
+		if (status != null) {
+			for (int i = 0; i < litStates.length; i++) {
+				if (status.equals(litStates[i])) { hasLitState = true; }
+			}
+		}
+		boolean hasLight = false; // pessimistic: only has light if we see it, due to WB and other flawed chunk generation hasLitState;	// Assume good light in a lit state
+		
 		// Start generic chunk builder
 		GenericChunk.Builder bld = new GenericChunk.Builder(dw.minY,  dw.worldheight);
 		int x = nbt.getInt("xPos");
 		int z = nbt.getInt("zPos");
-		bld.coords(x, z);
+		// Set chunk info
+		bld.coords(x, z).chunkStatus(status).dataVersion(version);
+		
         if (nbt.contains("InhabitedTime")) {
         	bld.inhabitedTicks(nbt.getLong("InhabitedTime"));
         }
@@ -939,6 +944,7 @@ public abstract class GenericMapChunkCache extends MapChunkCache {
         GenericChunkSection.Builder sbld = new GenericChunkSection.Builder();
         /* Get sections */
         GenericNBTList sect = nbt.contains("sections") ? nbt.getList("sections", 10) : nbt.getList("Sections", 10);
+        // And process sections
         for (int i = 0; i < sect.size(); i++) {
             GenericNBTCompound sec = sect.getCompound(i);
             int secnum = sec.getByte("Y");
@@ -1050,6 +1056,7 @@ public abstract class GenericMapChunkCache extends MapChunkCache {
             }
             if (sec.contains("SkyLight")) {
             	sbld.skyLight(sec.getByteArray("SkyLight"));
+            	hasLight = true;
             }
 			// If section biome palette
 			if (sec.contains("biomes")) {
@@ -1082,6 +1089,15 @@ public abstract class GenericMapChunkCache extends MapChunkCache {
 			// Finish and add section
 			bld.addSection(secnum, sbld.build());
 			sbld.reset();
+        }
+        // Assume skylight is only trustworthy in a lit state
+		if (!hasLitState) {
+			hasLight = false;
+		}
+        // If no light, do simple generate
+        if (!hasLight) {
+        	//Log.info(String.format("generateSky(%d,%d)", x, z));
+        	bld.generateSky();
         }
 		return bld.build();
 	}
