@@ -9,10 +9,12 @@ import org.dynmap.common.BiomeMap;
 public class GenericChunk {
 	public final int cx, cz;	// Chunk coord (world coord / 16)
 	public final GenericChunkSection[] sections;
+	public final int sectionCnt;
 	public final int cy_min;	// CY value of first section in sections list (index = (Y >> 4) - cy_min
 	public final long inhabitedTicks;
 	public final int dataVersion;	// Version of chunk data loaded
 	public final String chunkStatus;	// Chunk status of loaded chunk
+	public final boolean isEmpty;	// All sections are empty
 	
 	private GenericChunk(int cx, int cz, int cy_min, GenericChunkSection[] sections, long inhabTicks, int dataversion, String chunkstatus) {
 		this.cx = cx;
@@ -23,19 +25,23 @@ public class GenericChunk {
 		this.sections = new GenericChunkSection[sections.length + 2];	// Add one empty at top and bottom
 		this.cy_min = cy_min - 1;	// Include empty at bottom
 		Arrays.fill(this.sections, GenericChunkSection.EMPTY);	// Fill all spots with empty, including pad on bottom/top
+		boolean empty = true;
 		for (int off = 0; off < sections.length; off++) {
 			if (sections[off] != null) {	// If defined, set the section
 				this.sections[off+1] = sections[off];
+				empty = empty && sections[off].isEmpty;
 			}
 		}
+		this.sectionCnt = sections.length;
+		this.isEmpty = empty;
 	}
 	// Get section for given block Y coord
 	public final GenericChunkSection getSection(int y) {
-		try {
-			return this.sections[(y >> 4) - cy_min];
-		} catch (IndexOutOfBoundsException ioobx) {	// Builder and padding should be avoiding this, but be safe
+		int idx = (y >> 4) - this.cy_min;
+		if ((idx < 0) || (idx >= sectionCnt)) {
 			return GenericChunkSection.EMPTY;
 		}
+		return this.sections[idx];
 	}
 	
     public final DynmapBlockState getBlockType(int x, int y, int z) {    	
@@ -72,9 +78,6 @@ public class GenericChunk {
 		return String.format("chunk(%d,%d:%s,off=%d", cx, cz, Arrays.deepToString((sections)), cy_min);
 	}
 
-    // Generic empty (coordinates are wrong, but safe otherwise
-    public static final GenericChunk EMPTY = new GenericChunk(0, 0, -4, new GenericChunkSection[24], 0, 0, null);
-    
     // Builder for fabricating finalized chunk
     public static class Builder {
     	int x;
