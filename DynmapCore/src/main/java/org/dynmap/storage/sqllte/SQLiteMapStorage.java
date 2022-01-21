@@ -68,7 +68,7 @@ public class SQLiteMapStorage extends MapStorage {
                 rs.close();
                 stmt.close();
             } catch (SQLException x) {
-                Log.severe("Tile exists error - " + x.getMessage());
+            	logSQLException("Tile exists error", x);
                 err = true;
             } finally {
                 releaseConnection(c, err);
@@ -94,7 +94,7 @@ public class SQLiteMapStorage extends MapStorage {
                 rs.close();
                 stmt.close();
             } catch (SQLException x) {
-                Log.severe("Tile matches hash error - " + x.getMessage());
+            	logSQLException("Tile matches hash error", x);
                 err = true;
             } finally {
                 releaseConnection(c, err);
@@ -130,7 +130,7 @@ public class SQLiteMapStorage extends MapStorage {
                 rs.close();
                 stmt.close();
             } catch (SQLException x) {
-                Log.severe("Tile read error - " + x.getMessage());
+            	logSQLException("Tile read error", x);
                 err = true;
             } finally {
                 releaseConnection(c, err);
@@ -189,7 +189,7 @@ public class SQLiteMapStorage extends MapStorage {
                     world.enqueueZoomOutUpdate(this);
                 }
             } catch (SQLException x) {
-                Log.severe("Tile write error - " + x.getMessage());
+            	logSQLException("Tile write error", x);
                 err = true;
             } finally {
                 releaseConnection(c, err);
@@ -337,7 +337,7 @@ public class SQLiteMapStorage extends MapStorage {
             rs.close();
             stmt.close();
         } catch (SQLException x) {
-            Log.severe("Error loading map table - " + x.getMessage());
+        	logSQLException("Error loading map table", x);
             err = true;
         } finally {
             releaseConnection(c, err);
@@ -376,7 +376,7 @@ public class SQLiteMapStorage extends MapStorage {
                     rs.close();
                     stmt.close();
                 } catch (SQLException x) {
-                    Log.severe("Error updating Maps table - " + x.getMessage());
+                	logSQLException("Error updating Maps table", x);
                     err = true;
                 } finally {
                     releaseConnection(c, err);
@@ -394,6 +394,7 @@ public class SQLiteMapStorage extends MapStorage {
         // If new, add our tables
         if (version == 0) {
             try {
+            	Log.info("Initializing database schema");
                 c = getConnection();
                 doUpdate(c, "CREATE TABLE Maps (ID INTEGER PRIMARY KEY AUTOINCREMENT, WorldID STRING NOT NULL, MapID STRING NOT NULL, Variant STRING NOT NULL)");
                 doUpdate(c, "CREATE TABLE Tiles (MapID INT NOT NULL, x INT NOT NULL, y INT NOT NULL, zoom INT NOT NULL, HashCode INT NOT NULL, LastUpdate INT NOT NULL, Format INT NOT NULL, Image BLOB, ImageLen INT, PRIMARY KEY(MapID, x, y, zoom))");
@@ -402,8 +403,9 @@ public class SQLiteMapStorage extends MapStorage {
                 doUpdate(c, "CREATE TABLE MarkerFiles (FileName STRING PRIMARY KEY NOT NULL, Content CLOB)");
                 doUpdate(c, "CREATE TABLE SchemaVersion (level INT PRIMARY KEY NOT NULL)");
                 doUpdate(c, "INSERT INTO SchemaVersion (level) VALUES (2)");
+                version = 2;	// Initializes to current schema
             } catch (SQLException x) {
-                Log.severe("Error creating tables - " + x.getMessage());
+            	logSQLException("Error creating tables", x);
                 err = true;
                 return false;
             } finally {
@@ -411,15 +413,17 @@ public class SQLiteMapStorage extends MapStorage {
                 c = null;
             }
         }
-        else if (version == 1) {	// Add ImageLen columns
+        if (version == 1) {	// Add ImageLen columns
             try {
+            	Log.info("Updating database schema from version = " + version);
                 c = getConnection();
                 doUpdate(c, "ALTER TABLE Tiles ADD ImageLen INT");
                 doUpdate(c, "ALTER TABLE Faces ADD ImageLen INT");
                 doUpdate(c, "ALTER TABLE MarkerIcons ADD ImageLen INT");
                 doUpdate(c, "UPDATE SchemaVersion SET level=2");
+                version = 2;
             } catch (SQLException x) {
-                Log.severe("Error creating tables - " + x.getMessage());
+            	logSQLException("Error updating tables to version=2", x);
                 err = true;
                 return false;
             } finally {
@@ -427,6 +431,7 @@ public class SQLiteMapStorage extends MapStorage {
                 c = null;
             }
         }
+    	Log.info("Schema version = " + version);
         // Load maps table - cache results
         doLoadMaps();
         
@@ -607,7 +612,7 @@ public class SQLiteMapStorage extends MapStorage {
             rs.close();
             stmt.close();
         } catch (SQLException x) {
-            Log.severe("Tile enum error - " + x.getMessage());
+        	logSQLException("Tile enum error", x);
             err = true;
         } finally {
             releaseConnection(c, err);
@@ -644,7 +649,7 @@ public class SQLiteMapStorage extends MapStorage {
             doExecuteUpdate(stmt, "DELETE FROM Tiles WHERE MapID=" + mapkey + ";");
             stmt.close();
         } catch (SQLException x) {
-            Log.severe("Tile purge error - " + x.getMessage());
+        	logSQLException("Tile purge error", x);
             err = true;
         } finally {
             releaseConnection(c, err);
@@ -686,7 +691,7 @@ public class SQLiteMapStorage extends MapStorage {
             doExecuteUpdate(stmt);
             stmt.close();
         } catch (SQLException x) {
-            Log.severe("Face write error - " + x.getMessage());
+        	logSQLException("Face write error", x);
             err = true;
         } finally {
             releaseConnection(c, err);
@@ -720,7 +725,7 @@ public class SQLiteMapStorage extends MapStorage {
             rs.close();
             stmt.close();
         } catch (SQLException x) {
-            Log.severe("Face read error - " + x.getMessage());
+        	logSQLException("Face read error", x);
             err = true;
         } finally {
             releaseConnection(c, err);
@@ -746,7 +751,7 @@ public class SQLiteMapStorage extends MapStorage {
             rs.close();
             stmt.close();
         } catch (SQLException x) {
-            Log.severe("Face exists error - " + x.getMessage());
+        	logSQLException("Face exists error", x);
             err = true;
         } finally {
             releaseConnection(c, err);
@@ -797,7 +802,7 @@ public class SQLiteMapStorage extends MapStorage {
             stmt.close();
             stmt = null;
         } catch (SQLException x) {
-            Log.severe("Marker write error - " + x.getMessage());
+        	logSQLException("Marker write error", x);
             err = true;
         } finally {
             if (rs != null) { try { rs.close(); } catch (SQLException sx) {} }
@@ -831,7 +836,7 @@ public class SQLiteMapStorage extends MapStorage {
             rs.close();
             stmt.close();
         } catch (SQLException x) {
-            Log.severe("Marker read error - " + x.getMessage());
+        	logSQLException("Marker read error", x);
             err = true;
         } finally {
             releaseConnection(c, err);
@@ -878,7 +883,7 @@ public class SQLiteMapStorage extends MapStorage {
             //stmt.executeUpdate();
             doExecuteUpdate(stmt);
         } catch (SQLException x) {
-            Log.severe("Marker file write error - " + x.getMessage());
+        	logSQLException("Marker file write error", x);
             err = true;
         } finally {
             if (rs != null) { try { rs.close(); } catch (SQLException sx) {} }
@@ -906,7 +911,7 @@ public class SQLiteMapStorage extends MapStorage {
             rs.close();
             stmt.close();
         } catch (SQLException x) {
-            Log.severe("Marker file read error - " + x.getMessage());
+        	logSQLException("Marker file read error", x);
             err = true;
         } finally {
             releaseConnection(c, err);

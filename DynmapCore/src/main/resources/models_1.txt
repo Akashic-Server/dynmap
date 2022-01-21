@@ -621,7 +621,7 @@ block:id=repeater,data=12,data=13,data=14,data=15,data=28,data=29,data=30,data=3
 rotate:id=repeater,data=0,rot=270
 # Sticky piston
 # Piston:
-boxlist:id=piston,id=sticky_piston,data=4,box=0:1:0:0.75:0:1:0/3/2/2/2/,box=0.375:0.625:0.75:1.0:0.375:0.625:3/3/2/2/2/2
+boxlist:id=piston,id=sticky_piston,data=4,box=0:1:0:0.75:0:1:0/3/2/2/2/2,box=0.375:0.625:0.75:1.0:0.375:0.625:3/3/4/4/4/4
 patchblock:id=piston,id=sticky_piston,data=0
 patchrotate:id=piston,data=4,rotx=90
 patchblock:id=piston,id=sticky_piston,data=1
@@ -632,7 +632,7 @@ patchblock:id=piston,id=sticky_piston,data=3
 patchrotate:id=piston,data=4,rotx=90,roty=270
 patchblock:id=piston,id=sticky_piston,data=5
 patchrotate:id=piston,data=4,rotx=180
-boxlist:id=piston,id=sticky_piston,data=10,box=0:1:0:0.75:0:1:0/3/2/2/2/,box=0:1:0.75:1.0:0:1:3/1/2/2/2/2
+boxlist:id=piston,id=sticky_piston,data=10,box=0:1:0:0.75:0:1:0/3/2/2/2/2,box=0:1:0.75:1.0:0:1:3/1/2/2/2/2
 patchblock:id=piston,id=sticky_piston,data=6
 patchrotate:id=piston,data=10,rotx=90
 patchblock:id=piston,id=sticky_piston,data=7
@@ -644,7 +644,7 @@ patchrotate:id=piston,data=10,rotx=90,roty=270
 patchblock:id=piston,id=sticky_piston,data=11
 patchrotate:id=piston,data=10,rotx=180
 # Piston head
-boxlist:id=piston_head,data=16,data=17,data=18,data=19,box=0:1:0.75:1:0:1:3/1/2/2/2/,box=0.375:0.625:0:0.75:0.375:0.625:2/2/2/2/2/2
+boxlist:id=piston_head,data=16,data=17,data=18,data=19,box=0:1:0.75:1:0:1:3/1/2/2/2/2,box=0.375:0.625:0:0.75:0.375:0.625:2/2/4/4/4/4
 patchblock:id=piston_head,data=0,data=1,data=2,data=3
 patchrotate:id=piston_head,data=16,rotx=90
 patchblock:id=piston_head,data=4,data=5,data=6,data=7
@@ -763,72 +763,24 @@ layer:4,5,6,7
 *------*
 *------*
 ********
-# Air portal
-block:id=end_portal,scale=8
-layer:6
-********
-********
-********
-********
-********
-********
-********
-********
-# Air portal frame (no eye)
-block:id=end_portal_frame,data=0,data=1,data=2,data=3,scale=16
-layer:0,1,2,3,4,5,6,7,8,9,10,11,12
-****************
-****************
-****************
-****************
-****************
-****************
-****************
-****************
-****************
-****************
-****************
-****************
-****************
-****************
-****************
-****************
-# Air portal fram (eye)
-block:id=end_portal_frame,data=4,data=5,data=6,data=7,scale=16
-layer:0,1,2,3,4,5,6,7,8,9,10,11,12
-****************
-****************
-****************
-****************
-****************
-****************
-****************
-****************
-****************
-****************
-****************
-****************
-****************
-****************
-****************
-****************
-layer:13,14
-----------------
-----------------
-----------------
-----------------
-----********----
-----********----
-----********----
-----********----
-----********----
-----********----
-----********----
-----********----
-----------------
-----------------
-----------------
-----------------
+# End portal
+boxlist:id=end_portal,box=0:1:0:0.75:0:1:0/0/-1/-1/-1/-1
+# End portal frame (eye)
+boxlist:id=end_portal_frame,data=1,box=0:1:0:0.8125:0:1:0/1/2/2/2/2,box=0.25:0.75:0.8125:1:0.25:0.75:3/3/3/3/3/3
+patchblock:id=end_portal_frame,data=0
+patchrotate:id=end_portal_frame,data=1,roty=180
+patchblock:id=end_portal_frame,data=2
+patchrotate:id=end_portal_frame,data=1,roty=90
+patchblock:id=end_portal_frame,data=3
+patchrotate:id=end_portal_frame,data=1,roty=270
+# End portal frame (no eye)
+boxlist:id=end_portal_frame,data=5,box=0:1:0:0.8125:0:1:0/1/2/2/2/2
+patchblock:id=end_portal_frame,data=4
+patchrotate:id=end_portal_frame,data=5,roty=180
+patchblock:id=end_portal_frame,data=6
+patchrotate:id=end_portal_frame,data=5,roty=90
+patchblock:id=end_portal_frame,data=7
+patchrotate:id=end_portal_frame,data=5,roty=270
 # Dragon Egg
 block:id=dragon_egg,scale=8
 layer:0,7
@@ -1393,8 +1345,16 @@ patchblock:id=bubble_column
 [1.16-]customblock:id=brick_wall,id=prismarine_wall,id=red_sandstone_wall,id=mossy_stone_brick_wall,id=granite_wall,id=stone_brick_wall,id=nether_brick_wall,id=andesite_wall,id=red_nether_brick_wall,id=sandstone_wall,id=end_stone_brick_wall,id=diorite_wall,class=org.dynmap.hdmap.renderer.FenceWallBlockStateRenderer,type=tallwall
 # Scaffolding
 [1.14-]boxlist:id=scaffolding,box=0:1:0.99:1:0:1:0/0/-1/-1/-1/-1,box=0:0.125:0:1:0:0.125:2/-1/1/1/1/1,box=0:0.125:0:1:0.875:1:2/-1/1/1/1/1,box=0.875:1:0:1:0.875:1:2/-1/1/1/1/1,box=0.875:1:0:1:0:0.125:2/-1/1/1/1/1,box=0.125:0.875:0.875:1:0:0.125:2/-1/1/1/1/1,box=0.125:0.875:0.875:1:0.875:1:2/-1/1/1/1/1,box=0.875:1:0.875:1:0.125:0.875:2/-1/1/1/1/1,box=0:0.125:0.875:1:0.125:0.875:2/-1/1/1/1/1
-# Composter
-[1.14-]boxlist:id=composter,box=0:1:0:0.125:0:1:1/3/-1/-1/-1/-1,box=0:0.125:0:1:0:1:-1/0/2/2/2/2,box=0.875:1:0:1:0:1:-1/0/2/2/2/2,box=0.125:0.875:0:1:0:0.125:-1/0/2/2/2/2,box=0.125:0.875:0:1:0.875:1:-1/0/2/2/2/2
+# Composter (level 0 to 8
+[1.14-]boxlist:id=composter,data=0,box=0:1:0:0.125:0:1:1/3/-1/-1/-1/-1,box=0:0.125:0:1:0:1:-1/0/2/2/2/2,box=0.875:1:0:1:0:1:-1/0/2/2/2/2,box=0.125:0.875:0:1:0:0.125:-1/0/2/2/2/2,box=0.125:0.875:0:1:0.875:1:-1/0/2/2/2/2
+[1.14-]boxlist:id=composter,data=1,box=0:1:0:0.1875:0:1:1/4/-1/-1/-1/-1,box=0:0.125:0:1:0:1:-1/0/2/2/2/2,box=0.875:1:0:1:0:1:-1/0/2/2/2/2,box=0.125:0.875:0:1:0:0.125:-1/0/2/2/2/2,box=0.125:0.875:0:1:0.875:1:-1/0/2/2/2/2
+[1.14-]boxlist:id=composter,data=2,box=0:1:0:0.3125:0:1:1/4/-1/-1/-1/-1,box=0:0.125:0:1:0:1:-1/0/2/2/2/2,box=0.875:1:0:1:0:1:-1/0/2/2/2/2,box=0.125:0.875:0:1:0:0.125:-1/0/2/2/2/2,box=0.125:0.875:0:1:0.875:1:-1/0/2/2/2/2
+[1.14-]boxlist:id=composter,data=3,box=0:1:0:0.4375:0:1:1/4/-1/-1/-1/-1,box=0:0.125:0:1:0:1:-1/0/2/2/2/2,box=0.875:1:0:1:0:1:-1/0/2/2/2/2,box=0.125:0.875:0:1:0:0.125:-1/0/2/2/2/2,box=0.125:0.875:0:1:0.875:1:-1/0/2/2/2/2
+[1.14-]boxlist:id=composter,data=4,box=0:1:0:0.5625:0:1:1/4/-1/-1/-1/-1,box=0:0.125:0:1:0:1:-1/0/2/2/2/2,box=0.875:1:0:1:0:1:-1/0/2/2/2/2,box=0.125:0.875:0:1:0:0.125:-1/0/2/2/2/2,box=0.125:0.875:0:1:0.875:1:-1/0/2/2/2/2
+[1.14-]boxlist:id=composter,data=5,box=0:1:0:0.6875:0:1:1/4/-1/-1/-1/-1,box=0:0.125:0:1:0:1:-1/0/2/2/2/2,box=0.875:1:0:1:0:1:-1/0/2/2/2/2,box=0.125:0.875:0:1:0:0.125:-1/0/2/2/2/2,box=0.125:0.875:0:1:0.875:1:-1/0/2/2/2/2
+[1.14-]boxlist:id=composter,data=6,box=0:1:0:0.8125:0:1:1/4/-1/-1/-1/-1,box=0:0.125:0:1:0:1:-1/0/2/2/2/2,box=0.875:1:0:1:0:1:-1/0/2/2/2/2,box=0.125:0.875:0:1:0:0.125:-1/0/2/2/2/2,box=0.125:0.875:0:1:0.875:1:-1/0/2/2/2/2
+[1.14-]boxlist:id=composter,data=7,box=0:1:0:0.9375:0:1:1/4/-1/-1/-1/-1,box=0:0.125:0:1:0:1:-1/0/2/2/2/2,box=0.875:1:0:1:0:1:-1/0/2/2/2/2,box=0.125:0.875:0:1:0:0.125:-1/0/2/2/2/2,box=0.125:0.875:0:1:0.875:1:-1/0/2/2/2/2
+[1.14-]boxlist:id=composter,data=8,box=0:1:0:0.9375:0:1:1/5/-1/-1/-1/-1,box=0:0.125:0:1:0:1:-1/0/2/2/2/2,box=0.875:1:0:1:0:1:-1/0/2/2/2/2,box=0.125:0.875:0:1:0:0.125:-1/0/2/2/2/2,box=0.125:0.875:0:1:0.875:1:-1/0/2/2/2/2
 # Jigsaw
 [1.14-]boxlist:id=jigsaw,data=4,box=0:1:0:1:0:1:0/1/2/2/2/2
 [1.14-]patchblock:id=jigsaw,data=0
@@ -1437,7 +1397,7 @@ patchblock:id=bubble_column
 [1.14-]patchblock:id=smoker,id=blast_furnace,data=6,data=7
 [1.14-]patchrotate:id=smoker,data=0,roty=90
 # Grindstone
-[1.14-]boxlist:id=grindstone,data=0,box=0.75:0.875:0:0.4375:0.375:0.625:4/-1/4/4/4/4,box=0.125:0.25:0:0.4375:0.375:0.625:4/-1/4/4/4,box=0.125:0.25:0.4375:0.8325:0.3125:0.6875:0/0/0/0/0/0,box=0.25:0.75:0.25:1:0.125:0.875:1/1/2/2/1/1
+[1.14-]boxlist:id=grindstone,data=0,box=0.75:0.875:0:0.4375:0.375:0.625:4/-1/4/4/4/4,box=0.125:0.25:0:0.4375:0.375:0.625:4/-1/4/4/4,box=0.125:0.875:0.4375:0.8325:0.3125:0.6875:4/4/4/4/4/4,box=0.25:0.75:0.25:1:0.125:0.875:5/5/2/2/1/1
 [1.14-]patchblock:id=grindstone,data=1
 [1.14-]patchrotate:id=grindstone,data=0,roty=180
 [1.14-]patchblock:id=grindstone,data=2
@@ -1494,35 +1454,35 @@ patchblock:id=bubble_column
 [1.14-]patchrotate:id=campfire,data=0,roty=90
 [1.14-]patchblock:id=campfire,data=28,data=29,data=30,data=31
 [1.14-]patchrotate:id=campfire,data=4,roty=90
-# Bell
-[1.14-]boxlist:id=bell,data=2,box=0.125:0.875:0.8125:0.9375:0.4375:0.5625:0/0/0/0/0/0,box=0.875:1:0:1:0.375:0.625:1/1/1/1/1/1,box=0:0.125:0:1:0.375:0.625:1/1/1/1/1/1,box=0.3125:0.6875:0.375:0.8175:0.3125:0.6875:2/3/4/4/4/4,box=0.25:0.75:0.25:0.375:0.25:0.75:2/3/4/4/4/4
-[1.14-]patchblock:id=bell,data=3
-[1.14-]patchrotate:id=bell,data=2,roty=180
-[1.14-]patchblock:id=bell,data=0
-[1.14-]patchrotate:id=bell,data=2,roty=270
-[1.14-]patchblock:id=bell,data=1
-[1.14-]patchrotate:id=bell,data=2,roty=90
-[1.14-]boxlist:id=bell,data=6,box=0.4375:0.5625:0.8125:1:0.4375:0.5625:0/0/0/0/0/0,box=0.3125:0.6875:0.375:0.8175:0.3125:0.6875:2/3/4/4/4/4,box=0.25:0.75:0.25:0.375:0.25:0.75:2/3/4/4/4/4
-[1.14-]patchblock:id=bell,data=7
-[1.14-]patchrotate:id=bell,data=6,roty=180
-[1.14-]patchblock:id=bell,data=4
-[1.14-]patchrotate:id=bell,data=6,roty=270
-[1.14-]patchblock:id=bell,data=5
-[1.14-]patchrotate:id=bell,data=6,roty=90
-[1.14-]boxlist:id=bell,data=10,box=0.1875:1:0.8125:0.9375:0.4375:0.5625:0/0/0/0/0/0,box=0.3125:0.6875:0.375:0.8175:0.3125:0.6875:2/3/4/4/4/4,box=0.25:0.75:0.25:0.375:0.25:0.75:2/3/4/4/4/4
-[1.14-]patchblock:id=bell,data=11
-[1.14-]patchrotate:id=bell,data=10,roty=180
-[1.14-]patchblock:id=bell,data=8
-[1.14-]patchrotate:id=bell,data=10,roty=270
-[1.14-]patchblock:id=bell,data=9
-[1.14-]patchrotate:id=bell,data=10,roty=90
-[1.14-]boxlist:id=bell,data=14,box=0:1:0.8125:0.9375:0.4375:0.5625:0/0/0/0/0/0,box=0.3125:0.6875:0.375:0.8175:0.3125:0.6875:2/3/4/4/4/4,box=0.25:0.75:0.25:0.375:0.25:0.75:2/3/4/4/4/4
-[1.14-]patchblock:id=bell,data=15
-[1.14-]patchrotate:id=bell,data=14,roty=180
-[1.14-]patchblock:id=bell,data=12
-[1.14-]patchrotate:id=bell,data=14,roty=270
-[1.14-]patchblock:id=bell,data=13
-[1.14-]patchrotate:id=bell,data=14,roty=90
+# Bell (1.14.x)
+[1.14-1.14.4]boxlist:id=bell,data=2,box=0.125:0.875:0.8125:0.9375:0.4375:0.5625:0/0/0/0/0/0,box=0.875:1:0:1:0.375:0.625:1/1/1/1/1/1,box=0:0.125:0:1:0.375:0.625:1/1/1/1/1/1,box=0.3125:0.6875:0.375:0.8175:0.3125:0.6875:2/3/4/4/4/4,box=0.25:0.75:0.25:0.375:0.25:0.75:2/3/4/4/4/4
+[1.14-1.14.4]patchblock:id=bell,data=3
+[1.14-1.14.4]patchrotate:id=bell,data=2,roty=180
+[1.14-1.14.4]patchblock:id=bell,data=0
+[1.14-1.14.4]patchrotate:id=bell,data=2,roty=270
+[1.14-1.14.4]patchblock:id=bell,data=1
+[1.14-1.14.4]patchrotate:id=bell,data=2,roty=90
+[1.14-1.14.4]boxlist:id=bell,data=6,box=0.4375:0.5625:0.8125:1:0.4375:0.5625:0/0/0/0/0/0,box=0.3125:0.6875:0.375:0.8175:0.3125:0.6875:2/3/4/4/4/4,box=0.25:0.75:0.25:0.375:0.25:0.75:2/3/4/4/4/4
+[1.14-1.14.4]patchblock:id=bell,data=7
+[1.14-1.14.4]patchrotate:id=bell,data=6,roty=180
+[1.14-1.14.4]patchblock:id=bell,data=4
+[1.14-1.14.4]patchrotate:id=bell,data=6,roty=270
+[1.14-1.14.4]patchblock:id=bell,data=5
+[1.14-1.14.4]patchrotate:id=bell,data=6,roty=90
+[1.14-1.14.4]boxlist:id=bell,data=10,box=0.1875:1:0.8125:0.9375:0.4375:0.5625:0/0/0/0/0/0,box=0.3125:0.6875:0.375:0.8175:0.3125:0.6875:2/3/4/4/4/4,box=0.25:0.75:0.25:0.375:0.25:0.75:2/3/4/4/4/4
+[1.14-1.14.4]patchblock:id=bell,data=11
+[1.14-1.14.4]patchrotate:id=bell,data=10,roty=180
+[1.14-1.14.4]patchblock:id=bell,data=8
+[1.14-1.14.4]patchrotate:id=bell,data=10,roty=270
+[1.14-1.14.4]patchblock:id=bell,data=9
+[1.14-1.14.4]patchrotate:id=bell,data=10,roty=90
+[1.14-1.14.4]boxlist:id=bell,data=14,box=0:1:0.8125:0.9375:0.4375:0.5625:0/0/0/0/0/0,box=0.3125:0.6875:0.375:0.8175:0.3125:0.6875:2/3/4/4/4/4,box=0.25:0.75:0.25:0.375:0.25:0.75:2/3/4/4/4/4
+[1.14-1.14.4]patchblock:id=bell,data=15
+[1.14-1.14.4]patchrotate:id=bell,data=14,roty=180
+[1.14-1.14.4]patchblock:id=bell,data=12
+[1.14-1.14.4]patchrotate:id=bell,data=14,roty=270
+[1.14-1.14.4]patchblock:id=bell,data=13
+[1.14-1.14.4]patchrotate:id=bell,data=14,roty=90
 
 # 1.15 blocks
 # Beenest
@@ -1535,6 +1495,35 @@ patchblock:id=bubble_column
 [1.15-]patchrotate:id=bee_nest,data=0,roty=90
 # Honey block
 [1.15-]boxlist:id=honey_block,box=0:1:0:1:0:1:1/1/1/1/1/1,box=0.0625:0.9375:0.0625:0.9375:0.0625:0.9375:0/1/2/2/2/2
+# Bell (1.15)
+[1.15-]boxlist:id=bell,data=2,data=3,box=0.125:0.875:0.8125:0.9375:0.4375:0.5625:0/0/0/0/0/0,box=0.875:1:0:1:0.375:0.625:1/1/1/1/1/1,box=0:0.125:0:1:0.375:0.625:1/1/1/1/1/1,box=0.3125:0.6875:0.375:0.8175:0.3125:0.6875:2/3/4/4/4/4,box=0.25:0.75:0.25:0.375:0.25:0.75:2/3/4/4/4/4
+[1.15-]patchblock:id=bell,data=6,data=7
+[1.15-]patchrotate:id=bell,data=2,roty=270
+[1.15-]patchblock:id=bell,data=0,data=1
+[1.15-]patchrotate:id=bell,data=2,roty=180
+[1.15-]patchblock:id=bell,data=4,data=5
+[1.15-]patchrotate:id=bell,data=2,roty=90
+[1.15-]boxlist:id=bell,data=12,data=13,box=0.4375:0.5625:0.8125:1:0.4375:0.5625:0/0/0/0/0/0,box=0.3125:0.6875:0.375:0.8175:0.3125:0.6875:2/3/4/4/4/4,box=0.25:0.75:0.25:0.375:0.25:0.75:2/3/4/4/4/4
+[1.15-]patchblock:id=bell,data=14,data=15
+[1.15-]patchrotate:id=bell,data=12,roty=180
+[1.15-]patchblock:id=bell,data=8,data=9
+[1.15-]patchrotate:id=bell,data=12,roty=270
+[1.15-]patchblock:id=bell,data=10,data=11
+[1.15-]patchrotate:id=bell,data=12,roty=90
+[1.15-]boxlist:id=bell,data=20,data=21,box=0.1875:1:0.8125:0.9375:0.4375:0.5625:0/0/0/0/0/0,box=0.3125:0.6875:0.375:0.8175:0.3125:0.6875:2/3/4/4/4/4,box=0.25:0.75:0.25:0.375:0.25:0.75:2/3/4/4/4/4
+[1.15-]patchblock:id=bell,data=22,data=23
+[1.15-]patchrotate:id=bell,data=20,roty=180
+[1.15-]patchblock:id=bell,data=16,data=17
+[1.15-]patchrotate:id=bell,data=20,roty=270
+[1.15-]patchblock:id=bell,data=18,data=19
+[1.15-]patchrotate:id=bell,data=20,roty=90
+[1.15-]boxlist:id=bell,data=28,data=29,box=0:1:0.8125:0.9375:0.4375:0.5625:0/0/0/0/0/0,box=0.3125:0.6875:0.375:0.8175:0.3125:0.6875:2/3/4/4/4/4,box=0.25:0.75:0.25:0.375:0.25:0.75:2/3/4/4/4/4
+[1.15-]patchblock:id=bell,data=30,data=31
+[1.15-]patchrotate:id=bell,data=28,roty=180
+[1.15-]patchblock:id=bell,data=24,data=25
+[1.15-]patchrotate:id=bell,data=28,roty=270
+[1.15-]patchblock:id=bell,data=26,data=27
+[1.15-]patchrotate:id=bell,data=28,roty=90
 
 # 1.16 blocks
 # Soul Fire

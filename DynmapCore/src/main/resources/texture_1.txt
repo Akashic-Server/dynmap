@@ -190,7 +190,7 @@ texture:id=detector_rail_on
 texture:id=detector_rail
 texture:id=piston_bottom
 texture:id=piston_inner
-texture:id=piston_side
+texture:id=piston_side,format=CUSTOM,tile0=0:0/16:16/0:0,tile1=0:0/12:4/4:6,tile2=12:0/4:4/0:6
 texture:id=piston_top
 texture:id=piston_top_sticky
 texture:id=dandelion
@@ -813,12 +813,12 @@ block:id=tall_seagrass,data=0,patch0-3=1000:tall_seagrass_top,transparency=TRANS
 block:id=tall_seagrass,data=1,patch0-3=1000:tall_seagrass_bottom,transparency=TRANSPARENT
 
 #  Piston
-block:id=piston,patch0=0:piston_bottom,patch1=0:piston_top,patch2=0:piston_side,patch3=0:piston_inner
+block:id=piston,patch0=0:piston_bottom,patch1=0:piston_top,patch2=0:piston_side,patch3=0:piston_inner,patch4=6002:piston_side
 # Sticky piston
-block:id=sticky_piston,patch0=0:piston_bottom,patch1=0:piston_top_sticky,patch2=0:piston_side,patch3=0:piston_inner
+block:id=sticky_piston,patch0=0:piston_bottom,patch1=0:piston_top_sticky,patch2=0:piston_side,patch3=0:piston_inner,patch4=6002:piston_side
 # Piston head
-block:id=piston_head,data=0,data=2,data=4,data=6,data=8,data=10,data=12,data=14,data=16,data=18,data=20,data=22,patch0=0:piston_bottom,patch1=0:piston_top,patch2=0:piston_side,patch3=0:piston_inner,transparency=TRANSPARENT
-block:id=piston_head,data=1,data=3,data=5,data=7,data=9,data=11,data=13,data=15,data=17,data=19,data=21,data=23,patch0=0:piston_bottom,patch1=0:piston_top_sticky,patch2=0:piston_side,patch3=0:piston_inner,transparency=TRANSPARENT
+block:id=piston_head,data=0,data=2,data=4,data=6,data=8,data=10,data=12,data=14,data=16,data=18,data=20,data=22,patch0=0:piston_bottom,patch1=0:piston_top,patch2=0:piston_side,patch3=0:piston_inner,patch4=6001:piston_side,transparency=TRANSPARENT
+block:id=piston_head,data=1,data=3,data=5,data=7,data=9,data=11,data=13,data=15,data=17,data=19,data=21,data=23,patch0=0:piston_bottom,patch1=0:piston_top_sticky,patch2=0:piston_side,patch3=0:piston_inner,patch4=6001:piston_side,transparency=TRANSPARENT
 # Moving piston (don't show)
 block:id=moving_piston
 # Wool
@@ -1152,11 +1152,9 @@ block:id=brewing_stand,patch0=0:brewing_stand_base,patch1-7=0:brewing_stand,tran
 # Cauldron
 block:id=cauldron,data=*,top=0:cauldron_top,bottom=0:cauldron_bottom,allsides=0:cauldron_side,stdrot=true,transparency=TRANSPARENT
 # End portal
-block:id=end_portal,data=*,topbottom=0:endportal,stdrot=true
-# End portal frame (no eye)
-block:id=end_portal_frame,data=0,data=1,data=2,data=3,top=0:end_portal_frame_top,allsides=0:end_portal_frame_side,bottom=0:end_stone,stdrot=true
-# End portal fram (eye installed) (TODO: eye installed)
-block:id=end_portal_frame,data=4,data=5,data=6,data=7,top=0:end_portal_frame_eye,allsides=0:end_portal_frame_side,bottom=0:end_stone,stdrot=true
+block:id=end_portal,data=*,patch0=0:endportal,stdrot=true
+# End portal frame
+block:id=end_portal_frame,data=*,patch0=0:end_stone,patch1=0:end_portal_frame_top,patch2=0:end_portal_frame_side,patch3=0:end_portal_frame_eye
 # End stone
 block:id=end_stone,allfaces=0:end_stone,stdrot=true
 # Dragon Egg
@@ -2143,6 +2141,8 @@ block:id=black_banner,id=black_wall_banner,data=*,patch0=0:oak_planks,patch1=0:b
 [1.14-]texture:id=composter_top
 [1.14-]texture:id=composter_side
 [1.14-]texture:id=composter_bottom
+[1.14-]texture:id=composter_compost
+[1.14-]texture:id=composter_ready
 [1.14-]texture:id=jigsaw_bottom
 [1.14-]texture:id=jigsaw_side
 [1.14-]texture:id=jigsaw_top
@@ -2174,9 +2174,9 @@ block:id=black_banner,id=black_wall_banner,data=*,patch0=0:oak_planks,patch1=0:b
 [1.14-]texture:id=sweet_berry_bush_stage1
 [1.14-]texture:id=sweet_berry_bush_stage2
 [1.14-]texture:id=sweet_berry_bush_stage3
-[1.14-]texture:id=grindstone_pivot
-[1.14-]texture:id=grindstone_round
-[1.14-]texture:id=grindstone_side
+[1.14-]texture:id=grindstone_pivot,format=CUSTOM,tile0=0:0/10:6:3:5,tile1=0:0/10:6:4:5
+[1.14-]texture:id=grindstone_round,format=CUSTOM,tile0=0:0/8:12/4:0,tile1=0:0/8:12/4:2
+[1.14-]texture:id=grindstone_side,format=CUSTOM,tile0=0:0/12:12/2:0
 [1.14-]texture:id=lectern_base
 [1.14-]texture:id=lectern_front
 [1.14-]texture:id=lectern_sides
@@ -2194,9 +2194,9 @@ block:id=black_banner,id=black_wall_banner,data=*,patch0=0:oak_planks,patch1=0:b
 [1.14-]texture:id=campfire_log
 [1.14-]texture:id=campfire_log_lit
 [1.14-]texture:id=campfire_fire
-[1.14-]texture:id=bell_top
-[1.14-]texture:id=bell_side
-[1.14-]texture:id=bell_bottom
+[1.14-]texture:id=bell_top,format=CUSTOM,tile0=0:0/8:8/4:4
+[1.14-]texture:id=bell_side,format=CUSTOM,tile0=0:0/8:9/4:3
+[1.14-]texture:id=bell_bottom,format=CUSTOM,tile0=0:0/8:8/4:4
 
 # Signpost
 [1.14-]block:id=oak_sign,patch0=0,patch1=1,patch2=2,patch3=3,patch4=4,patch5=5,patch6=6,patch7=7,patch8=8,patch9=9,transparency=TRANSPARENT,txtid=oak_sign
@@ -2333,7 +2333,7 @@ block:id=black_banner,id=black_wall_banner,data=*,patch0=0:oak_planks,patch1=0:b
 # Scaffolding
 [1.14-]block:id=scaffolding,patch0=0:scaffolding_top,patch1=0:scaffolding_side,patch2=0:scaffolding_bottom,transparency=TRANSPARENT
 # Composter
-[1.14-]block:id=composter,patch0=0:composter_top,patch1=0:composter_bottom,patch2=0:composter_side,patch3=0:composter_bottom,transparency=TRANSPARENT
+[1.14-]block:id=composter,patch0=0:composter_top,patch1=0:composter_bottom,patch2=0:composter_side,patch3=0:composter_bottom,patch4=0:composter_compost,patch5=0:composter_ready,transparency=TRANSPARENT
 # Jigsaw
 [1.14-]block:id=jigsaw,patch0=0:jigsaw_bottom,patch1=0:jigsaw_top,patch2=0:jigsaw_side
 # Loom
@@ -2357,7 +2357,7 @@ block:id=black_banner,id=black_wall_banner,data=*,patch0=0:oak_planks,patch1=0:b
 [1.14-]block:id=sweet_berry_bush,data=2,patch0-1=0:sweet_berry_bush_stage2,transparency=TRANSPARENT
 [1.14-]block:id=sweet_berry_bush,data=3,patch0-1=0:sweet_berry_bush_stage3,transparency=TRANSPARENT
 # Grindstone
-[1.14-]block:id=grindstone,patch0=0:grindstone_pivot,patch1=0:grindstone_round,patch2=0:grindstone_side,patch4=0:dark_oak_log,transparency=TRANSPARENT
+[1.14-]block:id=grindstone,patch0=6000:grindstone_pivot,patch1=0:grindstone_round,patch2=0:grindstone_side,patch4=0:dark_oak_log,patch5=1:grindstone_round,patch6=6001:grindstone_pivot,transparency=TRANSPARENT
 # Lectern
 [1.14-]block:id=lectern,patch0=0:oak_planks,patch1=0:lectern_base,patch2=0:lectern_front,patch3=0:lectern_sides,patch4=0:lectern_top,transparency=TRANSPARENT
 # Lantern
@@ -2369,7 +2369,7 @@ block:id=black_banner,id=black_wall_banner,data=*,patch0=0:oak_planks,patch1=0:b
 # Campfire
 [1.14-]block:id=campfire,patch0=0:campfire_log,patch1=0:campfire_log_lit,patch2=0:campfire_fire,transparency=TRANSPARENT
 # Bell
-[1.14-]block:id=bell,patch0=0:dark_oak_planks,patch1=0:stone,patch2=0:bell_top,patch3=0:bell_bottom,patch4=0:bell_side,transparency=TRANSPARENT
+[1.14-]block:id=bell,patch0=0:dark_oak_planks,patch1=0:stone,patch2=0:bell_bottom,patch3=0:bell_top,patch4=0:bell_side,transparency=TRANSPARENT
 
 # 1.15 resources
 [1.15-]texture:id=bee_nest_bottom
