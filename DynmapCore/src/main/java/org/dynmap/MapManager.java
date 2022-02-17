@@ -60,6 +60,7 @@ public class MapManager {
     private int progressinterval = 100;
     private int tileupdatedelay = 30;
     private int savependingperiod = 15 * 60; // every 15 minutes, by default
+    private int defaulttilescale = 0;
     private boolean saverestorepending = true;
     private boolean pauseupdaterenders = false;
     private boolean hideores = false;
@@ -190,6 +191,10 @@ public class MapManager {
         return tileupdatedelay;
     }
 
+    public int getDefaultTileScale() {
+    	return defaulttilescale;
+    }
+    
     private static class OurThreadFactory implements ThreadFactory {
         @Override
         public Thread newThread(Runnable r) {
@@ -228,8 +233,10 @@ public class MapManager {
                         try {
                             r.run();
                         } catch (Exception x) {
-                            Log.severe("Exception during render job: " + r);
-                            x.printStackTrace();                        
+                        	if (!(x instanceof InterruptedException)) {	// Avoid shutdown noise
+                        		Log.severe("Exception during render job: " + r);
+                        		x.printStackTrace();                        
+                        	}
                         }
                     }
                 });
@@ -244,8 +251,10 @@ public class MapManager {
                         try {
                             command.run();
                         } catch (Exception x) {
-                            Log.severe("Exception during render job: " + command);
-                            x.printStackTrace();                        
+                        	if (!(x instanceof InterruptedException)) {	// Avoid shutdown noise
+                        		Log.severe("Exception during render job: " + command);
+                        		x.printStackTrace();                    
+                        	}
                         }
                     }
                 }, delay, unit);
@@ -922,6 +931,8 @@ public class MapManager {
                 f.get();
             } catch (CancellationException cx) {
                 return;
+            } catch (InterruptedException cx) {
+                return;
             } catch (ExecutionException ex) {
                 Log.severe("Error while checking world times: ", ex.getCause());
             } catch (Exception ix) {
@@ -1141,7 +1152,9 @@ public class MapManager {
         if(progressinterval < 100) progressinterval = 100;
         saverestorepending = configuration.getBoolean("saverestorepending", true);
         tileupdatedelay = configuration.getInteger("tileupdatedelay", 30);
-        
+        defaulttilescale = configuration.getInteger("defaulttilescale", 0);
+        if (defaulttilescale < 0) defaulttilescale = 0;
+        if (defaulttilescale > 4) defaulttilescale = 4;
         tpslimit_updaterenders = configuration.getDouble("update-min-tps", 18.0);
         if (tpslimit_updaterenders > 19.5) tpslimit_updaterenders = 19.5;
         tpslimit_fullrenders = configuration.getDouble("fullrender-min-tps", 18.0);
@@ -1635,6 +1648,12 @@ public class MapManager {
             render_pool.awaitTermination(5, TimeUnit.SECONDS);
         } catch (InterruptedException ix) {
         }
+        render_pool.shutdownNow();	// Force hard shutdown
+        try {
+            render_pool.awaitTermination(5, TimeUnit.SECONDS);
+        } catch (InterruptedException ix) {
+        }
+        
         mapman = null;
         hdmapman = null;
         did_start = false;

@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Random;
 
-import javax.sound.sampled.AudioFormat.Encoding;
-
 import org.json.simple.JSONAware;
 import org.json.simple.JSONStreamAware;
 import org.owasp.html.HtmlPolicyBuilder;
@@ -286,11 +284,12 @@ public class Client {
     }
 
     private static PolicyFactory sanitizer = null; 
+    private static PolicyFactory OLDTAGS = new HtmlPolicyBuilder().allowElements("center", "basefont", "hr").toFactory();
     public static String sanitizeHTML(String html) {
         PolicyFactory s = sanitizer;
         if (s == null) {
             // Generous but safe html formatting allowances
-            s = Sanitizers.FORMATTING.and(Sanitizers.BLOCKS).and(Sanitizers.IMAGES).and(Sanitizers.LINKS).and(Sanitizers.STYLES);
+            s = Sanitizers.FORMATTING.and(Sanitizers.BLOCKS).and(Sanitizers.IMAGES).and(Sanitizers.LINKS).and(Sanitizers.STYLES).and(Sanitizers.TABLES).and(OLDTAGS);
             sanitizer = s;
         }
         return s.sanitize(html);

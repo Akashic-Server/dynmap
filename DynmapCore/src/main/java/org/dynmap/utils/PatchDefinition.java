@@ -1,9 +1,21 @@
 package org.dynmap.utils;
 
 import org.dynmap.Log;
+import org.dynmap.modsupport.BlockSide;
+import org.dynmap.modsupport.ModelBlockModel;
 import org.dynmap.renderer.RenderPatch;
 import org.dynmap.renderer.RenderPatchFactory.SideVisible;
 
+//
+//          (v = 1)         umin    umax
+// x0+xv,y0+yv,z0+zv  *-----|-------|--------* (u=1, v=1)      x0,y0,z0 = lower left corner relative to cube origin (0,0,0 to 1,1,1)
+//                   |     |       |        |                  length of xu,yu,zu = width of whole texture (u=0 to u=1)
+//                  |-----+=======+--------| vmax              length of xv,yv,zv = height of whole texture (v=0 to v=1)
+//                 |     [visible]        |                    umin to umax = clipping (visible portion of texture) horizontally
+//                |-----+=======+--------| vmin                vmin to vmax = clipping (visible portion of texture) vertically
+//      (u=0,v=0)|     |       |        |
+//      x0,y0,z0 *----|-------|--------* x0+xu, y0+yu, z0+zu (u = 1)
+//
 /* Define patch in surface-based models - origin (xyz), u-vector (xyz) v-vector (xyz), u limits and v limits */
 public class PatchDefinition implements RenderPatch {
     public double x0, y0, z0;   /* Origin of patch (lower left corner of texture) */
@@ -17,6 +29,7 @@ public class PatchDefinition implements RenderPatch {
     public SideVisible sidevis;  /* Which side is visible */
     public int textureindex;
     public BlockStep step; /* Best approximation of orientation of surface, from top (positive determinent) */
+    public boolean shade;	// If false, patch is not shaded
     private int hc;
     /* Offset vector of middle of block */
     private static final Vector3D offsetCenter = new Vector3D(0.5,0.5,0.5);
@@ -33,6 +46,7 @@ public class PatchDefinition implements RenderPatch {
         v = new Vector3D();
         sidevis = SideVisible.BOTH;
         textureindex = 0;
+        shade = true;
         update();
     }
     PatchDefinition(PatchDefinition pd) {
@@ -56,6 +70,7 @@ public class PatchDefinition implements RenderPatch {
         this.sidevis = pd.sidevis;
         this.textureindex = pd.textureindex;
         this.step = pd.step;
+        this.shade = pd.shade;
         this.hc = pd.hc;
     }
     /**
@@ -67,31 +82,48 @@ public class PatchDefinition implements RenderPatch {
      * @param rotatez - z rotation in degrees
      * @param textureindex - texture index for new patch (-1 = use same as original patch)
      */
-    PatchDefinition(PatchDefinition orig, int rotatex, int rotatey, int rotatez, int textureindex) {
+    PatchDefinition(PatchDefinition orig, double rotatex, double rotatey, double rotatez, int textureindex) {
+    	this(orig, rotatex, rotatey, rotatez, null, textureindex);
+    }
+    /**
+     * Construct patch, based on rotation of existing patch clockwise by N
+     * 90 degree steps
+     * @param orig - original patch to copy and rotate
+     * @param rotatex - x rotation in degrees
+     * @param rotatey - y rotation in degrees
+     * @param rotatez - z rotation in degrees
+     * @param rotorigin - rotation origin (x, y, z)
+     * @param textureindex - texture index for new patch (-1 = use same as original patch)
+     */
+    PatchDefinition(PatchDefinition orig, double rotatex, double rotatey, double rotatez, Vector3D rotorigin, int textureindex) {
+    	if (rotorigin == null) rotorigin = offsetCenter;
         Vector3D vec = new Vector3D(orig.x0, orig.y0, orig.z0);
-        rotate(vec, rotatex, rotatey, rotatez); /* Rotate origin */
+        rotate(vec, rotatex, rotatey, rotatez, rotorigin); /* Rotate origin */
         x0 = vec.x; y0 = vec.y; z0 = vec.z;
         /* Rotate U */
         vec.x = orig.xu; vec.y = orig.yu; vec.z = orig.zu;
-        rotate(vec, rotatex, rotatey, rotatez); /* Rotate origin */
+        rotate(vec, rotatex, rotatey, rotatez, rotorigin); /* Rotate origin */
         xu = vec.x; yu = vec.y; zu = vec.z;
         /* Rotate V */
         vec.x = orig.xv; vec.y = orig.yv; vec.z = orig.zv;
-        rotate(vec, rotatex, rotatey, rotatez); /* Rotate origin */
+        rotate(vec, rotatex, rotatey, rotatez, rotorigin); /* Rotate origin */
         xv = vec.x; yv = vec.y; zv = vec.z;
         umin = orig.umin; vmin = orig.vmin;
         umax = orig.umax; vmax = orig.vmax;
         vmaxatumax = orig.vmaxatumax;
         vminatumax = orig.vminatumax;
         sidevis = orig.sidevis;
+        shade = orig.shade;
         this.textureindex = (textureindex < 0) ? orig.textureindex : textureindex;
         u = new Vector3D();
         v = new Vector3D();
         update();
     }
     
-    private void rotate(Vector3D vec, int xcnt, int ycnt, int zcnt) {
-        vec.subtract(offsetCenter); /* Shoft to center of block */
+    private void rotate(Vector3D vec, double xcnt, double ycnt, double zcnt, Vector3D origin) {
+    	// If no rotation, skip
+    	if ((xcnt == 0) && (ycnt == 0) && (zcnt == 0)) return;
+        vec.subtract(origin); /* Shoft to center of block */
         /* Do X rotation */
         double rot = Math.toRadians(xcnt);
         double nval = vec.z * Math.sin(rot) + vec.y * Math.cos(rot);
@@ -107,7 +139,7 @@ public class PatchDefinition implements RenderPatch {
         nval = vec.y * Math.sin(rot) + vec.x * Math.cos(rot);
         vec.y = vec.y * Math.cos(rot) - vec.x * Math.sin(rot);
         vec.x = nval;
-        vec.add(offsetCenter); /* Shoft back to corner */
+        vec.add(origin); /* Shoft back to corner */
     }
     public void update(double x0, double y0, double z0, double xu,
             double yu, double zu, double xv, double yv, double zv, double umin,
@@ -183,69 +215,39 @@ public class PatchDefinition implements RenderPatch {
             }
         }        
     }
+    private boolean outOfRange(double v) {
+    	return (v < -1.0) || (v > 2.0);
+    }
     public boolean validate() {
         boolean good = true;
-        if((x0 < -1.0) || (x0 > 2.0)) {
-            Log.severe("Invalid x0=" + x0);
-            good = false;
+        // Compute visible corners to see if we're inside cube
+        double xx0 = x0 + (xu - x0) * umin + (xv - x0) * vmin;
+        double xx1 = x0 + (xu - x0) * vmin + (xv - x0) * vmax;
+        double xx2 = x0 + (xu - x0) * umax + (xv - x0) * vmin;
+        double xx3 = x0 + (xu - x0) * vmax + (xv - x0) * vmax;;
+        if (outOfRange(xx0) || outOfRange(xx1) || outOfRange(xx2) || outOfRange(xx3)) {
+            Log.verboseinfo(String.format("Invalid visible range xu=[%f:%f], xv=[%f:%f]", xx0, xx2, xx1, xx3));
+            good = false;        	
         }
-        if((y0 < -1.0) || (y0 > 2.0)) {
-            Log.severe("Invalid y0=" + y0);
-            good = false;
+        double yy0 = y0 + (yu - y0) * umin + (yv - y0) * vmin;
+        double yy1 = y0 + (yu - y0) * vmin + (yv - y0) * vmax;
+        double yy2 = y0 + (yu - y0) * umax + (yv - y0) * vmin;
+        double yy3 = y0 + (yu - y0) * vmax + (yv - y0) * vmax;;
+        if (outOfRange(yy0) || outOfRange(yy1) || outOfRange(yy2) || outOfRange(yy3)) {
+            Log.verboseinfo(String.format("Invalid visible range yu=[%f:%f], yv=[%f:%f]", yy0, yy2, yy1, yy3));
+            good = false;        	
         }
-        if((z0 < -1.0) || (z0 > 2.0)) {
-            Log.severe("Invalid z0=" + z0);
-            good = false;
+        double zz0 = z0 + (zu - z0) * umin + (zv - z0) * vmin;
+        double zz1 = z0 + (zu - z0) * vmin + (zv - z0) * vmax;
+        double zz2 = z0 + (zu - z0) * umax + (zv - z0) * vmin;
+        double zz3 = z0 + (zu - z0) * vmax + (zv - z0) * vmax;
+        if (outOfRange(zz0) || outOfRange(zz1) || outOfRange(zz2) || outOfRange(zz3)) {
+            Log.verboseinfo(String.format("Invalid visible range zu=[%f:%f], zv=[%f:%f]", zz0, zz2, zz1, zz3));
+            good = false;        	
         }
-        if((xu < -1.0) || (xu > 2.0)) {
-            Log.severe("Invalid xu=" + xu);
-            good = false;
+        if (!good) {
+        	Log.verboseinfo("Bad patch: " + this);
         }
-        if((yu < -1.0) || (yu > 2.0)) {
-            Log.severe("Invalid yu=" + yu);
-            good = false;
-        }
-        if((zu < -1.0) || (zu > 2.0)) {
-            Log.severe("Invalid zu=" + zu);
-            good = false;
-        }
-        if((xv < -1.0) || (xv > 2.0)) {
-            Log.severe("Invalid xv=" + xv);
-            good = false;
-        }
-        if((yv < -1.0) || (yv > 2.0)) {
-            Log.severe("Invalid yv=" + yv);
-            good = false;
-        }
-        if((zv < -1.0) || (zv > 2.0)) {
-            Log.severe("Invalid zv=" + zv);
-            good = false;
-        }
-        if((umin < 0.0) || (umin > umax)) {
-            Log.severe("Invalid umin=" + umin);
-            good = false;
-        }
-        if((vmin < 0.0) || (vmin > vmax)) {
-            Log.severe("Invalid vmin=" + vmin);
-            good = false;
-        }
-        if(umax > 1.0) {
-            Log.severe("Invalid umax=" + umax);
-            good = false;
-        }
-        if(vmax > 1.0) {
-            Log.severe("Invalid vmax=" + vmax);
-            good = false;
-        }
-        if ((vminatumax < 0.0) || (vminatumax > vmaxatumax)) {
-            Log.severe("Invalid vminatumax=" + vminatumax);
-            good = false;
-        }
-        if(vmaxatumax > 1.0) {
-            Log.severe("Invalid vmaxatumax=" + vmaxatumax);
-            good = false;
-        }
-        
         return good;
     }
     @Override
@@ -261,7 +263,8 @@ public class PatchDefinition implements RenderPatch {
                     (umin == p.umin) && (umax == p.umax) &&
                     (vmin == p.vmin) && (vmax == p.vmax) &&
                     (vmaxatumax == p.vmaxatumax) && 
-                    (vminatumax == p.vminatumax) && (sidevis == p.sidevis)) {
+                    (vminatumax == p.vminatumax) && (sidevis == p.sidevis) &&
+                    (shade == p.shade)) {
                 return true;
             }
         }
@@ -277,7 +280,178 @@ public class PatchDefinition implements RenderPatch {
     }
     @Override
     public String toString() {
-    	return String.format("xyz0=%f/%f/%f,xyzU=%f/%f/%f,xyzV=%f/%f/%f,minU=%f,maxU=%f,vMin=%f/%f,vmax=%f/%f,side=%s,txtidx=%d",
-    			x0, y0, z0, xu, yu, zu, xv, yv, zv, umin, umax, vmin, vminatumax, vmax, vmaxatumax, sidevis, textureindex);
+    	return String.format("xyz0=%f/%f/%f,xyzU=%f/%f/%f,xyzV=%f/%f/%f,minU=%f,maxU=%f,vMin=%f/%f,vmax=%f/%f,side=%s,txtidx=%d,shade=%b",
+    			x0, y0, z0, xu, yu, zu, xv, yv, zv, umin, umax, vmin, vminatumax, vmax, vmaxatumax, sidevis, textureindex, shade);
+    }
+    
+    //
+    // Update patch relative to typical parameters found in
+    // minecraft model files.  Specifically, all coordinates are relative to 0-16 range for
+    // side of a cube, and relative to 0-16 range for U,V within a texture:
+    //
+    //   from, to in model drive 'from', 'to' inputs
+    //   face, uv of face, and texture in model drives face, uv, textureid
+    //
+    // @param from - vector of lower left corner of box (0-16 range for coordinates - min x, y, z)
+    // @param to - vector of upper right corner of box (0-16 range for coordinates max x, y, z)
+    // @param face - which face (determines use of xyz-min vs xyz-max
+    // @param uv - bounds on UV (umin, vmin, umax, vmax): if undefined, default based on face range (minecraft UV is relative to top left corner of texture)
+    // @param rot - texture rotation (default 0 - DEG0, DEG90, DEG180, DEG270)
+    // @param shade - if false, no shadows on patch
+    // @param textureid - texture ID
+    public void updateModelFace(double[] from, double[] to, BlockSide face, double[] uv, ModelBlockModel.SideRotation rot, boolean shade, int textureid) {
+    	if (rot == null) rot = ModelBlockModel.SideRotation.DEG0;
+    	this.shade = shade;
+    	// Compute corners of the face
+    	Vector3D lowleft;
+    	Vector3D lowright;
+    	Vector3D upleft;
+    	Vector3D upright;
+    	// Default UV, if not defined
+    	double[] patchuv = null;
+    	boolean flipU = false, flipV = false;
+    	if (uv != null) {	// MC V is top down, so flip
+    		patchuv = new double[] { uv[0] / 16.0, 1 - uv[3] / 16.0, uv[2] / 16.0, 1 - uv[1] / 16.0 }; 
+//    		if (patchuv[0] > patchuv[2]) { flipU = true; double save = patchuv[0]; patchuv[0] = patchuv[2]; patchuv[2] = save; }
+//    		if (patchuv[1] > patchuv[3]) { flipV = true; double save = patchuv[1]; patchuv[1] = patchuv[3]; patchuv[3] = save; }
+    		if (patchuv[0] > patchuv[2]) { flipU = true; patchuv[0] = 1.0 - patchuv[0]; patchuv[2] = 1.0 - patchuv[2]; }
+    		if (patchuv[1] > patchuv[3]) { flipV = true; patchuv[1] = 1.0 - patchuv[1]; patchuv[3] = 1.0 - patchuv[3]; }
+    	}
+    	
+    	switch (face) {
+    		case BOTTOM:
+			case FACE_0:
+			case Y_MINUS:
+		    	// Bottom - Y-negative (top towards south (+Z), right towards east (+x))
+				lowleft = new Vector3D(from[0] / 16.0, from[1] / 16.0, from[2] / 16.0);
+				lowright = new Vector3D(to[0] / 16.0, from[1] / 16.0, from[2] / 16.0);
+				upleft = new Vector3D(from[0] / 16.0, from[1] / 16.0, to[2] / 16.0);
+				upright = new Vector3D(to[0] / 16.0, from[1] / 16.0, to[2] / 16.0);
+				if (patchuv == null) {
+					patchuv = new double[] { from[0] / 16.0, from[2] / 16.0, to[0] / 16.0, to[2] / 16.0 };
+				}
+				break;
+			case TOP:
+			case FACE_1:
+			case Y_PLUS:
+				// Top - Y-positive  (top towards north (-Z), right towards east (+x))
+				lowleft = new Vector3D(from[0] / 16.0, to[1] / 16.0, to[2] / 16.0);
+				lowright = new Vector3D(to[0] / 16.0, to[1] / 16.0, to[2] / 16.0);
+				upleft = new Vector3D(from[0] / 16.0, to[1] / 16.0, from[2] / 16.0);
+				upright = new Vector3D(to[0] / 16.0, to[1] / 16.0, from[2] / 16.0);
+				if (patchuv == null) {
+					patchuv = new double[] { from[0] / 16.0, 1 - to[2] / 16.0, to[0] / 16.0, 1 - from[2] / 16.0 };
+				}
+				break;
+			case NORTH:
+			case FACE_2:
+			case Z_MINUS:    			
+				// North - Z-negative (top towards up (+Y), right towards west (-X))
+				lowleft = new Vector3D(to[0] / 16.0, from[1] / 16.0, from[2] / 16.0);
+				lowright = new Vector3D(from[0] / 16.0, from[1] / 16.0, from[2] / 16.0);
+				upleft = new Vector3D(to[0] / 16.0, to[1] / 16.0, from[2] / 16.0);
+				upright = new Vector3D(from[0] / 16.0, to[1] / 16.0, from[2] / 16.0);
+				if (patchuv == null) {
+					patchuv = new double[] { 1 - to[0] / 16.0, from[1] / 16.0, 1 - from[0] / 16.0, to[1] / 16.0 };
+				}
+				break;
+			case SOUTH:
+			case FACE_3:
+			case Z_PLUS:    			
+				// South - Z-positive (top towards up (+Y), right towards east (+X))
+				lowleft = new Vector3D(from[0] / 16.0, from[1] / 16.0, to[2] / 16.0);
+				lowright = new Vector3D(to[0] / 16.0, from[1] / 16.0,to[2] / 16.0);
+				upleft = new Vector3D(from[0] / 16.0, to[1] / 16.0, to[2] / 16.0);
+				upright = new Vector3D(to[0] / 16.0, to[1] / 16.0, to[2] / 16.0);
+				if (patchuv == null) {
+					patchuv = new double[] { from[0] / 16.0, from[1] / 16.0, to[0] / 16.0, to[1] / 16.0 };
+				}
+				break;
+			case WEST:
+			case FACE_4:
+			case X_MINUS:    			
+				// West - X-negative (top towards up (+Y), right towards south (+Z))
+				lowleft = new Vector3D(from[0] / 16.0, from[1] / 16.0, from[2] / 16.0);
+				lowright = new Vector3D(from[0] / 16.0, from[1] / 16.0, to[2] / 16.0);
+				upleft = new Vector3D(from[0] / 16.0, to[1] / 16.0, from[2] / 16.0);
+				upright = new Vector3D(from[0] / 16.0, to[1] / 16.0, to[2] / 16.0);
+				if (patchuv == null) {
+					patchuv = new double[] { from[2] / 16.0, from[1] / 16.0, to[2] / 16.0, to[1] / 16.0 };
+				}
+				break;
+			case EAST:
+			case FACE_5:
+			case X_PLUS:    			
+				// East - X-positive (top towards up (+Y), right towards north (-Z))
+				lowleft = new Vector3D(to[0] / 16.0, from[1] / 16.0, to[2] / 16.0);
+				lowright = new Vector3D(to[0] / 16.0, from[1] / 16.0, from[2] / 16.0);
+				upleft = new Vector3D(to[0] / 16.0, to[1] / 16.0, to[2] / 16.0);
+				upright = new Vector3D(to[0] / 16.0, to[1] / 16.0, from[2] / 16.0);
+				if (patchuv == null) {
+					patchuv = new double[] { 1 - to[2] / 16.0, from[1] / 16.0, 1 - from[2] / 16.0, to[1] / 16.0 };
+				}
+				break;    		
+			default:
+				Log.severe("Invalid side: " + face);
+				return;
+    	}
+    	// Clamp patchuv to avoid extending off of patch, while maintaining width and height of patch area
+    	if (patchuv[0] < 0) { patchuv[2] -= patchuv[0]; patchuv[0] = 0.0; }
+    	if (patchuv[1] < 0) { patchuv[3] -= patchuv[1]; patchuv[1] = 0.0; }
+    	if (patchuv[2] > 1) { patchuv[0] -= (patchuv[2] - 1); patchuv[2] = 1; }
+    	if (patchuv[3] > 1) { patchuv[1] -= (patchuv[3] - 1); patchuv[3] = 1; }
+    	// If rotation, rotate face corners
+    	if (rot == ModelBlockModel.SideRotation.DEG270) {
+    		// 270 degrees CCW - origin is now upper left (V), V is now upper right (U+V-O), U is lower left (O)
+    		Vector3D save = lowleft;
+    		lowleft = lowright;
+    		lowright = upright;
+    		upright = upleft;
+    		upleft = save;
+    	}
+    	else if (rot == ModelBlockModel.SideRotation.DEG180) {
+    		// 180 degrees CCW - origin is now upper right, U is now upper left (V), V is lower right (U)
+    		Vector3D save = lowleft;
+    		lowleft = upright;
+    		upright = save;
+    		save = lowright;
+    		lowright = upleft;
+    		upleft = save;
+    	}
+    	else if (rot == ModelBlockModel.SideRotation.DEG90) {
+    		// 90 degrees CCW - origin is now lower right (V), U is now upper right (topright), V is lower right (O)
+    		Vector3D save = lowright;
+    		lowright = lowleft;
+    		lowleft = upleft;
+    		upleft = upright;
+    		upright = save;
+    	}
+    	// Compute texture origin, based on corners and patchuv
+    	Vector3D txtorig = new Vector3D();
+    	Vector3D txtU = new Vector3D();
+    	Vector3D txtV = new Vector3D();
+    	Vector3D wrk = new Vector3D();
+    	// If nonzero texture size
+    	if ((patchuv[0] != patchuv[2]) && (patchuv[1] != patchuv[3])) {
+        	// Get scale along U axis
+        	double du = patchuv[2] - patchuv[0];
+        	txtU.set(lowright).subtract(lowleft);	// vector along U 
+        	double uScale = txtU.length() / du;
+        	txtU.scale(uScale / txtU.length());	// Compute full U vect
+        	// Compute V axis
+        	double dv = patchuv[3] - patchuv[1];
+        	txtV.set(upleft).subtract(lowleft);	// vector along V
+        	double vScale = txtV.length() / dv;
+        	txtV.scale(vScale / txtV.length());	// Compute full V vect
+        	// Compute texture origin
+        	txtorig.set(txtU).scale(-patchuv[0]).add(lowleft);
+        	wrk.set(txtV).scale(-patchuv[1]);
+        	txtorig.add(wrk);
+        	// Compute full U and V
+        	txtU.add(txtorig);	// And add it for full U
+        	txtV.add(txtorig);	// And add it to compute full V 	
+    	}
+    	update(txtorig.x, txtorig.y, txtorig.z, txtU.x, txtU.y, txtU.z, txtV.x, txtV.y, txtV.z,
+    		patchuv[0], patchuv[2], patchuv[1], patchuv[3], flipU ? (flipV ? SideVisible.TOPFLIPHV : SideVisible.TOPFLIP) : (flipV ? SideVisible.TOPFLIPV : SideVisible.TOP), textureid, patchuv[1], patchuv[3]);
     }
 }

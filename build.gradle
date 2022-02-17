@@ -4,6 +4,14 @@ plugins {
     id  'maven-publish'
 }
 
+apply plugin: 'eclipse'
+
+eclipse {
+    project {
+        name = "Dynmap"
+    }
+}
+
 allprojects  {
   repositories {
      mavenLocal()
@@ -17,7 +25,7 @@ allprojects  {
   apply plugin: 'java'
   
   group = 'us.dynmap'
-  version = '3.3-SNAPSHOT'
+  version = '3.4-SNAPSHOT'
 
 }
 

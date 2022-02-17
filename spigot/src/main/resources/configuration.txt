@@ -15,6 +15,10 @@
 #   The definitions of these templates are in normal-hi_boost_xhi.txt, nether-hi_boost_xhi.txt, and the_end-hi_boost_xhi.txt
 deftemplatesuffix: hires
 
+# Set default tile scale (0 = 128px x 128x, 1 = 256px x 256px, 2 = 512px x 512px, 3 = 1024px x 1024px, 4 = 2048px x 2048px) - 0 is default
+# Note: changing this value will result in all maps that use the default value being required to be fully rendered
+#defaulttilescale: 0
+
 # Map storage scheme: only uncomment one 'type' value
 #  filetree: classic and default scheme: tree of files, with all map data under the directory indicated by 'tilespath' setting
 #  sqlite: single SQLite database file (this can get VERY BIG), located at 'dbfile' setting (default is file dynmap.db in data directory)
@@ -323,6 +327,10 @@ tilespath: web/tiles
 # The path where the web-files are located.
 webpath: web
 
+# If set to false, disable extraction of webpath content (good if using custom web UI or 3rd party web UI)
+# Note: web interface is unsupported in this configuration - you're on your own
+update-webpath-files: true
+
 # The path were the /dynmapexp command exports OBJ ZIP files
 exportpath: export
 
@@ -484,6 +492,10 @@ soft-ref-cache: true
 #enterexitUseTitle: true
 # Set true if new enter messages should supercede pending exit messages (vs being queued in order), default false
 #enterReplacesExits: true
+
+# Published public URL for Dynmap server (allows users to use 'dynmap url' command to get public URL usable to access server
+# If not set, 'dynmap url' will not return anything.  URL should be fully qualified (e.g. https://mc.westeroscraft.com/)
+#publicURL: http://my.greatserver.com/dynmap
 
 # Set to true to enable verbose startup messages - can help with debugging map configuration problems
 # Set to false for a much quieter startup log

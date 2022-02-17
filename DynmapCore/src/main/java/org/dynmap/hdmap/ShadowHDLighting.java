@@ -4,7 +4,6 @@ import org.dynmap.Color;
 import org.dynmap.ConfigurationNode;
 import org.dynmap.DynmapCore;
 import org.dynmap.DynmapWorld;
-import org.dynmap.Log;
 import org.dynmap.MapManager;
 import org.dynmap.utils.LightLevels;
 import org.dynmap.utils.BlockStep;
@@ -218,8 +217,8 @@ public class ShadowHDLighting extends DefaultHDLighting {
         
     /* Apply lighting to given pixel colors (1 outcolor if normal, 2 if night/day) */
     public void    applyLighting(HDPerspectiveState ps, HDShaderState ss, Color incolor, Color[] outcolor) {
-        int[] shadowscale = null;
-        if(smooth) {
+    	int[] shadowscale = null;
+        if (smooth && ps.getShade()) {
             shadowscale = ss.getLightingTable();
             if (shadowscale == null) {
                 shadowscale = defLightingTable;

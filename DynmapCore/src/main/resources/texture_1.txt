@@ -1,11 +1,24 @@
 # Mapping of texture resources to block ID and data values (v1.13-)
 version:1.13-
 # block:id=<block-id>,data=<data-val|*>,top=<index>,bottom=<index>,north=<index>,south=<index>,east=<index>,west=<index>,allfaces=<index>,allsides=<index>
-# <index>=0-255 (index of patch in terrain.png), -1=clear, 1xxx=biome tint from grasscolor.png,257=stationary water,258=moving water,
-#      259=stationary lava,260=moving lava,261=extended piston side,262=piston side while extended,263=glass pane top,2xxx=biome tint from foliagecolor.png,4xxx=rotate texture 90,
-#      5xxx=rotate texture 180, 6xxx=rotate texture 270, 7xxx=flip texture horizontally, 8xxx=shift down 1/2 block, 9=shift down 1/2,flip horiz,
-#      10xxx=inclined-torch,11xxx=grass-side,12xxx=clear if same block,3xxx=biome tint from watercolor.png, 13xxx=pine tone, 14xxx=birch tone, 15xxx=lily tone,
-#      264=air portal with eye, 265=fire texture
+# <index>=0-255 (index of patch in terrain.png), -1=clear, 
+#	1xxx=biome tint from grasscolor.png,
+#   2xxx=biome tint from foliagecolor.png,
+#   3xxx=biome tint from watercolor.png
+#   4xxx=rotate texture 90,
+#   5xxx=rotate texture 180,
+#   6xxx=rotate texture 270,
+#   7xxx=flip texture horizontally, 
+#   8xxx=shift down 1/2 block, 
+#   9xxx=shift down 1/2,flip horiz,
+#  10xxx=inclined-torch,
+#  11xxx=grass-side,
+#  12xxx=clear if same block,
+#  13xxx=pine tone, 
+#  14xxx=birch tone, 
+#  15xxx=lily tone,
+texture:id=foliagebiome,filename=assets/minecraft/textures/colormap/foliage.png,xcount=1,ycount=1,format=BIOME
+texture:id=grassbiome,filename=assets/minecraft/textures/colormap/grass.png,xcount=1,ycount=1,format=BIOME
 texturefile:id=chest,filename=assets/minecraft/textures/entity/chest/normal.png,format=CHEST
 texturefile:id=enderchest,filename=assets/minecraft/textures/entity/chest/ender.png,format=CHEST
 texturefile:id=bigchest,filename=assets/minecraft/textures/entity/chest/normal_double.png,format=BIGCHEST
@@ -88,6 +101,7 @@ texture:id=dropper_front
 texture:id=dropper_front_vertical
 texture:id=hopper_inside
 texture:id=hopper_outside
+texture:id=smooth_stone
 texture:id=black_terracotta
 texture:id=blue_terracotta
 texture:id=brown_terracotta
@@ -190,7 +204,7 @@ texture:id=detector_rail_on
 texture:id=detector_rail
 texture:id=piston_bottom
 texture:id=piston_inner
-texture:id=piston_side,format=CUSTOM,tile0=0:0/16:16/0:0,tile1=0:0/12:4/4:6,tile2=12:0/4:4/0:6
+texture:id=piston_side,format=CUSTOM,tile0=0:0/16:16/0:0,tile1=0:0/12:4/4:6,tile2=12:0/4:4/0:6,xcount=1,ycount=1
 texture:id=piston_top
 texture:id=piston_top_sticky
 texture:id=dandelion
@@ -335,6 +349,8 @@ texture:id=emerald_ore
 texture:id=emerald_block
 texture:id=repeater
 texture:id=repeater_on
+texture:id=cocoa_stage0
+texture:id=cocoa_stage1
 texture:id=cocoa_stage2
 texture:id=command_block
 texture:id=beacon
@@ -450,6 +466,7 @@ texture:id=spruce_door_bottom
 texture:id=spruce_door_top
 texture:id=observer_front
 texture:id=observer_back
+texture:id=observer_back_on
 texture:id=observer_side
 texture:id=observer_top
 texture:id=end_rod
@@ -784,18 +801,14 @@ block:id=red_bed,patch0=0:red_bed,patch1=1:red_bed,patch2=2:red_bed,patch3=3:red
 block:id=black_bed,patch0=0:black_bed,patch1=1:black_bed,patch2=2:black_bed,patch3=3:black_bed,patch4=4:black_bed,patch5=5:black_bed,patch6=6:black_bed,patch7=7:black_bed,patch8=8:black_bed,patch9=9:black_bed,patch10=10:black_bed,patch11=11:black_bed,patch12=12:black_bed,patch13=13:black_bed,patch14=14:black_bed,patch15=15:black_bed,patch16=16:black_bed,patch17=17:black_bed,transparency=TRANSPARENT
 
 # Powered rail - powered
-[-1.16.5]block:id=powered_rail,data=0-5,patch0=0:powered_rail_on,transparency=TRANSPARENT
-[1.17-]block:id=powered_rail,data=0-11,patch0=0:powered_rail_on,transparency=TRANSPARENT
+block:id=powered_rail,state=powered:true,patch0=0:powered_rail_on,transparency=TRANSPARENT
 # Powered rail - unpowered
-[-1.16.5]block:id=powered_rail,data=6-11,patch0=0:powered_rail,transparency=TRANSPARENT
-[1.17-]block:id=powered_rail,data=12-23,patch0=0:powered_rail,transparency=TRANSPARENT
+block:id=powered_rail,state=powered:false,patch0=0:powered_rail,transparency=TRANSPARENT
 
 # Detector rail - powered
-[-1.16.5]block:id=detector_rail,data=0-5,patch0=0:detector_rail_on,transparency=TRANSPARENT
-[1.17-]block:id=detector_rail,data=0-11,patch0=0:detector_rail_on,transparency=TRANSPARENT
+block:id=detector_rail,state=powered:true,patch0=0:detector_rail_on,transparency=TRANSPARENT
 # Detector rail - unpowered
-[-1.16.5]block:id=detector_rail,data=6-11,patch0=0:detector_rail,transparency=TRANSPARENT
-[1.17-]block:id=detector_rail,data=12-23,patch0=0:detector_rail,transparency=TRANSPARENT
+block:id=detector_rail,state=powered:false,patch0=0:detector_rail,transparency=TRANSPARENT
 
 
 # Web
@@ -879,9 +892,9 @@ block:id=obsidian,allfaces=0:obsidian,stdrot=true
 # Torch
 block:id=torch,patch0=0:torch,transparency=TRANSPARENT
 # Wall torch
-block:id=wall_torch,data=0,data=1,data=2,data=3,patch0=0:torch,transparency=TRANSPARENT
+block:id=wall_torch,state=*,patch0=0:torch,transparency=TRANSPARENT
 # Fire
-block:id=fire,patch0-3=0:fire_0,patch4-7=0:fire_1,transparency=TRANSPARENT
+block:id=fire,patch0=0:fire_0,transparency=TRANSPARENT
 # Monster spawner
 block:id=spawner,allfaces=0:spawner,stdrot=true,transparency=TRANSPARENT
 # Wooden stairs
@@ -895,7 +908,7 @@ block:id=diamond_ore,allfaces=0:diamond_ore,stdrot=true
 # Diamond block
 block:id=diamond_block,allfaces=0:diamond_block,stdrot=true
 # Crafting table
-block:id=crafting_table,topbottom=0:crafting_table_top,east=0:crafting_table_front,west=0:crafting_table_front,north=0:crafting_table_side,south=0:crafting_table_side,stdrot=true
+block:id=crafting_table,face0-1=0:crafting_table_top,face2=0:crafting_table_front,face3=0:crafting_table_side,face4=0:crafting_table_front,face5=0:crafting_table_side,stdrot=true
 # Crops (size 1)
 block:id=wheat,data=0,patch0-3=0:wheat_stage0,transparency=TRANSPARENT
 # Crops (size 2)
@@ -916,22 +929,22 @@ block:id=wheat,data=7,patch0-3=0:wheat_stage7,transparency=TRANSPARENT
 block:id=farmland,data=0,top=0:farmland,allsides=0:dirt,bottom=0:dirt,stdrot=true
 # Farmland (wet)
 block:id=farmland,data=1,data=2,data=3,data=4,data=5,data=6,data=7,top=0:farmland_moist,allsides=0:dirt,bottom=0:dirt,stdrot=true
-# Furnace (facing east)
-block:id=furnace,data=1,top=0:furnace_top,east=0:furnace_front,south=0:furnace_side,north=0:furnace_side,west=0:furnace_side,bottom=0:furnace_top,stdrot=true
-# Furnace (facing west)
-block:id=furnace,data=3,top=0:furnace_top,west=0:furnace_front,south=0:furnace_side,north=0:furnace_side,east=0:furnace_side,bottom=0:furnace_top,stdrot=true
 # Furnace (facing north)
-block:id=furnace,data=5,top=0:furnace_top,north=0:furnace_front,south=0:furnace_side,east=0:furnace_side,west=0:furnace_side,bottom=0:furnace_top,stdrot=true
+block:id=furnace,data=1,face0-1=0:furnace_top,face2=0:furnace_front,face3-5=0:furnace_side,stdrot=true
 # Furnace (facing south)
-block:id=furnace,data=7,top=0:furnace_top,south=0:furnace_front,north=0:furnace_side,east=0:furnace_side,west=0:furnace_side,bottom=0:furnace_top,stdrot=true
-# Burning Furnace (facing east)
-block:id=furnace,data=0,top=0:furnace_top,east=0:furnace_front_on,south=0:furnace_side,north=0:furnace_side,west=0:furnace_side,bottom=0:furnace_top,stdrot=true
-# Burning Furnace (facing west)
-block:id=furnace,data=2,top=0:furnace_top,west=0:furnace_front_on,south=0:furnace_side,north=0:furnace_side,east=0:furnace_side,bottom=0:furnace_top,stdrot=true
+block:id=furnace,data=3,face0-1=5000:furnace_top,face3=0:furnace_front,face2=0:furnace_side,face4-5=0:furnace_side,stdrot=true
+# Furnace (facing west)
+block:id=furnace,data=5,face0-1=4000:furnace_top,face4=0:furnace_front,face2-3=0:furnace_side,face5=0:furnace_side,west=0:furnace_side,stdrot=true
+# Furnace (facing east)
+block:id=furnace,data=7,face0-1=6000:furnace_top,face5=0:furnace_front,face2-4=0:furnace_side,stdrot=true
 # Burning Furnace (facing north)
-block:id=furnace,data=4,top=0:furnace_top,north=0:furnace_front_on,south=0:furnace_side,east=0:furnace_side,west=0:furnace_side,bottom=0:furnace_top,stdrot=true
+block:id=furnace,data=0,face0-1=0:furnace_top,face2=0:furnace_front_on,face3-5=0:furnace_side,stdrot=true
+# Burning Furnace (facing west)
+block:id=furnace,data=2,face0-1=5000:furnace_top,face3=0:furnace_front_on,face2=0:furnace_side,face4-5=0:furnace_side,stdrot=true
+# Burning Furnace (facing east)
+block:id=furnace,data=4,face0-1=4000:furnace_top,face4=0:furnace_front_on,face2-3=0:furnace_side,face5=0:furnace_side,stdrot=true
 # Burning Furnace (facing south)
-block:id=furnace,data=6,top=0:furnace_top,south=0:furnace_front_on,north=0:furnace_side,east=0:furnace_side,west=0:furnace_side,bottom=0:furnace_top,stdrot=true
+block:id=furnace,data=6,face0-1=6000:furnace_top,face5=0:furnace_front_on,face2-4=0:furnace_side,stdrot=true
 # Oak Door
 block:id=oak_door,data=*,patch0=0:oak_door_top,patch1=0:oak_door_bottom,transparency=TRANSPARENT
 # Ladder
@@ -959,7 +972,7 @@ block:id=ladder,patch0=0:ladder,transparency=TRANSPARENT
 # Cobblestone Stairs
 block:id=cobblestone_stairs,patch0-2=0:cobblestone,transparency=SEMITRANSPARENT
 # Lever
-block:id=lever,patch0-4=0:cobblestone,patch5-8=0:lever,transparency=TRANSPARENT
+block:id=lever,patch0=0:cobblestone,patch1=0:lever,transparency=TRANSPARENT
 # Stone pressure plate
 block:id=stone_pressure_plate,allfaces=0:stone,stdrot=true,transparency=TRANSPARENT
 # Iron Door
@@ -1015,40 +1028,26 @@ block:id=soul_sand,allfaces=0:soul_sand,stdrot=true
 block:id=glowstone,allfaces=0:glowstone,stdrot=true
 # Nether Portal
 block:id=nether_portal,allfaces=0:nether_portal,stdrot=true,transparency=TRANSPARENT
-# Carved Pumpkin (west)
-block:id=carved_pumpkin,data=0,north=0:pumpkin_side,south=0:pumpkin_side,east=0:pumpkin_side,west=0:carved_pumpkin,topbottom=0:pumpkin_top,stdrot=true
 # Carved Pumpkin (north)
-block:id=carved_pumpkin,data=1,north=0:carved_pumpkin,south=0:pumpkin_side,east=0:pumpkin_side,west=0:pumpkin_side,topbottom=0:pumpkin_top,stdrot=true
-# Carved Pumpkin (east)
-block:id=carved_pumpkin,data=2,north=0:pumpkin_side,south=0:pumpkin_side,east=0:carved_pumpkin,west=0:pumpkin_side,topbottom=0:pumpkin_top,stdrot=true
+block:id=carved_pumpkin,data=0,face2=0:carved_pumpkin,face3=0:pumpkin_side,face4=0:pumpkin_side,face5=0:pumpkin_side,topbottom=0:pumpkin_top,stdrot=true
 # Carved Pumpkin (south)
-block:id=carved_pumpkin,data=3,north=0:pumpkin_side,south=0:carved_pumpkin,east=0:pumpkin_side,west=0:pumpkin_side,topbottom=0:pumpkin_top,stdrot=true
-# Jack-O-Lantern (west)
-block:id=jack_o_lantern,data=0,north=0:pumpkin_side,south=0:pumpkin_side,east=0:pumpkin_side,west=0:jack_o_lantern,topbottom=0:pumpkin_top,stdrot=true
+block:id=carved_pumpkin,data=1,face3=0:carved_pumpkin,face2=0:pumpkin_side,face4=0:pumpkin_side,face5=0:pumpkin_side,topbottom=5000:pumpkin_top,stdrot=true
+# Carved Pumpkin (west)
+block:id=carved_pumpkin,data=2,face4=0:carved_pumpkin,face2=0:pumpkin_side,face3=0:pumpkin_side,face5=0:pumpkin_side,topbottom=4000:pumpkin_top,stdrot=true
+# Carved Pumpkin (east)
+block:id=carved_pumpkin,data=3,face5=0:carved_pumpkin,face2=0:pumpkin_side,face3=0:pumpkin_side,face4=0:pumpkin_side,topbottom=6000:pumpkin_top,stdrot=true
 # Jack-O-Lantern (north)
-block:id=jack_o_lantern,data=1,north=0:jack_o_lantern,south=0:pumpkin_side,east=0:pumpkin_side,west=0:pumpkin_side,topbottom=0:pumpkin_top,stdrot=true
-# Jack-O-Lantern (east)
-block:id=jack_o_lantern,data=2,north=0:pumpkin_side,south=0:pumpkin_side,east=0:jack_o_lantern,west=0:pumpkin_side,topbottom=0:pumpkin_top,stdrot=true
+block:id=jack_o_lantern,data=0,face2=0:jack_o_lantern,face3=0:pumpkin_side,face4=0:pumpkin_side,face5=0:pumpkin_side,topbottom=0:pumpkin_top,stdrot=true
 # Jack-O-Lantern (south)
-block:id=jack_o_lantern,data=3,north=0:pumpkin_side,south=0:jack_o_lantern,east=0:pumpkin_side,west=0:pumpkin_side,topbottom=0:pumpkin_top,stdrot=true
+block:id=jack_o_lantern,data=1,face3=0:jack_o_lantern,face2=0:pumpkin_side,face4=0:pumpkin_side,face5=0:pumpkin_side,topbottom=5000:pumpkin_top,stdrot=true
+# Jack-O-Lantern (west)
+block:id=jack_o_lantern,data=2,face4=0:jack_o_lantern,face2=0:pumpkin_side,face3=0:pumpkin_side,face5=0:pumpkin_side,topbottom=4000:pumpkin_top,stdrot=true
+# Jack-O-Lantern (east)
+block:id=jack_o_lantern,data=3,face5=0:jack_o_lantern,face2=0:pumpkin_side,face3=0:pumpkin_side,face4=0:pumpkin_side,topbottom=6000:pumpkin_top,stdrot=true
 # Cake Block
-block:id=cake,allsides=0:cake_side,top=0:cake_top,bottom=0:cake_bottom,stdrot=true,transparency=TRANSPARENT
-# Repeater (on) facing east
-block:id=repeater,data=0,data=2,data=16,data=18,data=32,data=34,data=48,data=50,top=6000:repeater_on,allsides=0:stone,bottom=0:stone,transparency=TRANSPARENT
-# Repeater (off) facing east
-block:id=repeater,data=1,data=3,data=17,data=19,data=33,data=35,data=49,data=51,top=6000:repeater,allsides=0:stone,bottom=0:stone,transparency=TRANSPARENT
-# Repeater (on) facing south
-block:id=repeater,data=4,data=6,data=20,data=22,data=36,data=38,data=52,data=54,,top=5000:repeater_on,allsides=0:stone,bottom=0:stone,transparency=TRANSPARENT
-# Repeater (off) facing south
-block:id=repeater,data=5,data=7,data=21,data=23,data=37,data=39,data=53,data=55,top=5000:repeater,allsides=0:stone,bottom=0:stone,transparency=TRANSPARENT
-# Repeater (on) facing west
-block:id=repeater,data=8,data=10,data=24,data=26,data=40,data=42,data=56,data=58,top=4000:repeater_on,allsides=0:stone,bottom=0:stone,transparency=TRANSPARENT
-# Repeater (off) facing west
-block:id=repeater,data=9,data=11,data=25,data=27,data=41,data=43,data=57,data=59,top=4000:repeater,allsides=0:stone,bottom=0:stone,transparency=TRANSPARENT
-# Repeater (on) facing north
-block:id=repeater,data=12,data=14,data=28,data=30,data=44,data=46,data=60,data=62,top=0:repeater_on,allsides=0:stone,bottom=0:stone,transparency=TRANSPARENT
-# Repeater (off) facing north
-block:id=repeater,data=13,data=15,data=29,data=31,data=45,data=47,data=61,data=63,top=0:repeater,allsides=0:stone,bottom=0:stone,transparency=TRANSPARENT
+block:id=cake,data=0,data=1,data=2,data=3,data=4,data=5,data=6,patch0=0:cake_bottom,patch1=0:cake_top,patch2=0:cake_side,patch3=0:cake_inner,transparency=TRANSPARENT
+# Repeater
+block:id=repeater,data=*,patch0=0:smooth_stone,patch1=0:repeater,patch2=0:redstone_torch_off,patch3=0:redstone_torch,patch4=0:bedrock,patch5=0:repeater_on,transparency=TRANSPARENT
 # Stained Glass (95)
 block:id=white_stained_glass,allfaces=12000:white_stained_glass,stdrot=true,transparency=TRANSPARENT
 block:id=orange_stained_glass,allfaces=12000:orange_stained_glass,stdrot=true,transparency=TRANSPARENT
@@ -1107,19 +1106,12 @@ block:id=red_mushroom_block,patch1=0:red_mushroom_block,patch0=0:mushroom_block_
 block:id=mushroom_stem,patch1=0:mushroom_stem,patch0=0:mushroom_block_inside,patch3=0:mushroom_stem,patch2=0:mushroom_block_inside,patch5=0:mushroom_stem,patch4=0:mushroom_block_inside,patch7=0:mushroom_stem,patch6=0:mushroom_block_inside,patch9=0:mushroom_stem,patch8=0:mushroom_block_inside,patch11=0:mushroom_stem,patch10=0:mushroom_block_inside
 
 # Iron fence
-block:id=iron_bars,patch0-1=0:iron_bars,transparency=TRANSPARENT
+block:id=%iron_bars,patch0=0:iron_bars,transparency=TRANSPARENT
 # Glass pane
-block:id=glass_pane,patch0=12000:glass,patch1=12000:glass_pane_top,transparency=TRANSPARENT
+block:id=%glass_pane,patch0=0:glass_pane_top,patch1=0:glass,transparency=TRANSPARENT
+
 # Watermellon
 block:id=melon,allsides=0:melon_side,topbottom=0:melon_top,stdrot=true
-# Attached Pumpkin stem 
-block:id=attached_pumpkin_stem,allsides=1000:attached_pumpkin_stem,stdrot=true,transparency=TRANSPARENT
-# Attached Melon stem
-block:id=attached_melon_stem,allsides=1000:attached_melon_stem,stdrot=true,transparency=TRANSPARENT
-# Pumpkin stem 
-block:id=pumpkin_stem,allsides=1000:pumpkin_stem,stdrot=true,transparency=TRANSPARENT
-# Melon stem
-block:id=melon_stem,allsides=1000:melon_stem,stdrot=true,transparency=TRANSPARENT
 # Vines
 block:id=vine,patch0-4=2000:vine,transparency=TRANSPARENT
 # Fence gate
@@ -1139,18 +1131,18 @@ block:id=nether_bricks,allfaces=0:nether_bricks,stdrot=true
 block:id=nether_brick_fence,patch0-2=0:nether_bricks,transparency=TRANSPARENT
 # Nether brick stairs
 block:id=nether_brick_stairs,patch0-2=0:nether_bricks,transparency=SEMITRANSPARENT
-# Nether Wart (small)
-block:id=nether_wart,data=0,patch0-1=0:nether_wart_stage0,transparency=TRANSPARENT
-# Nether Wart (medium)
-block:id=nether_wart,data=1,data=2,patch0-1=0:nether_wart_stage1,transparency=TRANSPARENT
-# Nether Wart (large)
-block:id=nether_wart,data=3,patch0-1=0:nether_wart_stage2,transparency=TRANSPARENT
+# Nether Wart
+block:id=%nether_wart,state=age:0,patch0=0:nether_wart_stage0,transparency=TRANSPARENT,stdrot=true
+block:id=%nether_wart,state=age:1,patch0=0:nether_wart_stage1,transparency=TRANSPARENT,stdrot=true
+block:id=%nether_wart,state=age:2,patch0=0:nether_wart_stage1,transparency=TRANSPARENT,stdrot=true
+block:id=%nether_wart,state=age:3,patch0=0:nether_wart_stage2,transparency=TRANSPARENT,stdrot=true
 # Enchantment table
 block:id=enchanting_table,top=0:enchanting_table_top,allsides=0:enchanting_table_side,bottom=0:enchanting_table_bottom,stdrot=true,transparency=TRANSPARENT
 # Brewing stand
-block:id=brewing_stand,patch0=0:brewing_stand_base,patch1-7=0:brewing_stand,transparency=TRANSPARENT
+block:id=%brewing_stand,patch0=0:brewing_stand,patch1=0:brewing_stand_base,transparency=TRANSPARENT,stdrot=true
 # Cauldron
-block:id=cauldron,data=*,top=0:cauldron_top,bottom=0:cauldron_bottom,allsides=0:cauldron_side,stdrot=true,transparency=TRANSPARENT
+block:id=%cauldron,patch0=0:cauldron_side,patch1=0:cauldron_inner,patch2=0:cauldron_top,patch3=0:cauldron_bottom,transparency=TRANSPARENT,stdrot=true
+
 # End portal
 block:id=end_portal,data=*,patch0=0:endportal,stdrot=true
 # End portal frame
@@ -1163,8 +1155,10 @@ block:id=dragon_egg,data=*,allfaces=0:dragon_egg,stdrot=true
 block:id=redstone_lamp,data=0,allfaces=0:redstone_lamp_on,stdrot=true
 # Redstone lamp (off)
 block:id=redstone_lamp,data=1,allfaces=0:redstone_lamp,stdrot=true
-# Cocoa Plant (TODO: handle different stages, orientations)
-block:id=cocoa,allsides=0:cocoa_stage2
+# Cocoa Plant
+block:id=cocoa,data=0,data=1,data=2,data=3,patch0=0:cocoa_stage0,transparency=TRANSPARENT
+block:id=cocoa,data=4,data=5,data=6,data=7,patch0=0:cocoa_stage1,transparency=TRANSPARENT
+block:id=cocoa,data=8,data=9,data=10,data=11,patch0=0:cocoa_stage2,transparency=TRANSPARENT
 # Sandstone stairs
 block:id=sandstone_stairs,patch0=0:sandstone,patch1=0:sandstone_top,patch2=0:sandstone_bottom,transparency=SEMITRANSPARENT
 # Emerald Ore
@@ -1184,18 +1178,18 @@ block:id=birch_stairs,patch0-2=0:birch_planks,transparency=SEMITRANSPARENT
 # Jungle Wooden stairs
 block:id=jungle_stairs,patch0-2=0:jungle_planks,transparency=SEMITRANSPARENT
 # Command Block
-block:id=command_block,data=0,top=4000:command_block_back,bottom=4000:command_block_front,south=5000:command_block_conditional,north=5000:command_block_conditional,east=5000:command_block_conditional,west=5000:command_block_conditional
-block:id=command_block,data=1,top=4000:command_block_front,bottom=4000:command_block_back,south=0:command_block_conditional,north=0:command_block_conditional,east=0:command_block_conditional,west=0:command_block_conditional
-block:id=command_block,data=2,top=6000:command_block_conditional,bottom=6000:command_block_conditional,south=6000:command_block_conditional,north=6000:command_block_conditional,east=0:command_block_front,west=0:command_block_back
-block:id=command_block,data=3,top=4000:command_block_conditional,bottom=4000:command_block_conditional,south=4000:command_block_conditional,north=4000:command_block_conditional,east=0:command_block_back,west=0:command_block_front
-block:id=command_block,data=4,top=0:command_block_conditional,bottom=0:command_block_conditional,south=0:command_block_back,north=0:command_block_front,east=4000:command_block_conditional,west=4000:command_block_conditional
-block:id=command_block,data=5,top=5000:command_block_conditional,bottom=5000:command_block_conditional,south=0:command_block_front,north=0:command_block_back,east=6000:command_block_conditional,west=6000:command_block_conditional
-block:id=command_block,data=6,top=4000:command_block_back,bottom=4000:command_block_front,south=5000:command_block_side,north=5000:command_block_side,east=5000:command_block_side,west=5000:command_block_side
-block:id=command_block,data=7,top=4000:command_block_front,bottom=4000:command_block_back,south=0:command_block_side,north=0:command_block_side,east=0:command_block_side,west=0:command_block_side
-block:id=command_block,data=8,top=6000:command_block_side,bottom=6000:command_block_side,south=6000:command_block_side,north=6000:command_block_side,east=0:command_block_front,west=0:command_block_back
-block:id=command_block,data=9,top=4000:command_block_side,bottom=4000:command_block_side,south=4000:command_block_side,north=4000:command_block_side,east=0:command_block_back,west=0:command_block_front
-block:id=command_block,data=10,top=0:command_block_side,bottom=0:command_block_side,south=0:command_block_back,north=0:command_block_front,east=4000:command_block_side,west=4000:command_block_side
-block:id=command_block,data=11,top=5000:command_block_side,bottom=5000:command_block_side,south=0:command_block_front,north=0:command_block_back,east=6000:command_block_side,west=6000:command_block_side
+block:id=%command_block,state=conditional:true/facing:north,patch0=4000:command_block_conditional,patch1=5000:command_block_conditional,patch2=0:command_block_front,patch3=6000:command_block_conditional,patch4=0:command_block_conditional,patch5=0:command_block_back,stdrot=true
+block:id=%command_block,state=conditional:true/facing:east,patch0=0:command_block_back,patch1=0:command_block_conditional,patch2=0:command_block_front,stdrot=true
+block:id=%command_block,state=conditional:true/facing:south,patch0=0:command_block_back,patch1=0:command_block_conditional,patch2=0:command_block_front,stdrot=true
+block:id=%command_block,state=conditional:true/facing:west,patch0=0:command_block_back,patch1=0:command_block_conditional,patch2=0:command_block_front,stdrot=true
+block:id=%command_block,state=conditional:true/facing:up,patch0=0:command_block_back,patch1=0:command_block_conditional,patch2=0:command_block_front,stdrot=true
+block:id=%command_block,state=conditional:true/facing:down,patch0=0:command_block_back,patch1=0:command_block_conditional,patch2=0:command_block_front,stdrot=true
+block:id=%command_block,state=conditional:false/facing:north,patch0=4000:command_block_side,patch1=5000:command_block_side,patch2=0:command_block_front,patch3=6000:command_block_side,patch4=0:command_block_side,patch5=0:command_block_back,stdrot=true
+block:id=%command_block,state=conditional:false/facing:east,patch0=0:command_block_back,patch1=0:command_block_side,patch2=0:command_block_front,stdrot=true
+block:id=%command_block,state=conditional:false/facing:south,patch0=0:command_block_back,patch1=0:command_block_side,patch2=0:command_block_front,stdrot=true
+block:id=%command_block,state=conditional:false/facing:west,patch0=0:command_block_back,patch1=0:command_block_side,patch2=0:command_block_front,stdrot=true
+block:id=%command_block,state=conditional:false/facing:up,patch0=0:command_block_back,patch1=0:command_block_side,patch2=0:command_block_front,stdrot=true
+block:id=%command_block,state=conditional:false/facing:down,patch0=0:command_block_back,patch1=0:command_block_side,patch2=0:command_block_front,stdrot=true
 # Beacon
 block:id=beacon,patch0-5=12000:glass,patch6-9=0:obsidian,patch10=6000:obsidian,patch11-14=0:beacon,patch15=6000:beacon,transparency=TRANSPARENT
 # Cobblestone wall
@@ -1295,62 +1289,62 @@ block:id=trapped_chest,patch0=0:trapchest,patch1=1:trapchest,patch2=2:trapchest,
 ############
 
 # Oak slab
-block:id=oak_slab,data=0,data=1,data=2,data=3,allfaces=0:oak_planks,stdrot=true,transparency=SEMITRANSPARENT
-block:id=oak_slab,data=4,data=5,allfaces=0:oak_planks,stdrot=true
+block:id=oak_slab,state=type:top,state=type:bottom,allfaces=0:oak_planks,stdrot=true,transparency=SEMITRANSPARENT
+block:id=oak_slab,state=type:double,allfaces=0:oak_planks,stdrot=true
 # Spruce slab
-block:id=spruce_slab,data=0,data=1,data=2,data=3,allfaces=0:spruce_planks,stdrot=true,transparency=SEMITRANSPARENT
-block:id=spruce_slab,data=4,data=5,allfaces=0:spruce_planks,stdrot=true
+block:id=spruce_slab,state=type:top,state=type:bottom,allfaces=0:spruce_planks,stdrot=true,transparency=SEMITRANSPARENT
+block:id=spruce_slab,state=type:double,allfaces=0:spruce_planks,stdrot=true
 # Birch slab
-block:id=birch_slab,data=0,data=1,data=2,data=3,allfaces=0:birch_planks,stdrot=true,transparency=SEMITRANSPARENT
-block:id=birch_slab,data=4,data=5,allfaces=0:birch_planks,stdrot=true
+block:id=birch_slab,state=type:top,state=type:bottom,allfaces=0:birch_planks,stdrot=true,transparency=SEMITRANSPARENT
+block:id=birch_slab,state=type:double,allfaces=0:birch_planks,stdrot=true
 # Jungle slab
-block:id=jungle_slab,data=0,data=1,data=2,data=3,allfaces=0:jungle_planks,stdrot=true,transparency=SEMITRANSPARENT
-block:id=jungle_slab,data=4,data=5,allfaces=0:jungle_planks,stdrot=true
+block:id=jungle_slab,state=type:top,state=type:bottom,allfaces=0:jungle_planks,stdrot=true,transparency=SEMITRANSPARENT
+block:id=jungle_slab,state=type:double,allfaces=0:jungle_planks,stdrot=true
 # Acacia slab
-block:id=acacia_slab,data=0,data=1,data=2,data=3,allfaces=0:acacia_planks,stdrot=true,transparency=SEMITRANSPARENT
-block:id=acacia_slab,data=4,data=5,allfaces=0:acacia_planks,stdrot=true
+block:id=acacia_slab,state=type:top,state=type:bottom,allfaces=0:acacia_planks,stdrot=true,transparency=SEMITRANSPARENT
+block:id=acacia_slab,state=type:double,allfaces=0:acacia_planks,stdrot=true
 # Dark oak slab
-block:id=dark_oak_slab,data=0,data=1,data=2,data=3,allfaces=0:dark_oak_planks,stdrot=true,transparency=SEMITRANSPARENT
-block:id=dark_oak_slab,data=4,data=5,allfaces=0:dark_oak_planks,stdrot=true
+block:id=dark_oak_slab,state=type:top,state=type:bottom,allfaces=0:dark_oak_planks,stdrot=true,transparency=SEMITRANSPARENT
+block:id=dark_oak_slab,state=type:double,allfaces=0:dark_oak_planks,stdrot=true
 # Stone slab
-block:id=stone_slab,data=0,data=1,data=2,data=3,allsides=0:stone,topbottom=0:stone,stdrot=true,transparency=SEMITRANSPARENT
-block:id=stone_slab,data=4,data=5,allsides=0:stone,topbottom=0:stone,stdrot=true
+block:id=stone_slab,state=type:top,state=type:bottom,allsides=0:stone,topbottom=0:stone,stdrot=true,transparency=SEMITRANSPARENT
+block:id=stone_slab,state=type:double,allsides=0:stone,topbottom=0:stone,stdrot=true
 # Sandstone slab
-block:id=sandstone_slab,data=0,data=1,data=2,data=3,bottom=0:sandstone_bottom,top=0:sandstone_top,allsides=0:sandstone,stdrot=true,transparency=SEMITRANSPARENT
-block:id=sandstone_slab,data=4,data=5,bottom=0:sandstone_bottom,top=0:sandstone_top,allsides=0:sandstone,stdrot=true
+block:id=sandstone_slab,state=type:top,state=type:bottom,bottom=0:sandstone_bottom,top=0:sandstone_top,allsides=0:sandstone,stdrot=true,transparency=SEMITRANSPARENT
+block:id=sandstone_slab,state=type:double,bottom=0:sandstone_bottom,top=0:sandstone_top,allsides=0:sandstone,stdrot=true
 # Petified oak slab
-block:id=petrified_oak_slab,data=0,data=1,data=2,data=3,allfaces=0:oak_planks,stdrot=true,transparency=SEMITRANSPARENT
-block:id=petrified_oak_slab,data=4,data=5,allfaces=0:oak_planks,stdrot=true
+block:id=petrified_oak_slab,state=type:top,state=type:bottom,allfaces=0:oak_planks,stdrot=true,transparency=SEMITRANSPARENT
+block:id=petrified_oak_slab,state=type:double,allfaces=0:oak_planks,stdrot=true
 # Cobblestone slab
-block:id=cobblestone_slab,data=0,data=1,data=2,data=3,allfaces=0:cobblestone,stdrot=true,transparency=SEMITRANSPARENT
-block:id=cobblestone_slab,data=4,data=5,allfaces=0:cobblestone,stdrot=true
+block:id=cobblestone_slab,state=type:top,state=type:bottom,allfaces=0:cobblestone,stdrot=true,transparency=SEMITRANSPARENT
+block:id=cobblestone_slab,state=type:double,allfaces=0:cobblestone,stdrot=true
 # Brick slab
-block:id=brick_slab,data=0,data=1,data=2,data=3,allfaces=0:bricks,stdrot=true,transparency=SEMITRANSPARENT
-block:id=brick_slab,data=4,data=5,allfaces=0:bricks,stdrot=true
+block:id=brick_slab,state=type:top,state=type:bottom,allfaces=0:bricks,stdrot=true,transparency=SEMITRANSPARENT
+block:id=brick_slab,state=type:double,allfaces=0:bricks,stdrot=true
 # Stone brick slab
-block:id=stone_brick_slab,data=0,data=1,data=2,data=3,allfaces=0:stone_bricks,stdrot=true,transparency=SEMITRANSPARENT
-block:id=stone_brick_slab,data=4,data=5,allfaces=0:stone_bricks,stdrot=true
+block:id=stone_brick_slab,state=type:top,state=type:bottom,allfaces=0:stone_bricks,stdrot=true,transparency=SEMITRANSPARENT
+block:id=stone_brick_slab,state=type:double,allfaces=0:stone_bricks,stdrot=true
 # Nether brick slab
-block:id=nether_brick_slab,data=0,data=1,data=2,data=3,allfaces=0:nether_bricks,stdrot=true,transparency=SEMITRANSPARENT
-block:id=nether_brick_slab,data=4,data=5,allfaces=0:nether_bricks,stdrot=true
+block:id=nether_brick_slab,state=type:top,state=type:bottom,allfaces=0:nether_bricks,stdrot=true,transparency=SEMITRANSPARENT
+block:id=nether_brick_slab,state=type:double,allfaces=0:nether_bricks,stdrot=true
 # Quartz slab
-block:id=quartz_slab,data=0,data=1,data=2,data=3,top=0:quartz_block_top,bottom=0:quartz_block_bottom,allsides=0:quartz_block_side,stdrot=true,transparency=SEMITRANSPARENT
-block:id=quartz_slab,data=4,data=5,top=0:quartz_block_top,bottom=0:quartz_block_bottom,allsides=0:quartz_block_side
+block:id=quartz_slab,state=type:top,state=type:bottom,top=0:quartz_block_top,bottom=0:quartz_block_bottom,allsides=0:quartz_block_side,stdrot=true,transparency=SEMITRANSPARENT
+block:id=quartz_slab,state=type:double,top=0:quartz_block_top,bottom=0:quartz_block_bottom,allsides=0:quartz_block_side
 # Red sandstone slab
-block:id=red_sandstone_slab,data=0,data=1,data=2,data=3,bottom=0:red_sandstone_bottom,top=0:red_sandstone_top,allsides=0:red_sandstone,stdrot=true,transparency=SEMITRANSPARENT
-block:id=red_sandstone_slab,data=4,data=5,bottom=0:red_sandstone_bottom,top=0:red_sandstone_top,allsides=0:red_sandstone,stdrot=true
+block:id=red_sandstone_slab,state=type:top,state=type:bottom,bottom=0:red_sandstone_bottom,top=0:red_sandstone_top,allsides=0:red_sandstone,stdrot=true,transparency=SEMITRANSPARENT
+block:id=red_sandstone_slab,state=type:double,bottom=0:red_sandstone_bottom,top=0:red_sandstone_top,allsides=0:red_sandstone,stdrot=true
 # Purpur slab
-block:id=purpur_slab,data=0,data=1,data=2,data=3,allfaces=0:purpur_block,stdrot=true,transparency=SEMITRANSPARENT
-block:id=purpur_slab,data=4,data=5,allfaces=0:purpur_block,stdrot=true
+block:id=purpur_slab,state=type:top,state=type:bottom,allfaces=0:purpur_block,stdrot=true,transparency=SEMITRANSPARENT
+block:id=purpur_slab,state=type:double,allfaces=0:purpur_block,stdrot=true
 # Prismarine slab
-block:id=prismarine_slab,data=0,data=1,data=2,data=3,allfaces=0:prismarine,stdrot=true,transparency=SEMITRANSPARENT
-block:id=prismarine_slab,data=4,data=5,allfaces=0:prismarine,stdrot=true
+block:id=prismarine_slab,state=type:top,state=type:bottom,allfaces=0:prismarine,stdrot=true,transparency=SEMITRANSPARENT
+block:id=prismarine_slab,state=type:double,allfaces=0:prismarine,stdrot=true
 # Prismarine brick slab
-block:id=prismarine_brick_slab,data=0,data=1,data=2,data=3,allfaces=0:prismarine_bricks,stdrot=true,transparency=SEMITRANSPARENT
-block:id=prismarine_brick_slab,data=4,data=5,allfaces=0:prismarine_bricks,stdrot=true
+block:id=prismarine_brick_slab,state=type:top,state=type:bottom,allfaces=0:prismarine_bricks,stdrot=true,transparency=SEMITRANSPARENT
+block:id=prismarine_brick_slab,state=type:double,allfaces=0:prismarine_bricks,stdrot=true
 # Dsrk prismarine slab
-block:id=dark_prismarine_slab,data=0,data=1,data=2,data=3,allfaces=0:dark_prismarine,stdrot=true,transparency=SEMITRANSPARENT
-block:id=dark_prismarine_slab,data=4,data=5,allfaces=0:dark_prismarine,stdrot=true
+block:id=dark_prismarine_slab,state=type:top,state=type:bottom,allfaces=0:dark_prismarine,stdrot=true,transparency=SEMITRANSPARENT
+block:id=dark_prismarine_slab,state=type:double,allfaces=0:dark_prismarine,stdrot=true
 
 
 # Light weighted pressure plate
@@ -1358,16 +1352,8 @@ block:id=light_weighted_pressure_plate,allfaces=0:gold_block,stdrot=true,transpa
 # Heavy weighted pressure plate
 block:id=heavy_weighted_pressure_plate,allfaces=0:iron_block,stdrot=true,transparency=TRANSPARENT
 
-# Redstone Comparator (active)
-block:id=comparator,data=0,data=2,top=6000:comparator_on,allsides=0:stone,bottom=0:stone,transparency=TRANSPARENT
-block:id=comparator,data=4,data=6,top=5000:comparator_on,allsides=0:stone,bottom=0:stone,transparency=TRANSPARENT
-block:id=comparator,data=8,data=10,top=4000:comparator_on,allsides=0:stone,bottom=0:stone,transparency=TRANSPARENT
-block:id=comparator,data=12,data=14,top=0:comparator_on,allsides=0:stone,bottom=0:stone,transparency=TRANSPARENT
-# Redstone Comparator (inactive)
-block:id=comparator,data=1,data=3,top=6000:comparator,allsides=0:stone,bottom=0:stone,transparency=TRANSPARENT
-block:id=comparator,data=5,data=7,top=5000:comparator,allsides=0:stone,bottom=0:stone,transparency=TRANSPARENT
-block:id=comparator,data=9,data=11,top=4000:comparator,allsides=0:stone,bottom=0:stone,transparency=TRANSPARENT
-block:id=comparator,data=13,data=15,top=0:comparator,allsides=0:stone,bottom=0:stone,transparency=TRANSPARENT
+# Comparator (on)
+block:id=comparator,data=*,patch0=0:smooth_stone,patch1=0:comparator,patch2=0:redstone_torch_off,patch3=0:redstone_torch,patch4=0:comparator_on,transparency=TRANSPARENT
 
 # Daylight Sensor
 # Inverted Daylight Sensor
@@ -1403,12 +1389,12 @@ block:id=quartz_stairs,patch0=0:quartz_block_side,patch1=0:quartz_block_top,patc
 [1.17-]block:id=activator_rail,data=12-23,patch0=0:activator_rail,transparency=TRANSPARENT
 
 # (158)	Dropper
-block:id=dropper,data=0-1,top=0:furnace_top,east=0:furnace_top,south=0:furnace_top,north=0:furnace_top,west=0:furnace_top,bottom=6000:dropper_front_vertical
-block:id=dropper,data=2-3,top=6000:dropper_front_vertical,east=0:furnace_top,south=0:furnace_top,north=0:furnace_top,west=0:furnace_top,bottom=0:furnace_top
-block:id=dropper,data=4-5,top=0:furnace_top,east=0:dropper_front,south=0:furnace_side,north=0:furnace_side,west=0:furnace_side,bottom=0:furnace_top
-block:id=dropper,data=6-7,top=0:furnace_top,west=0:dropper_front,south=0:furnace_side,north=0:furnace_side,east=0:furnace_side,bottom=0:furnace_top
-block:id=dropper,data=8-9,top=0:furnace_top,north=0:dropper_front,south=0:furnace_side,east=0:furnace_side,west=0:furnace_side,bottom=0:furnace_top
-block:id=dropper,data=10-11,top=0:furnace_top,south=0:dropper_front,north=0:furnace_side,east=0:furnace_side,west=0:furnace_side,bottom=0:furnace_top
+block:id=%dropper,state=facing:north,patch0=0:furnace_side,patch1=0:furnace_top,patch2=0:dropper_front,patch3=0:furnace_side,patch4=0:furnace_top,patch5=0:furnace_side,stdrot=true
+block:id=%dropper,state=facing:east,patch0=0:dropper_front,patch1=0:furnace_side,patch2=0:furnace_top,stdrot=true
+block:id=%dropper,state=facing:south,patch0=0:dropper_front,patch1=0:furnace_side,patch2=0:furnace_top,stdrot=true
+block:id=%dropper,state=facing:west,patch0=0:dropper_front,patch1=0:furnace_side,patch2=0:furnace_top,stdrot=true
+block:id=%dropper,state=facing:up,patch0=0:furnace_top,patch1=0:furnace_top,patch2=0:furnace_top,patch3=0:furnace_top,patch4=0:dropper_front_vertical,patch5=0:furnace_top,stdrot=true
+block:id=%dropper,state=facing:down,patch0=0:furnace_top,patch1=0:dropper_front_vertical,stdrot=true
 
 # (159) Colored clay
 block:id=black_terracotta,stdrot=true,allfaces=0:black_terracotta
@@ -1428,22 +1414,22 @@ block:id=magenta_terracotta,stdrot=true,allfaces=0:magenta_terracotta
 block:id=orange_terracotta,stdrot=true,allfaces=0:orange_terracotta
 block:id=white_terracotta,stdrot=true,allfaces=0:white_terracotta
 # (160) Stained Glass Pane
-block:id=white_stained_glass_pane,patch0=12000:white_stained_glass,patch1=12000:white_stained_glass_pane_top,transparency=TRANSPARENT
-block:id=orange_stained_glass_pane,patch0=12000:orange_stained_glass,patch1=12000:orange_stained_glass_pane_top,transparency=TRANSPARENT
-block:id=magenta_stained_glass_pane,patch0=12000:magenta_stained_glass,patch1=12000:magenta_stained_glass_pane_top,transparency=TRANSPARENT
-block:id=light_blue_stained_glass_pane,patch0=12000:light_blue_stained_glass,patch1=12000:light_blue_stained_glass_pane_top,transparency=TRANSPARENT
-block:id=yellow_stained_glass_pane,patch0=12000:yellow_stained_glass,patch1=12000:yellow_stained_glass_pane_top,transparency=TRANSPARENT
-block:id=lime_stained_glass_pane,patch0=12000:lime_stained_glass,patch1=12000:lime_stained_glass_pane_top,transparency=TRANSPARENT
-block:id=pink_stained_glass_pane,patch0=12000:pink_stained_glass,patch1=12000:pink_stained_glass_pane_top,transparency=TRANSPARENT
-block:id=gray_stained_glass_pane,patch0=12000:gray_stained_glass,patch1=12000:gray_stained_glass_pane_top,transparency=TRANSPARENT
-block:id=light_gray_stained_glass_pane,patch0=12000:light_gray_stained_glass,patch1=12000:light_gray_stained_glass_pane_top,transparency=TRANSPARENT
-block:id=cyan_stained_glass_pane,patch0=12000:cyan_stained_glass,patch1=12000:cyan_stained_glass_pane_top,transparency=TRANSPARENT
-block:id=purple_stained_glass_pane,patch0=12000:purple_stained_glass,patch1=12000:purple_stained_glass_pane_top,transparency=TRANSPARENT
-block:id=blue_stained_glass_pane,patch0=12000:blue_stained_glass,patch1=12000:blue_stained_glass_pane_top,transparency=TRANSPARENT
-block:id=brown_stained_glass_pane,patch0=12000:brown_stained_glass,patch1=12000:brown_stained_glass_pane_top,transparency=TRANSPARENT
-block:id=green_stained_glass_pane,patch0=12000:green_stained_glass,patch1=12000:green_stained_glass_pane_top,transparency=TRANSPARENT
-block:id=red_stained_glass_pane,patch0=12000:red_stained_glass,patch1=12000:red_stained_glass_pane_top,transparency=TRANSPARENT
-block:id=black_stained_glass_pane,patch0=12000:black_stained_glass,patch1=12000:black_stained_glass_pane_top,transparency=TRANSPARENT
+block:id=%white_stained_glass_pane,patch0=0:white_stained_glass_pane_top,patch1=0:white_stained_glass,transparency=TRANSPARENT,stdrot=true
+block:id=%orange_stained_glass_pane,patch0=0:orange_stained_glass_pane_top,patch1=0:orange_stained_glass,transparency=TRANSPARENT,stdrot=true
+block:id=%magenta_stained_glass_pane,patch0=0:magenta_stained_glass_pane_top,patch1=0:magenta_stained_glass,transparency=TRANSPARENT,stdrot=true
+block:id=%light_blue_stained_glass_pane,patch0=0:light_blue_stained_glass_pane_top,patch1=0:light_blue_stained_glass,transparency=TRANSPARENT,stdrot=true
+block:id=%yellow_stained_glass_pane,patch0=0:yellow_stained_glass_pane_top,patch1=0:yellow_stained_glass,transparency=TRANSPARENT,stdrot=true
+block:id=%lime_stained_glass_pane,patch0=0:lime_stained_glass_pane_top,patch1=0:lime_stained_glass,transparency=TRANSPARENT,stdrot=true
+block:id=%pink_stained_glass_pane,patch0=0:pink_stained_glass_pane_top,patch1=0:pink_stained_glass,transparency=TRANSPARENT,stdrot=true
+block:id=%gray_stained_glass_pane,patch0=0:gray_stained_glass_pane_top,patch1=0:gray_stained_glass,transparency=TRANSPARENT,stdrot=true
+block:id=%light_gray_stained_glass_pane,patch0=0:light_gray_stained_glass_pane_top,patch1=0:light_gray_stained_glass,transparency=TRANSPARENT,stdrot=true
+block:id=%cyan_stained_glass_pane,patch0=0:cyan_stained_glass_pane_top,patch1=0:cyan_stained_glass,transparency=TRANSPARENT,stdrot=true
+block:id=%purple_stained_glass_pane,patch0=0:purple_stained_glass_pane_top,patch1=0:purple_stained_glass,transparency=TRANSPARENT,stdrot=true
+block:id=%blue_stained_glass_pane,patch0=0:blue_stained_glass_pane_top,patch1=0:blue_stained_glass,transparency=TRANSPARENT,stdrot=true
+block:id=%brown_stained_glass_pane,patch0=0:brown_stained_glass_pane_top,patch1=0:brown_stained_glass,transparency=TRANSPARENT,stdrot=true
+block:id=%green_stained_glass_pane,patch0=0:green_stained_glass_pane_top,patch1=0:green_stained_glass,transparency=TRANSPARENT,stdrot=true
+block:id=%red_stained_glass_pane,patch0=0:red_stained_glass_pane_top,patch1=0:red_stained_glass,transparency=TRANSPARENT,stdrot=true
+block:id=%black_stained_glass_pane,patch0=0:black_stained_glass_pane_top,patch1=0:black_stained_glass,transparency=TRANSPARENT,stdrot=true
 
 # Acacia Stairs (163)
 block:id=acacia_stairs,data=*,patch0-2=0:acacia_planks,transparency=SEMITRANSPARENT
@@ -1479,8 +1465,8 @@ block:id=coal_block,data=*,stdrot=true,allfaces=0:coal_block
 # (174) Packed Ice
 block:id=packed_ice,allfaces=0:packed_ice,stdrot=true
 # Sunflower
-block:id=sunflower,data=0,patch0-1=0:sunflower_top,transparency=TRANSPARENT
-block:id=sunflower,data=1,patch0-1=0:sunflower_bottom,transparency=TRANSPARENT
+block:id=%sunflower,state=half:upper,patch0=0:sunflower_top,patch1=0:sunflower_back,patch2=0:sunflower_front,transparency=TRANSPARENT,stdrot=true
+block:id=%sunflower,state=half:lower,patch0=0:sunflower_bottom,transparency=TRANSPARENT,stdrot=true
 # Lilac
 block:id=lilac,data=0,patch0-1=0:lilac_top,transparency=TRANSPARENT
 block:id=lilac,data=1,patch0-1=0:lilac_bottom,transparency=TRANSPARENT
@@ -1583,14 +1569,14 @@ block:id=dark_oak_door,data=*,patch0=0:dark_oak_door_top,patch1=0:dark_oak_door_
 
 
 # End rod
-block:id=end_rod,data=*,patch0=0:end_rod,transparency=TRANSPARENT
+block:id=%end_rod,patch0=0:end_rod,transparency=TRANSPARENT,stdrot=true
 
 # Chorus Plant
-block:id=chorus_plant,data=*,patch0-2=0:chorus_plant,transparency=TRANSPARENT
+block:id=%chorus_plant,patch0=0:chorus_plant,transparency=TRANSPARENT
 
 # Chorus Flower
-block:id=chorus_flower,data=0,data=1,data=2,data=3,data=4,stdrot=true,allfaces=0:chorus_flower,transparency=TRANSPARENT
-block:id=chorus_flower,data=5,stdrot=true,allfaces=0:chorus_flower_dead,transparency=TRANSPARENT
+block:id=%chorus_flower,state=age:0,state=age:1,state=age:2,state=age:3,state=age:4,patch0=0:chorus_flower,patch1=0:chorus_plant,transparency=TRANSPARENT,stdrot=true
+block:id=%chorus_flower,state=age:5,patch0=0:chorus_flower_dead,patch1=0:chorus_plant,transparency=TRANSPARENT,stdrot=true
 
 # Purpur Block
 block:id=purpur_block,data=*,stdrot=true,allfaces=0:purpur_block
@@ -1613,38 +1599,38 @@ block:id=beetroots,data=2,patch0-3=0:beetroots_stage2,transparency=TRANSPARENT
 block:id=beetroots,data=3,patch0-3=0:beetroots_stage3,transparency=TRANSPARENT
 
 # Grass Path (replaced with dirt path in 1.17
-[-1.16.5]block:id=grass_path,allsides=0:grass_path_side,top=0:grass_path_top,bottom=0:dirt,stdrot=true, transparency=TRANSPARENT
+[-1.16.5]block:id=grass_path,allsides=0:grass_path_side,top=0:grass_path_top,bottom=0:dirt,stdrot=true, transparency=SEMITRANSPARENT
 
 # End Gateway
 block:id=end_gateway,data=*,stdrot=true,allfaces=0:endportal
 
 # Repeating Command Block
-block:id=repeating_command_block,data=0,top=4000:repeating_command_block_back,bottom=4000:repeating_command_block_front,south=5000:repeating_command_block_side,north=5000:repeating_command_block_side,east=5000:repeating_command_block_side,west=5000:repeating_command_block_side
-block:id=repeating_command_block,data=1,top=4000:repeating_command_block_front,bottom=4000:repeating_command_block_back,south=0:repeating_command_block_side,north=0:repeating_command_block_side,east=0:repeating_command_block_side,west=0:repeating_command_block_side
-block:id=repeating_command_block,data=2,top=6000:repeating_command_block_side,bottom=6000:repeating_command_block_side,south=6000:repeating_command_block_side,north=6000:repeating_command_block_side,east=0:repeating_command_block_front,west=0:repeating_command_block_back
-block:id=repeating_command_block,data=3,top=4000:repeating_command_block_side,bottom=4000:repeating_command_block_side,south=4000:repeating_command_block_side,north=4000:repeating_command_block_side,east=0:repeating_command_block_back,west=0:repeating_command_block_front
-block:id=repeating_command_block,data=4,top=0:repeating_command_block_side,bottom=0:repeating_command_block_side,south=0:repeating_command_block_back,north=0:repeating_command_block_front,east=4000:repeating_command_block_side,west=4000:repeating_command_block_side
-block:id=repeating_command_block,data=5,top=5000:repeating_command_block_side,bottom=5000:repeating_command_block_side,south=0:repeating_command_block_front,north=0:repeating_command_block_back,east=6000:repeating_command_block_side,west=6000:repeating_command_block_side
-block:id=repeating_command_block,data=6,top=4000:repeating_command_block_back,bottom=4000:repeating_command_block_front,south=5000:repeating_command_block_conditional,north=5000:repeating_command_block_conditional,east=5000:repeating_command_block_conditional,west=5000:repeating_command_block_conditional
-block:id=repeating_command_block,data=7,top=4000:repeating_command_block_front,bottom=4000:repeating_command_block_back,south=0:repeating_command_block_conditional,north=0:repeating_command_block_conditional,east=0:repeating_command_block_conditional,west=0:repeating_command_block_conditional
-block:id=repeating_command_block,data=8,top=6000:repeating_command_block_conditional,bottom=6000:repeating_command_block_conditional,south=6000:repeating_command_block_conditional,north=6000:repeating_command_block_conditional,east=0:repeating_command_block_front,west=0:repeating_command_block_back
-block:id=repeating_command_block,data=9,top=4000:repeating_command_block_conditional,bottom=4000:repeating_command_block_conditional,south=4000:repeating_command_block_conditional,north=4000:repeating_command_block_conditional,east=0:repeating_command_block_back,west=0:repeating_command_block_front
-block:id=repeating_command_block,data=10,top=0:repeating_command_block_conditional,bottom=0:repeating_command_block_conditional,south=0:repeating_command_block_back,north=0:repeating_command_block_front,east=4000:repeating_command_block_conditional,west=4000:repeating_command_block_conditional
-block:id=repeating_command_block,data=11,top=5000:repeating_command_block_conditional,bottom=5000:repeating_command_block_conditional,south=0:repeating_command_block_front,north=0:repeating_command_block_back,east=6000:repeating_command_block_conditional,west=6000:repeating_command_block_conditional
+block:id=%repeating_command_block,state=conditional:true/facing:north,patch0=4000:repeating_command_block_conditional,patch1=5000:repeating_command_block_conditional,patch2=0:repeating_command_block_front,patch3=6000:repeating_command_block_conditional,patch4=0:repeating_command_block_conditional,patch5=0:repeating_command_block_back,stdrot=true
+block:id=%repeating_command_block,state=conditional:true/facing:east,patch0=0:repeating_command_block_back,patch1=0:repeating_command_block_conditional,patch2=0:repeating_command_block_front,stdrot=true
+block:id=%repeating_command_block,state=conditional:true/facing:south,patch0=0:repeating_command_block_back,patch1=0:repeating_command_block_conditional,patch2=0:repeating_command_block_front,stdrot=true
+block:id=%repeating_command_block,state=conditional:true/facing:west,patch0=0:repeating_command_block_back,patch1=0:repeating_command_block_conditional,patch2=0:repeating_command_block_front,stdrot=true
+block:id=%repeating_command_block,state=conditional:true/facing:up,patch0=0:repeating_command_block_back,patch1=0:repeating_command_block_conditional,patch2=0:repeating_command_block_front,stdrot=true
+block:id=%repeating_command_block,state=conditional:true/facing:down,patch0=0:repeating_command_block_back,patch1=0:repeating_command_block_conditional,patch2=0:repeating_command_block_front,stdrot=true
+block:id=%repeating_command_block,state=conditional:false/facing:north,patch0=4000:repeating_command_block_side,patch1=5000:repeating_command_block_side,patch2=0:repeating_command_block_front,patch3=6000:repeating_command_block_side,patch4=0:repeating_command_block_side,patch5=0:repeating_command_block_back,stdrot=true
+block:id=%repeating_command_block,state=conditional:false/facing:east,patch0=0:repeating_command_block_back,patch1=0:repeating_command_block_side,patch2=0:repeating_command_block_front,stdrot=true
+block:id=%repeating_command_block,state=conditional:false/facing:south,patch0=0:repeating_command_block_back,patch1=0:repeating_command_block_side,patch2=0:repeating_command_block_front,stdrot=true
+block:id=%repeating_command_block,state=conditional:false/facing:west,patch0=0:repeating_command_block_back,patch1=0:repeating_command_block_side,patch2=0:repeating_command_block_front,stdrot=true
+block:id=%repeating_command_block,state=conditional:false/facing:up,patch0=0:repeating_command_block_back,patch1=0:repeating_command_block_side,patch2=0:repeating_command_block_front,stdrot=true
+block:id=%repeating_command_block,state=conditional:false/facing:down,patch0=0:repeating_command_block_back,patch1=0:repeating_command_block_side,patch2=0:repeating_command_block_front,stdrot=true
 
 # Chain Command Block
-block:id=chain_command_block,data=0,top=4000:chain_command_block_back,bottom=4000:chain_command_block_front,south=5000:chain_command_block_side,north=5000:chain_command_block_side,east=5000:chain_command_block_side,west=5000:chain_command_block_side
-block:id=chain_command_block,data=1,top=4000:chain_command_block_front,bottom=4000:chain_command_block_back,south=0:chain_command_block_side,north=0:chain_command_block_side,east=0:chain_command_block_side,west=0:chain_command_block_side
-block:id=chain_command_block,data=2,top=6000:chain_command_block_side,bottom=6000:chain_command_block_side,south=6000:chain_command_block_side,north=6000:chain_command_block_side,east=0:chain_command_block_front,west=0:chain_command_block_back
-block:id=chain_command_block,data=3,top=4000:chain_command_block_side,bottom=4000:chain_command_block_side,south=4000:chain_command_block_side,north=4000:chain_command_block_side,east=0:chain_command_block_back,west=0:chain_command_block_front
-block:id=chain_command_block,data=4,top=0:chain_command_block_side,bottom=0:chain_command_block_side,south=0:chain_command_block_back,north=0:chain_command_block_front,east=4000:chain_command_block_side,west=4000:chain_command_block_side
-block:id=chain_command_block,data=5,top=5000:chain_command_block_side,bottom=5000:chain_command_block_side,south=0:chain_command_block_front,north=0:chain_command_block_back,east=6000:chain_command_block_side,west=6000:chain_command_block_side
-block:id=chain_command_block,data=6,top=4000:chain_command_block_back,bottom=4000:chain_command_block_front,south=5000:chain_command_block_conditional,north=5000:chain_command_block_conditional,east=5000:chain_command_block_conditional,west=5000:chain_command_block_conditional
-block:id=chain_command_block,data=7,top=4000:chain_command_block_front,bottom=4000:chain_command_block_back,south=0:chain_command_block_conditional,north=0:chain_command_block_conditional,east=0:chain_command_block_conditional,west=0:chain_command_block_conditional
-block:id=chain_command_block,data=8,top=6000:chain_command_block_conditional,bottom=6000:chain_command_block_conditional,south=6000:chain_command_block_conditional,north=6000:chain_command_block_conditional,east=0:chain_command_block_front,west=0:chain_command_block_back
-block:id=chain_command_block,data=9,top=4000:chain_command_block_conditional,bottom=4000:chain_command_block_conditional,south=4000:chain_command_block_conditional,north=4000:chain_command_block_conditional,east=0:chain_command_block_back,west=0:chain_command_block_front
-block:id=chain_command_block,data=10,top=0:chain_command_block_conditional,bottom=0:chain_command_block_conditional,south=0:chain_command_block_back,north=0:chain_command_block_front,east=4000:chain_command_block_conditional,west=4000:chain_command_block_conditional
-block:id=chain_command_block,data=11,top=5000:chain_command_block_conditional,bottom=5000:chain_command_block_conditional,south=0:chain_command_block_front,north=0:chain_command_block_back,east=6000:chain_command_block_conditional,west=6000:chain_command_block_conditional
+block:id=%chain_command_block,state=conditional:true/facing:north,patch0=4000:chain_command_block_conditional,patch1=5000:chain_command_block_conditional,patch2=0:chain_command_block_front,patch3=6000:chain_command_block_conditional,patch4=0:chain_command_block_conditional,patch5=0:chain_command_block_back,stdrot=true
+block:id=%chain_command_block,state=conditional:true/facing:east,patch0=0:chain_command_block_back,patch1=0:chain_command_block_conditional,patch2=0:chain_command_block_front,stdrot=true
+block:id=%chain_command_block,state=conditional:true/facing:south,patch0=0:chain_command_block_back,patch1=0:chain_command_block_conditional,patch2=0:chain_command_block_front,stdrot=true
+block:id=%chain_command_block,state=conditional:true/facing:west,patch0=0:chain_command_block_back,patch1=0:chain_command_block_conditional,patch2=0:chain_command_block_front,stdrot=true
+block:id=%chain_command_block,state=conditional:true/facing:up,patch0=0:chain_command_block_back,patch1=0:chain_command_block_conditional,patch2=0:chain_command_block_front,stdrot=true
+block:id=%chain_command_block,state=conditional:true/facing:down,patch0=0:chain_command_block_back,patch1=0:chain_command_block_conditional,patch2=0:chain_command_block_front,stdrot=true
+block:id=%chain_command_block,state=conditional:false/facing:north,patch0=4000:chain_command_block_side,patch1=5000:chain_command_block_side,patch2=0:chain_command_block_front,patch3=6000:chain_command_block_side,patch4=0:chain_command_block_side,patch5=0:chain_command_block_back,stdrot=true
+block:id=%chain_command_block,state=conditional:false/facing:east,patch0=0:chain_command_block_back,patch1=0:chain_command_block_side,patch2=0:chain_command_block_front,stdrot=true
+block:id=%chain_command_block,state=conditional:false/facing:south,patch0=0:chain_command_block_back,patch1=0:chain_command_block_side,patch2=0:chain_command_block_front,stdrot=true
+block:id=%chain_command_block,state=conditional:false/facing:west,patch0=0:chain_command_block_back,patch1=0:chain_command_block_side,patch2=0:chain_command_block_front,stdrot=true
+block:id=%chain_command_block,state=conditional:false/facing:up,patch0=0:chain_command_block_back,patch1=0:chain_command_block_side,patch2=0:chain_command_block_front,stdrot=true
+block:id=%chain_command_block,state=conditional:false/facing:down,patch0=0:chain_command_block_back,patch1=0:chain_command_block_side,patch2=0:chain_command_block_front,stdrot=true
 
 # Frosted Ice
 block:id=frosted_ice,data=0,allfaces=12000:frosted_ice_0,stdrot=true,transparency=TRANSPARENT
@@ -1667,21 +1653,17 @@ block:id=bone_block,data=0,north=0:bone_block_top,south=0:bone_block_top,east=40
 block:id=bone_block,data=2,north=4000:bone_block_side,south=4000:bone_block_side,east=0:bone_block_top,west=0:bone_block_top,top=4000:bone_block_side,bottom=4000:bone_block_side
 
 # Structure Block
-block:id=structure_block,data=0,stdrot=true,allfaces=0:structure_block_save
-block:id=structure_block,data=1,stdrot=true,allfaces=0:structure_block_load
-block:id=structure_block,data=2,stdrot=true,allfaces=0:structure_block_corner
-block:id=structure_block,data=3,stdrot=true,allfaces=0:structure_block_data
+block:id=%structure_block,state=mode:save,patch0=0:structure_block_save,patch1=0:structure_block_save,patch2=0:structure_block_save,patch3=0:structure_block_save,patch4=0:structure_block_save,patch5=0:structure_block_save,stdrot=true
+block:id=%structure_block,state=mode:load,patch0=0:structure_block_load,patch1=0:structure_block_load,patch2=0:structure_block_load,patch3=0:structure_block_load,patch4=0:structure_block_load,patch5=0:structure_block_load,stdrot=true
+block:id=%structure_block,state=mode:corner,patch0=0:structure_block_corner,patch1=0:structure_block_corner,patch2=0:structure_block_corner,patch3=0:structure_block_corner,patch4=0:structure_block_corner,patch5=0:structure_block_corner,stdrot=true
+block:id=%structure_block,state=mode:data,patch0=0:structure_block_data,patch1=0:structure_block_data,patch2=0:structure_block_data,patch3=0:structure_block_data,patch4=0:structure_block_data,patch5=0:structure_block_data,stdrot=true
 
 # Structure void
 block:id=structure_void,transparency=TRANSPARENT
 
-# Observer Block
-block:id=observer,data=0-1,top=4000:observer_back,east=0:observer_top,south=4000:observer_side,north=4000:observer_side,west=0:observer_top,bottom=4000:observer_front
-block:id=observer,data=2-3,top=4000:observer_front,east=5000:observer_top,south=4000:observer_side,north=4000:observer_side,west=5000:observer_top,bottom=4000:observer_back
-block:id=observer,data=4-5,top=4000:observer_top,east=0:observer_front,south=0:observer_side,north=0:observer_side,west=0:observer_back,bottom=4000:observer_top
-block:id=observer,data=6-7,top=6000:observer_top,east=0:observer_back,south=0:observer_side,north=0:observer_side,west=0:observer_front,bottom=6000:observer_top
-block:id=observer,data=8-9,top=5000:observer_top,east=0:observer_side,south=0:observer_back,north=0:observer_front,west=0:observer_side,bottom=5000:observer_top
-block:id=observer,data=10-11,top=0:observer_top,east=0:observer_side,south=0:observer_front,north=0:observer_back,west=0:observer_side,bottom=0:observer_top
+# Observer Block (top, front, bottom, side)
+block:id=observer,data=0,data=2,data=4,data=6,data=8,data=10,patch0=0:observer_top,patch1=0:observer_front,patch2=0:observer_back_on,patch3=0:observer_side
+block:id=observer,data=1,data=3,data=5,data=7,data=9,data=11,patch0=0:observer_top,patch1=0:observer_front,patch2=0:observer_back,patch3=0:observer_side
 
 # Shulker Blocks (facing bottom)
 block:id=shulker_box,data=0,top=4005,bottom=0,south=5004,north=5002,east=5003,west=5001,txtid=shulker
@@ -1799,71 +1781,22 @@ block:id=black_shulker_box,data=5,top=5001,bottom=5002,south=0,north=7005,east=6
 
 
 # Glazed Terracotta
-block:id=white_glazed_terracotta,data=0,stdrot=true,topbottom=0:white_glazed_terracotta,north=0:white_glazed_terracotta,south=5000:white_glazed_terracotta,west=4000:white_glazed_terracotta,east=6000:white_glazed_terracotta
-block:id=white_glazed_terracotta,data=1,stdrot=true,topbottom=6000:white_glazed_terracotta,east=0:white_glazed_terracotta,west=5000:white_glazed_terracotta,north=4000:white_glazed_terracotta,south=6000:white_glazed_terracotta
-block:id=white_glazed_terracotta,data=2,stdrot=true,topbottom=5000:white_glazed_terracotta,south=0:white_glazed_terracotta,north=5000:white_glazed_terracotta,east=4000:white_glazed_terracotta,west=6000:white_glazed_terracotta
-block:id=white_glazed_terracotta,data=3,stdrot=true,topbottom=4000:white_glazed_terracotta,west=0:white_glazed_terracotta,east=5000:white_glazed_terracotta,south=4000:white_glazed_terracotta,north=6000:white_glazed_terracotta
-block:id=orange_glazed_terracotta,data=0,stdrot=true,topbottom=0:orange_glazed_terracotta,north=0:orange_glazed_terracotta,south=5000:orange_glazed_terracotta,west=4000:orange_glazed_terracotta,east=6000:orange_glazed_terracotta
-block:id=orange_glazed_terracotta,data=1,stdrot=true,topbottom=6000:orange_glazed_terracotta,east=0:orange_glazed_terracotta,west=5000:orange_glazed_terracotta,north=4000:orange_glazed_terracotta,south=6000:orange_glazed_terracotta
-block:id=orange_glazed_terracotta,data=2,stdrot=true,topbottom=5000:orange_glazed_terracotta,south=0:orange_glazed_terracotta,north=5000:orange_glazed_terracotta,east=4000:orange_glazed_terracotta,west=6000:orange_glazed_terracotta
-block:id=orange_glazed_terracotta,data=3,stdrot=true,topbottom=4000:orange_glazed_terracotta,west=0:orange_glazed_terracotta,east=5000:orange_glazed_terracotta,south=4000:orange_glazed_terracotta,north=6000:orange_glazed_terracotta
-block:id=magenta_glazed_terracotta,data=0,stdrot=true,topbottom=0:magenta_glazed_terracotta,north=0:magenta_glazed_terracotta,south=5000:magenta_glazed_terracotta,west=4000:magenta_glazed_terracotta,east=6000:magenta_glazed_terracotta
-block:id=magenta_glazed_terracotta,data=1,stdrot=true,topbottom=6000:magenta_glazed_terracotta,east=0:magenta_glazed_terracotta,west=5000:magenta_glazed_terracotta,north=4000:magenta_glazed_terracotta,south=6000:magenta_glazed_terracotta
-block:id=magenta_glazed_terracotta,data=2,stdrot=true,topbottom=5000:magenta_glazed_terracotta,south=0:magenta_glazed_terracotta,north=5000:magenta_glazed_terracotta,east=4000:magenta_glazed_terracotta,west=6000:magenta_glazed_terracotta
-block:id=magenta_glazed_terracotta,data=3,stdrot=true,topbottom=4000:magenta_glazed_terracotta,west=0:magenta_glazed_terracotta,east=5000:magenta_glazed_terracotta,south=4000:magenta_glazed_terracotta,north=6000:magenta_glazed_terracotta
-block:id=light_blue_glazed_terracotta,data=0,stdrot=true,topbottom=0:light_blue_glazed_terracotta,north=0:light_blue_glazed_terracotta,south=5000:light_blue_glazed_terracotta,west=4000:light_blue_glazed_terracotta,east=6000:light_blue_glazed_terracotta
-block:id=light_blue_glazed_terracotta,data=1,stdrot=true,topbottom=6000:light_blue_glazed_terracotta,east=0:light_blue_glazed_terracotta,west=5000:light_blue_glazed_terracotta,north=4000:light_blue_glazed_terracotta,south=6000:light_blue_glazed_terracotta
-block:id=light_blue_glazed_terracotta,data=2,stdrot=true,topbottom=5000:light_blue_glazed_terracotta,south=0:light_blue_glazed_terracotta,north=5000:light_blue_glazed_terracotta,east=4000:light_blue_glazed_terracotta,west=6000:light_blue_glazed_terracotta
-block:id=light_blue_glazed_terracotta,data=3,stdrot=true,topbottom=4000:light_blue_glazed_terracotta,west=0:light_blue_glazed_terracotta,east=5000:light_blue_glazed_terracotta,south=4000:light_blue_glazed_terracotta,north=6000:light_blue_glazed_terracotta
-block:id=yellow_glazed_terracotta,data=0,stdrot=true,topbottom=0:yellow_glazed_terracotta,north=0:yellow_glazed_terracotta,south=5000:yellow_glazed_terracotta,west=4000:yellow_glazed_terracotta,east=6000:yellow_glazed_terracotta
-block:id=yellow_glazed_terracotta,data=1,stdrot=true,topbottom=6000:yellow_glazed_terracotta,east=0:yellow_glazed_terracotta,west=5000:yellow_glazed_terracotta,north=4000:yellow_glazed_terracotta,south=6000:yellow_glazed_terracotta
-block:id=yellow_glazed_terracotta,data=2,stdrot=true,topbottom=5000:yellow_glazed_terracotta,south=0:yellow_glazed_terracotta,north=5000:yellow_glazed_terracotta,east=4000:yellow_glazed_terracotta,west=6000:yellow_glazed_terracotta
-block:id=yellow_glazed_terracotta,data=3,stdrot=true,topbottom=4000:yellow_glazed_terracotta,west=0:yellow_glazed_terracotta,east=5000:yellow_glazed_terracotta,south=4000:yellow_glazed_terracotta,north=6000:yellow_glazed_terracotta
-block:id=lime_glazed_terracotta,data=0,stdrot=true,topbottom=0:lime_glazed_terracotta,north=0:lime_glazed_terracotta,south=5000:lime_glazed_terracotta,west=4000:lime_glazed_terracotta,east=6000:lime_glazed_terracotta
-block:id=lime_glazed_terracotta,data=1,stdrot=true,topbottom=6000:lime_glazed_terracotta,east=0:lime_glazed_terracotta,west=5000:lime_glazed_terracotta,north=4000:lime_glazed_terracotta,south=6000:lime_glazed_terracotta
-block:id=lime_glazed_terracotta,data=2,stdrot=true,topbottom=5000:lime_glazed_terracotta,south=0:lime_glazed_terracotta,north=5000:lime_glazed_terracotta,east=4000:lime_glazed_terracotta,west=6000:lime_glazed_terracotta
-block:id=lime_glazed_terracotta,data=3,stdrot=true,topbottom=4000:lime_glazed_terracotta,west=0:lime_glazed_terracotta,east=5000:lime_glazed_terracotta,south=4000:lime_glazed_terracotta,north=6000:lime_glazed_terracotta
-block:id=pink_glazed_terracotta,data=0,stdrot=true,topbottom=0:pink_glazed_terracotta,north=0:pink_glazed_terracotta,south=5000:pink_glazed_terracotta,west=4000:pink_glazed_terracotta,east=6000:pink_glazed_terracotta
-block:id=pink_glazed_terracotta,data=1,stdrot=true,topbottom=6000:pink_glazed_terracotta,east=0:pink_glazed_terracotta,west=5000:pink_glazed_terracotta,north=4000:pink_glazed_terracotta,south=6000:pink_glazed_terracotta
-block:id=pink_glazed_terracotta,data=2,stdrot=true,topbottom=5000:pink_glazed_terracotta,south=0:pink_glazed_terracotta,north=5000:pink_glazed_terracotta,east=4000:pink_glazed_terracotta,west=6000:pink_glazed_terracotta
-block:id=pink_glazed_terracotta,data=3,stdrot=true,topbottom=4000:pink_glazed_terracotta,west=0:pink_glazed_terracotta,east=5000:pink_glazed_terracotta,south=4000:pink_glazed_terracotta,north=6000:pink_glazed_terracotta
-block:id=gray_glazed_terracotta,data=0,stdrot=true,topbottom=0:gray_glazed_terracotta,north=0:gray_glazed_terracotta,south=5000:gray_glazed_terracotta,west=4000:gray_glazed_terracotta,east=6000:gray_glazed_terracotta
-block:id=gray_glazed_terracotta,data=1,stdrot=true,topbottom=6000:gray_glazed_terracotta,east=0:gray_glazed_terracotta,west=5000:gray_glazed_terracotta,north=4000:gray_glazed_terracotta,south=6000:gray_glazed_terracotta
-block:id=gray_glazed_terracotta,data=2,stdrot=true,topbottom=5000:gray_glazed_terracotta,south=0:gray_glazed_terracotta,north=5000:gray_glazed_terracotta,east=4000:gray_glazed_terracotta,west=6000:gray_glazed_terracotta
-block:id=gray_glazed_terracotta,data=3,stdrot=true,topbottom=4000:gray_glazed_terracotta,west=0:gray_glazed_terracotta,east=5000:gray_glazed_terracotta,south=4000:gray_glazed_terracotta,north=6000:gray_glazed_terracotta
-block:id=light_gray_glazed_terracotta,data=0,stdrot=true,topbottom=0:light_gray_glazed_terracotta,north=0:light_gray_glazed_terracotta,south=5000:light_gray_glazed_terracotta,west=4000:light_gray_glazed_terracotta,east=6000:light_gray_glazed_terracotta
-block:id=light_gray_glazed_terracotta,data=1,stdrot=true,topbottom=6000:light_gray_glazed_terracotta,east=0:light_gray_glazed_terracotta,west=5000:light_gray_glazed_terracotta,north=4000:light_gray_glazed_terracotta,south=6000:light_gray_glazed_terracotta
-block:id=light_gray_glazed_terracotta,data=2,stdrot=true,topbottom=5000:light_gray_glazed_terracotta,south=0:light_gray_glazed_terracotta,north=5000:light_gray_glazed_terracotta,east=4000:light_gray_glazed_terracotta,west=6000:light_gray_glazed_terracotta
-block:id=light_gray_glazed_terracotta,data=3,stdrot=true,topbottom=4000:light_gray_glazed_terracotta,west=0:light_gray_glazed_terracotta,east=5000:light_gray_glazed_terracotta,south=4000:light_gray_glazed_terracotta,north=6000:light_gray_glazed_terracotta
-block:id=cyan_glazed_terracotta,data=0,stdrot=true,topbottom=0:cyan_glazed_terracotta,north=0:cyan_glazed_terracotta,south=5000:cyan_glazed_terracotta,west=4000:cyan_glazed_terracotta,east=6000:cyan_glazed_terracotta
-block:id=cyan_glazed_terracotta,data=1,stdrot=true,topbottom=6000:cyan_glazed_terracotta,east=0:cyan_glazed_terracotta,west=5000:cyan_glazed_terracotta,north=4000:cyan_glazed_terracotta,south=6000:cyan_glazed_terracotta
-block:id=cyan_glazed_terracotta,data=2,stdrot=true,topbottom=5000:cyan_glazed_terracotta,south=0:cyan_glazed_terracotta,north=5000:cyan_glazed_terracotta,east=4000:cyan_glazed_terracotta,west=6000:cyan_glazed_terracotta
-block:id=cyan_glazed_terracotta,data=3,stdrot=true,topbottom=4000:cyan_glazed_terracotta,west=0:cyan_glazed_terracotta,east=5000:cyan_glazed_terracotta,south=4000:cyan_glazed_terracotta,north=6000:cyan_glazed_terracotta
-block:id=purple_glazed_terracotta,data=0,stdrot=true,topbottom=0:purple_glazed_terracotta,north=0:purple_glazed_terracotta,south=5000:purple_glazed_terracotta,west=4000:purple_glazed_terracotta,east=6000:purple_glazed_terracotta
-block:id=purple_glazed_terracotta,data=1,stdrot=true,topbottom=6000:purple_glazed_terracotta,east=0:purple_glazed_terracotta,west=5000:purple_glazed_terracotta,north=4000:purple_glazed_terracotta,south=6000:purple_glazed_terracotta
-block:id=purple_glazed_terracotta,data=2,stdrot=true,topbottom=5000:purple_glazed_terracotta,south=0:purple_glazed_terracotta,north=5000:purple_glazed_terracotta,east=4000:purple_glazed_terracotta,west=6000:purple_glazed_terracotta
-block:id=purple_glazed_terracotta,data=3,stdrot=true,topbottom=4000:purple_glazed_terracotta,west=0:purple_glazed_terracotta,east=5000:purple_glazed_terracotta,south=4000:purple_glazed_terracotta,north=6000:purple_glazed_terracotta
-block:id=blue_glazed_terracotta,data=0,stdrot=true,topbottom=0:blue_glazed_terracotta,north=0:blue_glazed_terracotta,south=5000:blue_glazed_terracotta,west=4000:blue_glazed_terracotta,east=6000:blue_glazed_terracotta
-block:id=blue_glazed_terracotta,data=1,stdrot=true,topbottom=6000:blue_glazed_terracotta,east=0:blue_glazed_terracotta,west=5000:blue_glazed_terracotta,north=4000:blue_glazed_terracotta,south=6000:blue_glazed_terracotta
-block:id=blue_glazed_terracotta,data=2,stdrot=true,topbottom=5000:blue_glazed_terracotta,south=0:blue_glazed_terracotta,north=5000:blue_glazed_terracotta,east=4000:blue_glazed_terracotta,west=6000:blue_glazed_terracotta
-block:id=blue_glazed_terracotta,data=3,stdrot=true,topbottom=4000:blue_glazed_terracotta,west=0:blue_glazed_terracotta,east=5000:blue_glazed_terracotta,south=4000:blue_glazed_terracotta,north=6000:blue_glazed_terracotta
-block:id=brown_glazed_terracotta,data=0,stdrot=true,topbottom=0:brown_glazed_terracotta,north=0:brown_glazed_terracotta,south=5000:brown_glazed_terracotta,west=4000:brown_glazed_terracotta,east=6000:brown_glazed_terracotta
-block:id=brown_glazed_terracotta,data=1,stdrot=true,topbottom=6000:brown_glazed_terracotta,east=0:brown_glazed_terracotta,west=5000:brown_glazed_terracotta,north=4000:brown_glazed_terracotta,south=6000:brown_glazed_terracotta
-block:id=brown_glazed_terracotta,data=2,stdrot=true,topbottom=5000:brown_glazed_terracotta,south=0:brown_glazed_terracotta,north=5000:brown_glazed_terracotta,east=4000:brown_glazed_terracotta,west=6000:brown_glazed_terracotta
-block:id=brown_glazed_terracotta,data=3,stdrot=true,topbottom=4000:brown_glazed_terracotta,west=0:brown_glazed_terracotta,east=5000:brown_glazed_terracotta,south=4000:brown_glazed_terracotta,north=6000:brown_glazed_terracotta
-block:id=green_glazed_terracotta,data=0,stdrot=true,topbottom=0:green_glazed_terracotta,north=0:green_glazed_terracotta,south=5000:green_glazed_terracotta,west=4000:green_glazed_terracotta,east=6000:green_glazed_terracotta
-block:id=green_glazed_terracotta,data=1,stdrot=true,topbottom=6000:green_glazed_terracotta,east=0:green_glazed_terracotta,west=5000:green_glazed_terracotta,north=4000:green_glazed_terracotta,south=6000:green_glazed_terracotta
-block:id=green_glazed_terracotta,data=2,stdrot=true,topbottom=5000:green_glazed_terracotta,south=0:green_glazed_terracotta,north=5000:green_glazed_terracotta,east=4000:green_glazed_terracotta,west=6000:green_glazed_terracotta
-block:id=green_glazed_terracotta,data=3,stdrot=true,topbottom=4000:green_glazed_terracotta,west=0:green_glazed_terracotta,east=5000:green_glazed_terracotta,south=4000:green_glazed_terracotta,north=6000:green_glazed_terracotta
-block:id=red_glazed_terracotta,data=0,stdrot=true,topbottom=0:red_glazed_terracotta,north=0:red_glazed_terracotta,south=5000:red_glazed_terracotta,west=4000:red_glazed_terracotta,east=6000:red_glazed_terracotta
-block:id=red_glazed_terracotta,data=1,stdrot=true,topbottom=6000:red_glazed_terracotta,east=0:red_glazed_terracotta,west=5000:red_glazed_terracotta,north=4000:red_glazed_terracotta,south=6000:red_glazed_terracotta
-block:id=red_glazed_terracotta,data=2,stdrot=true,topbottom=5000:red_glazed_terracotta,south=0:red_glazed_terracotta,north=5000:red_glazed_terracotta,east=4000:red_glazed_terracotta,west=6000:red_glazed_terracotta
-block:id=red_glazed_terracotta,data=3,stdrot=true,topbottom=4000:red_glazed_terracotta,west=0:red_glazed_terracotta,east=5000:red_glazed_terracotta,south=4000:red_glazed_terracotta,north=6000:red_glazed_terracotta
-block:id=black_glazed_terracotta,data=0,stdrot=true,topbottom=0:black_glazed_terracotta,north=0:black_glazed_terracotta,south=5000:black_glazed_terracotta,west=4000:black_glazed_terracotta,east=6000:black_glazed_terracotta
-block:id=black_glazed_terracotta,data=1,stdrot=true,topbottom=6000:black_glazed_terracotta,east=0:black_glazed_terracotta,west=5000:black_glazed_terracotta,north=4000:black_glazed_terracotta,south=6000:black_glazed_terracotta
-block:id=black_glazed_terracotta,data=2,stdrot=true,topbottom=5000:black_glazed_terracotta,south=0:black_glazed_terracotta,north=5000:black_glazed_terracotta,east=4000:black_glazed_terracotta,west=6000:black_glazed_terracotta
-block:id=black_glazed_terracotta,data=3,stdrot=true,topbottom=4000:black_glazed_terracotta,west=0:black_glazed_terracotta,east=5000:black_glazed_terracotta,south=4000:black_glazed_terracotta,north=6000:black_glazed_terracotta
-
+block:id=white_glazed_terracotta,data=*,patch0=0:white_glazed_terracotta
+block:id=orange_glazed_terracotta,data=*,patch0=0:orange_glazed_terracotta
+block:id=magenta_glazed_terracotta,data=*,patch0=0:magenta_glazed_terracotta
+block:id=light_blue_glazed_terracotta,data=*,patch0=0:light_blue_glazed_terracotta
+block:id=yellow_glazed_terracotta,data=*,patch0=0:yellow_glazed_terracotta
+block:id=lime_glazed_terracotta,data=*,patch0=0:lime_glazed_terracotta
+block:id=pink_glazed_terracotta,data=*,patch0=0:pink_glazed_terracotta
+block:id=gray_glazed_terracotta,data=*,patch0=0:gray_glazed_terracotta
+block:id=light_gray_glazed_terracotta,data=*,patch0=0:light_gray_glazed_terracotta
+block:id=cyan_glazed_terracotta,data=*,patch0=0:cyan_glazed_terracotta
+block:id=purple_glazed_terracotta,data=*,patch0=0:purple_glazed_terracotta
+block:id=blue_glazed_terracotta,data=*,patch0=0:blue_glazed_terracotta
+block:id=brown_glazed_terracotta,data=*,patch0=0:brown_glazed_terracotta
+block:id=green_glazed_terracotta,data=*,patch0=0:green_glazed_terracotta
+block:id=red_glazed_terracotta,data=*,patch0=0:red_glazed_terracotta
+block:id=black_glazed_terracotta,data=*,patch0=0:black_glazed_terracotta
 # Concrete
 block:id=white_concrete,stdrot=true,allfaces=0:white_concrete
 block:id=orange_concrete,stdrot=true,allfaces=0:orange_concrete
@@ -1944,13 +1877,13 @@ texture:id=sea_pickle
 texture:id=conduit
 
 # Kelp
-block:id=kelp,patch0-1=1000:kelp,transparency=TRANSPARENT
+block:id=%kelp,patch0=3000:kelp,transparency=SEMITRANSPARENT,stdrot=true
 
 # Kelp plant
-block:id=kelp_plant,patch0-1=1000:kelp_plant,transparency=TRANSPARENT
+block:id=%kelp_plant,patch0=3000:kelp_plant,transparency=SEMITRANSPARENT,stdrot=true
 
 # Dried kelp block
-block:id=dried_kelp_block,allsides=0:dried_kelp_side,top=0:dried_kelp_top,bottom=0:dried_kelp_bottom,stdrot=true
+block:id=%dried_kelp_block,patch0=0:dried_kelp_side,patch1=0:dried_kelp_bottom,patch2=0:dried_kelp_top,stdrot=true
 
 # Turtle egg
 block:id=turtle_egg,data=0,data=3,data=6,data=9,patch0-5=0:turtle_egg,transparency=TRANSPARENT
@@ -2132,9 +2065,10 @@ block:id=black_banner,id=black_wall_banner,data=*,patch0=0:oak_planks,patch1=0:b
 [1.14-]texture:id=wither_rose
 [1.14-]texture:id=lily_of_the_valley
 [1.14-]texture:id=smooth_stone_slab_side
-[1.14-]texture:id=smooth_stone
 [1.14-]texture:id=bamboo_stage0
 [1.14-]texture:id=bamboo_stalk
+[1.14-]texture:id=bamboo_small_leaves
+[1.14-]texture:id=bamboo_large_leaves
 [1.14-]texture:id=scaffolding_top
 [1.14-]texture:id=scaffolding_side
 [1.14-]texture:id=scaffolding_bottom
@@ -2174,15 +2108,14 @@ block:id=black_banner,id=black_wall_banner,data=*,patch0=0:oak_planks,patch1=0:b
 [1.14-]texture:id=sweet_berry_bush_stage1
 [1.14-]texture:id=sweet_berry_bush_stage2
 [1.14-]texture:id=sweet_berry_bush_stage3
-[1.14-]texture:id=grindstone_pivot,format=CUSTOM,tile0=0:0/10:6:3:5,tile1=0:0/10:6:4:5
-[1.14-]texture:id=grindstone_round,format=CUSTOM,tile0=0:0/8:12/4:0,tile1=0:0/8:12/4:2
-[1.14-]texture:id=grindstone_side,format=CUSTOM,tile0=0:0/12:12/2:0
+[1.14-]texture:id=grindstone_pivot
+[1.14-]texture:id=grindstone_round
+[1.14-]texture:id=grindstone_side
 [1.14-]texture:id=lectern_base
 [1.14-]texture:id=lectern_front
 [1.14-]texture:id=lectern_sides
 [1.14-]texture:id=lectern_top
-# tile0=up/down ot first box, tile1=sides of first box, tile2=top of second box, tile3=sides of second box, tile4=n/s of first cross (unhung), tile5=e/w of second cross (unhung), tile6= n/s of first cross (hung), tile7=e/2 of second cross (hung)
-[1.14-]texturefile:id=lantern,filename=assets/minecraft/textures/block/lantern.png,format=CUSTOM,tile0=0:9/7:7/5:5,tile1=0:2/7:8/5:7,tile2=1:10/5:5/6:6,tile3=1:0/5:3/6:6,tile4=11:1/5:3/6:5,tile5=11:10/5:3/6:5,tile6=11:1/5:5/6:0,tile7=11:10/5:5/6:0,xcount=1,ycount=3
+[1.14-]texture:id=lantern
 [1.14-]texture:id=smithing_table_front
 [1.14-]texture:id=smithing_table_side
 [1.14-]texture:id=smithing_table_top
@@ -2194,9 +2127,9 @@ block:id=black_banner,id=black_wall_banner,data=*,patch0=0:oak_planks,patch1=0:b
 [1.14-]texture:id=campfire_log
 [1.14-]texture:id=campfire_log_lit
 [1.14-]texture:id=campfire_fire
-[1.14-]texture:id=bell_top,format=CUSTOM,tile0=0:0/8:8/4:4
-[1.14-]texture:id=bell_side,format=CUSTOM,tile0=0:0/8:9/4:3
-[1.14-]texture:id=bell_bottom,format=CUSTOM,tile0=0:0/8:8/4:4
+[1.14-]texture:id=bell_top,format=CUSTOM,tile0=0:0/8:8/4:4,xcount=1,ycount=1
+[1.14-]texture:id=bell_side,format=CUSTOM,tile0=0:0/8:9/4:3,xcount=1,ycount=1
+[1.14-]texture:id=bell_bottom,format=CUSTOM,tile0=0:0/8:8/4:4,xcount=1,ycount=1
 
 # Signpost
 [1.14-]block:id=oak_sign,patch0=0,patch1=1,patch2=2,patch3=3,patch4=4,patch5=5,patch6=6,patch7=7,patch8=8,patch9=9,transparency=TRANSPARENT,txtid=oak_sign
@@ -2236,7 +2169,7 @@ block:id=black_banner,id=black_wall_banner,data=*,patch0=0:oak_planks,patch1=0:b
 # Bamboo Sapling
 [1.14-]block:id=bamboo_sapling,patch0-1=0:bamboo_stage0,transparency=TRANSPARENT
 # Bamboo
-[1.14-]block:id=bamboo,data=0-11,patch0-5=0:bamboo_stalk,transparency=TRANSPARENT
+[1.14-]block:id=bamboo,data=0-11,patch0=0:bamboo_stalk,patch1=0:bamboo_small_leaves,patch2=0:bamboo_large_leaves,transparency=TRANSPARENT
 # Potted bamboo
 [1.14-]block:id=potted_bamboo,patch0-5=0:flower_pot,patch6=0:dirt,patch7-8=0:bamboo_stage0,transparency=TRANSPARENT
 # Polished Granite Stairs
@@ -2356,18 +2289,18 @@ block:id=black_banner,id=black_wall_banner,data=*,patch0=0:oak_planks,patch1=0:b
 [1.14-]block:id=sweet_berry_bush,data=1,patch0-1=0:sweet_berry_bush_stage1,transparency=TRANSPARENT
 [1.14-]block:id=sweet_berry_bush,data=2,patch0-1=0:sweet_berry_bush_stage2,transparency=TRANSPARENT
 [1.14-]block:id=sweet_berry_bush,data=3,patch0-1=0:sweet_berry_bush_stage3,transparency=TRANSPARENT
-# Grindstone
-[1.14-]block:id=grindstone,patch0=6000:grindstone_pivot,patch1=0:grindstone_round,patch2=0:grindstone_side,patch4=0:dark_oak_log,patch5=1:grindstone_round,patch6=6001:grindstone_pivot,transparency=TRANSPARENT
+# Grindstone (grindstone_pivot, grindstone_round, grindstone_side, dark_oak_log)
+[1.14-]block:id=grindstone,patch0=0:grindstone_pivot,patch1=0:grindstone_round,patch2=0:grindstone_side,patch3=0:dark_oak_log,transparency=TRANSPARENT
 # Lectern
 [1.14-]block:id=lectern,patch0=0:oak_planks,patch1=0:lectern_base,patch2=0:lectern_front,patch3=0:lectern_sides,patch4=0:lectern_top,transparency=TRANSPARENT
 # Lantern
-[1.14-]block:id=lantern,patch0=0:lantern,patch1=1:lantern,patch2=2:lantern,patch3=3:lantern,patch4=4:lantern,patch5=5:lantern,patch6=6:lantern,patch7=7:lantern,transparency=TRANSPARENT
+[1.14-]block:id=lantern,patch0=0:lantern,transparency=TRANSPARENT
 # Smithing table
 [1.14-]block:id=smithing_table,top=0:smithing_table_top,bottom=0:smithing_table_bottom,north=0:smithing_table_side,south=0:smithing_table_side,east=0:smithing_table_front,west=0:smithing_table_front,stdrot=true
 # Stonecutter
 [1.14-]block:id=stonecutter,patch0=0:stonecutter_bottom,patch1=0:stonecutter_top,patch2=0:stonecutter_side,patch3=0:stonecutter_saw,transparency=TRANSPARENT
 # Campfire
-[1.14-]block:id=campfire,patch0=0:campfire_log,patch1=0:campfire_log_lit,patch2=0:campfire_fire,transparency=TRANSPARENT
+[1.14-]block:id=campfire,data=*,patch0=0:campfire_log,patch1=0:campfire_log_lit,patch2=0:campfire_fire,transparency=TRANSPARENT
 # Bell
 [1.14-]block:id=bell,patch0=0:dark_oak_planks,patch1=0:stone,patch2=0:bell_bottom,patch3=0:bell_top,patch4=0:bell_side,transparency=TRANSPARENT
 
@@ -2407,11 +2340,10 @@ block:id=black_banner,id=black_wall_banner,data=*,patch0=0:oak_planks,patch1=0:b
 [1.16-]texture:id=polished_basalt_side
 [1.16-]texture:id=polished_basalt_top
 [1.16-]texture:id=soul_torch
-[1.16-]texturefile:id=chain,filename=assets/minecraft/textures/block/chain.png,format=CUSTOM,tile0=0:0/3:16/6:0,tile1=3:0/3:16/6:0,xcount=2,ycount=1
+[1.16-]texture:id=chain
 [1.16-]texture:id=soul_campfire_log_lit
 [1.16-]texture:id=soul_campfire_fire
-# tile0=up/down ot first box, tile1=sides of first box, tile2=top of second box, tile3=sides of second box, tile4=n/s of first cross (unhung), tile5=e/w of second cross (unhung), tile6= n/s of first cross (hung), tile7=e/2 of second cross (hung)
-[1.16-]texturefile:id=soul_lantern,filename=assets/minecraft/textures/block/soul_lantern.png,format=CUSTOM,tile0=0:9/7:7/5:5,tile1=0:2/7:8/5:7,tile2=1:10/5:5/6:6,tile3=1:0/5:3/6:6,tile4=11:1/5:3/6:5,tile5=11:10/5:3/6:5,tile6=11:1/5:5/6:0,tile7=11:10/5:5/6:0,xcount=1,ycount=3
+[1.16-]texture:id=soul_lantern
 [1.16-]texture:id=warped_stem_top
 [1.16-]texture:id=warped_stem
 [1.16-]texture:id=stripped_warped_stem_top
@@ -2475,7 +2407,7 @@ block:id=black_banner,id=black_wall_banner,data=*,patch0=0:oak_planks,patch1=0:b
 # Nether gold ore
 [1.16-]block:id=nether_gold_ore,allfaces=0:nether_gold_ore,stdrot=true
 # Soul Fire
-[1.16-]block:id=soul_fire,patch0-3=0:soul_fire_0,patch4-7=0:soul_fire_1,transparency=TRANSPARENT
+[1.16-]block:id=soul_fire,patch0=0:soul_fire_0,transparency=TRANSPARENT
 # Soul soil
 [1.16-]block:id=soul_soil,allfaces=0:soul_soil,stdrot=true
 # Basalt
@@ -2491,12 +2423,11 @@ block:id=black_banner,id=black_wall_banner,data=*,patch0=0:oak_planks,patch1=0:b
 # Soul Wall torch
 [1.16-]block:id=soul_wall_torch,data=0,data=1,data=2,data=3,patch0=0:soul_torch,transparency=TRANSPARENT
 # Chain
-[1.16-]block:id=chain,patch0=0:chain,patch1=1:chain,transparency=TRANSPARENT
+[1.16-]block:id=chain,patch0=0:chain,transparency=TRANSPARENT
 # Soul Lantern
 [1.16-]block:id=soul_lantern,patch0=0:soul_lantern,transparency=TRANSPARENT
-[1.16-]block:id=soul_lantern,patch0=0:soul_lantern,patch1=1:soul_lantern,patch2=2:soul_lantern,patch3=3:soul_lantern,patch4=4:soul_lantern,patch5=5:soul_lantern,patch6=6:soul_lantern,patch7=7:soul_lantern,transparency=TRANSPARENT
 # Soul Campfire
-[1.16-]block:id=soul_campfire,patch0=0:campfire_log,patch1=0:soul_campfire_log_lit,patch2=0:soul_campfire_fire,transparency=TRANSPARENT
+[1.16-]block:id=soul_campfire,data=*,patch0=0:campfire_log,patch1=0:soul_campfire_log_lit,patch2=0:soul_campfire_fire,transparency=TRANSPARENT
 # Warped Stem
 [1.16-]block:id=warped_stem,data=1,allsides=0:warped_stem,topbottom=0:warped_stem_top,stdrot=true
 [1.16-]block:id=warped_stem,data=0,north=0:warped_stem_top,south=0:warped_stem_top,east=4000:warped_stem,west=4000:warped_stem,top=0:warped_stem,bottom=0:warped_stem
@@ -2769,7 +2700,7 @@ block:id=black_banner,id=black_wall_banner,data=*,patch0=0:oak_planks,patch1=0:b
 [1.17-]texture:id=budding_amethyst
 
 # Dirt path
-[1.17-]block:id=dirt_path,allsides=0:dirt_path_side,top=0:dirt_path_top,bottom=0:dirt,stdrot=true, transparency=TRANSPARENT
+[1.17-]block:id=dirt_path,allsides=0:dirt_path_side,top=0:dirt_path_top,bottom=0:dirt,stdrot=true, transparency=SEMITRANSPARENT
 # Deepslate
 [1.17-]block:id=deepslate,data=1,allsides=0:deepslate,topbottom=0:deepslate_top,stdrot=true
 [1.17-]block:id=deepslate,data=0,north=0:deepslate_top,south=0:deepslate_top,east=4000:deepslate,west=4000:deepslate,top=0:deepslate,bottom=0:deepslate
@@ -2837,9 +2768,9 @@ block:id=black_banner,id=black_wall_banner,data=*,patch0=0:oak_planks,patch1=0:b
 # Deepslate copper ore
 [1.17-]block:id=deepslate_copper_ore,allfaces=0:deepslate_copper_ore,stdrot=true
 # Leaves (azalea)
-[1.17-]block:id=azalea_leaves,allfaces=2000:azalea_leaves,stdrot=true,transparency=LEAVES
+[1.17-]block:id=azalea_leaves,allfaces=0:azalea_leaves,stdrot=true,transparency=TRANSPARENT
 # Leaves (flowering azalea)
-[1.17-]block:id=flowering_azalea_leaves,allfaces=2000:flowering_azalea_leaves,stdrot=true,transparency=LEAVES
+[1.17-]block:id=flowering_azalea_leaves,allfaces=0:flowering_azalea_leaves,stdrot=true,transparency=TRANSPARENT
 # Glow lichens
 [1.17-]block:id=glow_lichen,patch0-4=0:glow_lichen,transparency=TRANSPARENT
 # Calcite
@@ -3142,27 +3073,30 @@ block:id=black_banner,id=black_wall_banner,data=*,patch0=0:oak_planks,patch1=0:b
 [1.17-]block:id=%black_candle_cake,data=1,patch0=0:cake_side,patch1=0:cake_side,patch2=0:cake_bottom,patch3=0:cake_side,patch4=0:cake_top,patch5=0:cake_side,patch6=0:black_candle,patch7=0:black_candle,patch8=0:black_candle,patch9=0:black_candle,patch10=0:black_candle,patch11=0:black_candle,patch12=0:black_candle,patch13=0:black_candle,patch14=0:black_candle,patch15=0:black_candle,transparency=SEMITRANSPARENT,stdrot=true
 
 # Water Cauldron
-[1.17-]block:id=water_cauldron,data=*,top=0:cauldron_top,bottom=0:cauldron_bottom,allsides=0:cauldron_side,stdrot=true,transparency=TRANSPARENT
+[1.17-]block:id=%water_cauldron,patch0=0:cauldron_side,patch1=0:cauldron_inner,patch2=0:cauldron_top,patch3=0:cauldron_bottom,patch4=3000:water_still,transparency=TRANSPARENT,stdrot=true
 # Lava Cauldron
-[1.17-]block:id=lava_cauldron,data=*,top=0:cauldron_top,bottom=0:cauldron_bottom,allsides=0:cauldron_side,stdrot=true,transparency=TRANSPARENT
+[1.17-]block:id=%lava_cauldron,patch0=0:cauldron_side,patch1=0:cauldron_inner,patch2=0:cauldron_top,patch3=0:cauldron_bottom,patch4=0:lava_still,transparency=TRANSPARENT,stdrot=true
 # Powder Snow Cauldron
-[1.17-]block:id=powder_snow_cauldron,data=*,top=0:cauldron_top,bottom=0:cauldron_bottom,allsides=0:cauldron_side,stdrot=true,transparency=TRANSPARENT
+[1.17-]block:id=%powder_snow_cauldron,patch0=0:cauldron_side,patch1=0:cauldron_inner,patch2=0:cauldron_top,patch3=0:cauldron_bottom,patch4=0:powder_snow,transparency=TRANSPARENT,stdrot=true
+
 # Budding amethyst
 [1.17-]block:id=budding_amethyst,allfaces=0:budding_amethyst,stdrot=true
-# Sculk Sensor
+# Sculk Sensor (sculk_sensor_bottom, sculk_sensor_side, sculk_sensor_tendril_inactive/active, sculk_sensor_top)
 [1.17-]texture:id=sculk_sensor_side
 [1.17-]texture:id=sculk_sensor_bottom
 [1.17-]texture:id=sculk_sensor_top
 [1.17-]texture:id=sculk_sensor_tendril_inactive
 [1.17-]texture:id=sculk_sensor_tendril_active
-
-[1.17-]block:id=%sculk_sensor,data=0,data=1,data=6,data=7,data=12,data=13,patch0=0:sculk_sensor_side,patch1=0:sculk_sensor_side,patch2=0:sculk_sensor_bottom,patch3=0:sculk_sensor_side,patch4=0:sculk_sensor_side,patch5=0:sculk_sensor_top,patch6=0:sculk_sensor_tendril_inactive,patch7=0:sculk_sensor_tendril_inactive,patch8=0:sculk_sensor_tendril_inactive,patch9=0:sculk_sensor_tendril_inactive,patch10=0:sculk_sensor_tendril_inactive,patch11=0:sculk_sensor_tendril_inactive,patch12=0:sculk_sensor_tendril_inactive,patch13=0:sculk_sensor_tendril_inactive,transparency=SEMITRANSPARENT,stdrot=true
-[1.17-]block:id=%sculk_sensor,data=2,data=3,data=8,data=9,data=14,data=15,patch0=0:sculk_sensor_side,patch1=0:sculk_sensor_side,patch2=0:sculk_sensor_bottom,patch3=0:sculk_sensor_side,patch4=0:sculk_sensor_side,patch5=0:sculk_sensor_top,patch6=0:sculk_sensor_tendril_active,patch7=0:sculk_sensor_tendril_active,patch8=0:sculk_sensor_tendril_active,patch9=0:sculk_sensor_tendril_active,patch10=0:sculk_sensor_tendril_active,patch11=0:sculk_sensor_tendril_active,patch12=0:sculk_sensor_tendril_active,patch13=0:sculk_sensor_tendril_active,transparency=SEMITRANSPARENT,stdrot=true
-[1.17-]block:id=%sculk_sensor,data=4,data=5,data=10,data=11,patch0=0:sculk_sensor_side,patch1=0:sculk_sensor_side,patch2=0:sculk_sensor_bottom,patch3=0:sculk_sensor_side,patch4=0:sculk_sensor_side,patch5=0:sculk_sensor_top,patch6=0:sculk_sensor_tendril_inactive,patch7=0:sculk_sensor_tendril_inactive,patch8=0:sculk_sensor_tendril_inactive,patch9=0:sculk_sensor_tendril_inactive,patch10=0:sculk_sensor_tendril_inactive,patch11=0:sculk_sensor_tendril_inactive,patch12=0:sculk_sensor_tendril_inactive,patch13=0:sculk_sensor_tendril_inactive,transparency=SEMITRANSPARENT,stdrot=true
+# Sculk Sensor (inactive)
+[1.17-]block:id=sculk_sensor,data=0,data=1,data=6,data=7,data=10,data=11,data=14,data=15,data=18,data=19,data=22,data=23,data=26,data=27,data=30,data=31,data=34,data=35,data=38,data=39,data=42,data=43,data=46,data=47,data=50,data=51,data=54,data=55,data=58,data=59,data=62,data=63,data=66,data=67,data=70,data=71,data=74,data=75,data=78,data=79,data=82,data=83,data=86,data=87,data=90,data=91,patch0=0:sculk_sensor_bottom,patch1=0:sculk_sensor_side,patch2=0:sculk_sensor_tendril_inactive,patch3=0:sculk_sensor_top
+# Sculk Sensor (active)
+[1.17-]block:id=sculk_sensor,data=2,data=3,data=8,data=9,data=12,data=13,data=16,data=17,data=20,data=21,data=24,data=25,data=28,data=29,data=32,data=33,data=36,data=37,data=40,data=41,data=44,data=45,data=48,data=49,data=52,data=53,data=56,data=57,data=60,data=61,data=64,data=65,data=68,data=69,data=72,data=73,data=76,data=77,data=80,data=81,data=84,data=85,data=88,data=89,data=92,data=93,patch0=0:sculk_sensor_bottom,patch1=0:sculk_sensor_side,patch2=0:sculk_sensor_tendril_active,patch3=0:sculk_sensor_top
+# Sculk Sensor (cooldown)
+[1.17-]block:id=sculk_sensor,data=4,data=5,data=10,data=11,data=14,data=15,data=18,data=19,data=22,data=23,data=26,data=27,data=30,data=31,data=34,data=35,data=38,data=39,data=42,data=43,data=46,data=47,data=50,data=51,data=54,data=55,data=58,data=59,data=62,data=63,data=66,data=67,data=70,data=71,data=70,data=71,data=78,data=79,data=82,data=83,data=86,data=87,data=90,data=91,data=94,data=95,patch0=0:sculk_sensor_bottom,patch1=0:sculk_sensor_side,patch2=0:sculk_sensor_tendril_inactive,patch3=0:sculk_sensor_top
 # Spore blossom
 [1.17-]texture:id=spore_blossom_base
 [1.17-]texture:id=spore_blossom
-[1.17-]block:id=%spore_blossom,data=0,patch0=0:spore_blossom_base,patch1=0:spore_blossom_base,patch2=4000:spore_blossom,patch3=6000:spore_blossom,patch4=6000:spore_blossom,patch5=4000:spore_blossom,patch6=0:spore_blossom,patch7=0:spore_blossom,patch8=0:spore_blossom,patch9=0:spore_blossom,transparency=TRANSPARENT,stdrot=true
+[1.17-]block:id=%spore_blossom,patch0=0:spore_blossom_base,patch1=0:spore_blossom,transparency=TRANSPARENT,stdrot=true
 # Azalea
 [1.17-]texture:id=azalea_top
 [1.17-]texture:id=azalea_side
@@ -3172,20 +3106,49 @@ block:id=black_banner,id=black_wall_banner,data=*,patch0=0:oak_planks,patch1=0:b
 [1.17-]block:id=%azalea,data=0,patch0=0:azalea_top,patch1=0:azalea_top,patch2=0:azalea_side,patch3=0:azalea_side,patch4=0:azalea_side,patch5=0:azalea_side,patch6=0:azalea_side,patch7=0:azalea_side,patch8=0:azalea_side,patch9=0:azalea_side,patch10=0:azalea_plant,patch11=0:azalea_plant,patch12=0:azalea_plant,patch13=0:azalea_plant,transparency=SEMITRANSPARENT,stdrot=true
 [1.17-]block:id=%flowering_azalea,data=0,patch0=0:flowering_azalea_top,patch1=0:flowering_azalea_top,patch2=0:flowering_azalea_side,patch3=0:flowering_azalea_side,patch4=0:flowering_azalea_side,patch5=0:flowering_azalea_side,patch6=0:flowering_azalea_side,patch7=0:flowering_azalea_side,patch8=0:flowering_azalea_side,patch9=0:flowering_azalea_side,patch10=0:azalea_plant,patch11=0:azalea_plant,patch12=0:azalea_plant,patch13=0:azalea_plant,transparency=SEMITRANSPARENT,stdrot=true
 # Dripleaf
+[1.17-]texture:id=big_dripleaf_stem,filename=assets/minecraft/textures/block/big_dripleaf_stem.png,xcount=1,ycount=1,xcount=1,ycount=1
+[1.17-]texture:id=big_dripleaf_top,filename=assets/minecraft/textures/block/big_dripleaf_top.png,xcount=1,ycount=1
+[1.17-]texture:id=big_dripleaf_tip,filename=assets/minecraft/textures/block/big_dripleaf_tip.png,xcount=1,ycount=1
+[1.17-]texture:id=big_dripleaf_side,filename=assets/minecraft/textures/block/big_dripleaf_side.png,xcount=1,ycount=1
 [1.17-]texture:id=big_dripleaf_stem,filename=assets/minecraft/textures/block/big_dripleaf_stem.png,xcount=1,ycount=1
 [1.17-]texture:id=small_dripleaf_top,filename=assets/minecraft/textures/block/small_dripleaf_top.png,xcount=1,ycount=1
 [1.17-]texture:id=small_dripleaf_side,filename=assets/minecraft/textures/block/small_dripleaf_side.png,xcount=1,ycount=1
 [1.17-]texture:id=small_dripleaf_stem_top,filename=assets/minecraft/textures/block/small_dripleaf_stem_top.png,xcount=1,ycount=1
 [1.17-]texture:id=small_dripleaf_stem_bottom,filename=assets/minecraft/textures/block/small_dripleaf_stem_bottom.png,xcount=1,ycount=1
-[1.17-]block:id=%big_dripleaf_stem,data=0,data=1,patch0=0:big_dripleaf_stem,patch1=0:big_dripleaf_stem,patch2=0:big_dripleaf_stem,patch3=0:big_dripleaf_stem,transparency=TRANSPARENT,stdrot=true
-[1.17-]block:id=%big_dripleaf_stem,data=2,data=3,patch0=0:big_dripleaf_stem,patch1=0:big_dripleaf_stem,patch2=0:big_dripleaf_stem,patch3=0:big_dripleaf_stem,transparency=TRANSPARENT,stdrot=true
-[1.17-]block:id=%big_dripleaf_stem,data=4,data=5,patch0=0:big_dripleaf_stem,patch1=0:big_dripleaf_stem,patch2=0:big_dripleaf_stem,patch3=0:big_dripleaf_stem,transparency=TRANSPARENT,stdrot=true
-[1.17-]block:id=%big_dripleaf_stem,data=6,data=7,patch0=0:big_dripleaf_stem,patch1=0:big_dripleaf_stem,patch2=0:big_dripleaf_stem,patch3=0:big_dripleaf_stem,transparency=TRANSPARENT,stdrot=true
-[1.17-]block:id=%small_dripleaf,data=0,data=1,patch0=0:small_dripleaf_top,patch1=0:small_dripleaf_top,patch2=0:small_dripleaf_top,patch3=0:small_dripleaf_top,patch4=4000:small_dripleaf_top,patch5=4000:small_dripleaf_top,patch6=0:small_dripleaf_side,patch7=0:small_dripleaf_side,patch8=0:small_dripleaf_side,patch9=0:small_dripleaf_side,patch10=0:small_dripleaf_side,patch11=0:small_dripleaf_side,patch12=0:small_dripleaf_side,patch13=0:small_dripleaf_side,patch14=0:small_dripleaf_side,patch15=0:small_dripleaf_side,patch16=0:small_dripleaf_side,patch17=0:small_dripleaf_side,patch18=0:small_dripleaf_stem_top,patch19=0:small_dripleaf_stem_top,patch20=0:small_dripleaf_stem_top,patch21=0:small_dripleaf_stem_top,transparency=TRANSPARENT,stdrot=true
-[1.17-]block:id=%small_dripleaf,data=2,data=3,patch0=0:small_dripleaf_stem_bottom,patch1=0:small_dripleaf_stem_bottom,patch2=0:small_dripleaf_stem_bottom,patch3=0:small_dripleaf_stem_bottom,transparency=TRANSPARENT,stdrot=true
-[1.17-]block:id=%small_dripleaf,data=4,data=5,patch0=5000:small_dripleaf_top,patch1=5000:small_dripleaf_top,patch2=5000:small_dripleaf_top,patch3=5000:small_dripleaf_top,patch4=6000:small_dripleaf_top,patch5=6000:small_dripleaf_top,patch6=0:small_dripleaf_side,patch7=0:small_dripleaf_side,patch8=0:small_dripleaf_side,patch9=0:small_dripleaf_side,patch10=0:small_dripleaf_side,patch11=0:small_dripleaf_side,patch12=0:small_dripleaf_side,patch13=0:small_dripleaf_side,patch14=0:small_dripleaf_side,patch15=0:small_dripleaf_side,patch16=0:small_dripleaf_side,patch17=0:small_dripleaf_side,patch18=0:small_dripleaf_stem_top,patch19=0:small_dripleaf_stem_top,patch20=0:small_dripleaf_stem_top,patch21=0:small_dripleaf_stem_top,transparency=TRANSPARENT,stdrot=true
-[1.17-]block:id=%small_dripleaf,data=6,data=7,patch0=0:small_dripleaf_stem_bottom,patch1=0:small_dripleaf_stem_bottom,patch2=0:small_dripleaf_stem_bottom,patch3=0:small_dripleaf_stem_bottom,transparency=TRANSPARENT,stdrot=true
-[1.17-]block:id=%small_dripleaf,data=8,data=9,patch0=6000:small_dripleaf_top,patch1=4000:small_dripleaf_top,patch2=6000:small_dripleaf_top,patch3=4000:small_dripleaf_top,patch4=0:small_dripleaf_top,patch5=5000:small_dripleaf_top,patch6=0:small_dripleaf_side,patch7=0:small_dripleaf_side,patch8=0:small_dripleaf_side,patch9=0:small_dripleaf_side,patch10=0:small_dripleaf_side,patch11=0:small_dripleaf_side,patch12=0:small_dripleaf_side,patch13=0:small_dripleaf_side,patch14=0:small_dripleaf_side,patch15=0:small_dripleaf_side,patch16=0:small_dripleaf_side,patch17=0:small_dripleaf_side,patch18=0:small_dripleaf_stem_top,patch19=0:small_dripleaf_stem_top,patch20=0:small_dripleaf_stem_top,patch21=0:small_dripleaf_stem_top,transparency=TRANSPARENT,stdrot=true
-[1.17-]block:id=%small_dripleaf,data=10,data=11,patch0=0:small_dripleaf_stem_bottom,patch1=0:small_dripleaf_stem_bottom,patch2=0:small_dripleaf_stem_bottom,patch3=0:small_dripleaf_stem_bottom,transparency=TRANSPARENT,stdrot=true
-[1.17-]block:id=%small_dripleaf,data=12,data=13,patch0=4000:small_dripleaf_top,patch1=6000:small_dripleaf_top,patch2=4000:small_dripleaf_top,patch3=6000:small_dripleaf_top,patch4=5000:small_dripleaf_top,patch5=0:small_dripleaf_top,patch6=0:small_dripleaf_side,patch7=0:small_dripleaf_side,patch8=0:small_dripleaf_side,patch9=0:small_dripleaf_side,patch10=0:small_dripleaf_side,patch11=0:small_dripleaf_side,patch12=0:small_dripleaf_side,patch13=0:small_dripleaf_side,patch14=0:small_dripleaf_side,patch15=0:small_dripleaf_side,patch16=0:small_dripleaf_side,patch17=0:small_dripleaf_side,patch18=0:small_dripleaf_stem_top,patch19=0:small_dripleaf_stem_top,patch20=0:small_dripleaf_stem_top,patch21=0:small_dripleaf_stem_top,transparency=TRANSPARENT,stdrot=true
-[1.17-]block:id=%small_dripleaf,data=14,data=15,patch0=0:small_dripleaf_stem_bottom,patch1=0:small_dripleaf_stem_bottom,patch2=0:small_dripleaf_stem_bottom,patch3=0:small_dripleaf_stem_bottom,transparency=TRANSPARENT,stdrot=true
+[1.17-]block:id=%big_dripleaf,state=facing:north/tilt:none,patch0=0:big_dripleaf_top,patch1=0:big_dripleaf_tip,patch2=0:big_dripleaf_side,patch3=0:big_dripleaf_stem,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%big_dripleaf,state=facing:north/tilt:unstable,patch0=0:big_dripleaf_top,patch1=0:big_dripleaf_tip,patch2=0:big_dripleaf_side,patch3=0:big_dripleaf_stem,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%big_dripleaf,state=facing:north/tilt:partial,patch0=0:big_dripleaf_top,patch1=0:big_dripleaf_tip,patch2=0:big_dripleaf_side,patch3=0:big_dripleaf_stem,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%big_dripleaf,state=facing:north/tilt:full,patch0=0:big_dripleaf_top,patch1=0:big_dripleaf_tip,patch2=0:big_dripleaf_side,patch3=0:big_dripleaf_stem,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%big_dripleaf,state=facing:south/tilt:none,patch0=0:big_dripleaf_top,patch1=0:big_dripleaf_tip,patch2=0:big_dripleaf_side,patch3=0:big_dripleaf_stem,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%big_dripleaf,state=facing:south/tilt:unstable,patch0=0:big_dripleaf_top,patch1=0:big_dripleaf_tip,patch2=0:big_dripleaf_side,patch3=0:big_dripleaf_stem,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%big_dripleaf,state=facing:south/tilt:partial,patch0=0:big_dripleaf_top,patch1=0:big_dripleaf_tip,patch2=0:big_dripleaf_side,patch3=0:big_dripleaf_stem,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%big_dripleaf,state=facing:south/tilt:full,patch0=0:big_dripleaf_top,patch1=0:big_dripleaf_tip,patch2=0:big_dripleaf_side,patch3=0:big_dripleaf_stem,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%big_dripleaf,state=facing:west/tilt:none,patch0=0:big_dripleaf_top,patch1=0:big_dripleaf_tip,patch2=0:big_dripleaf_side,patch3=0:big_dripleaf_stem,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%big_dripleaf,state=facing:west/tilt:unstable,patch0=0:big_dripleaf_top,patch1=0:big_dripleaf_tip,patch2=0:big_dripleaf_side,patch3=0:big_dripleaf_stem,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%big_dripleaf,state=facing:west/tilt:partial,patch0=0:big_dripleaf_top,patch1=0:big_dripleaf_tip,patch2=0:big_dripleaf_side,patch3=0:big_dripleaf_stem,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%big_dripleaf,state=facing:west/tilt:full,patch0=0:big_dripleaf_top,patch1=0:big_dripleaf_tip,patch2=0:big_dripleaf_side,patch3=0:big_dripleaf_stem,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%big_dripleaf,state=facing:east/tilt:none,patch0=0:big_dripleaf_top,patch1=0:big_dripleaf_tip,patch2=0:big_dripleaf_side,patch3=0:big_dripleaf_stem,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%big_dripleaf,state=facing:east/tilt:unstable,patch0=0:big_dripleaf_top,patch1=0:big_dripleaf_tip,patch2=0:big_dripleaf_side,patch3=0:big_dripleaf_stem,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%big_dripleaf,state=facing:east/tilt:partial,patch0=0:big_dripleaf_top,patch1=0:big_dripleaf_tip,patch2=0:big_dripleaf_side,patch3=0:big_dripleaf_stem,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%big_dripleaf,state=facing:east/tilt:full,patch0=0:big_dripleaf_top,patch1=0:big_dripleaf_tip,patch2=0:big_dripleaf_side,patch3=0:big_dripleaf_stem,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%big_dripleaf_stem,state=facing:north,patch0=0:big_dripleaf_stem,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%big_dripleaf_stem,state=facing:south,patch0=0:big_dripleaf_stem,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%big_dripleaf_stem,state=facing:west,patch0=0:big_dripleaf_stem,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%big_dripleaf_stem,state=facing:east,patch0=0:big_dripleaf_stem,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%small_dripleaf,state=facing:north/half:upper,patch0=0:small_dripleaf_top,patch1=0:small_dripleaf_side,patch2=0:small_dripleaf_stem_top,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%small_dripleaf,state=facing:north/half:lower,patch0=0:small_dripleaf_stem_bottom,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%small_dripleaf,state=facing:south/half:upper,patch0=0:small_dripleaf_top,patch1=0:small_dripleaf_side,patch2=0:small_dripleaf_stem_top,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%small_dripleaf,state=facing:south/half:lower,patch0=0:small_dripleaf_stem_bottom,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%small_dripleaf,state=facing:west/half:upper,patch0=0:small_dripleaf_top,patch1=0:small_dripleaf_side,patch2=0:small_dripleaf_stem_top,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%small_dripleaf,state=facing:west/half:lower,patch0=0:small_dripleaf_stem_bottom,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%small_dripleaf,state=facing:east/half:upper,patch0=0:small_dripleaf_top,patch1=0:small_dripleaf_side,patch2=0:small_dripleaf_stem_top,transparency=SEMITRANSPARENT,stdrot=true
+[1.17-]block:id=%small_dripleaf,state=facing:east/half:lower,patch0=0:small_dripleaf_stem_bottom,transparency=SEMITRANSPARENT,stdrot=true
+
+# Attached pumpkin stem
+block:id=%attached_pumpkin_stem,patch0=0:pumpkin_stem,patch1=0:attached_pumpkin_stem,blockcolor=foliagebiome,transparency=TRANSPARENT,stdrot=true
+# Attached melon stem
+block:id=%attached_melon_stem,patch0=0:melon_stem,patch1=0:attached_melon_stem,blockcolor=foliagebiome,transparency=TRANSPARENT,stdrot=true
+# Pumpkin stem
+block:id=%pumpkin_stem,patch0=0:pumpkin_stem,blockcolor=foliagebiome,transparency=TRANSPARENT,stdrot=true
+# Melon stem
+block:id=%melon_stem,patch0=0:melon_stem,blockcolor=foliagebiome,transparency=TRANSPARENT,stdrot=true

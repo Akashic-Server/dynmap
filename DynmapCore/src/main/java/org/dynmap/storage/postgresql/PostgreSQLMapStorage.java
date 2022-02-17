@@ -27,7 +27,6 @@ import org.dynmap.storage.MapStorageBaseTileEnumCB;
 import org.dynmap.storage.MapStorageTile;
 import org.dynmap.storage.MapStorageTileEnumCB;
 import org.dynmap.storage.MapStorageTileSearchEndCB;
-import org.dynmap.storage.mysql.MySQLMapStorage.StorageTile;
 import org.dynmap.utils.BufferInputStream;
 import org.dynmap.utils.BufferOutputStream;
 
@@ -312,6 +311,10 @@ public class PostgreSQLMapStorage extends MapStorage {
     	if (!core.isInternalWebServerDisabled) {	// If using internal server
     		cfgfile.delete();	// Zap file (in case we left junk from last time)
     		return true;
+    	}
+    	// During initial startup, this can happen before baseStandaloneDir is setup
+    	if (!baseStandaloneDir.exists()) {
+    		baseStandaloneDir.mkdirs();
     	}
         FileWriter fw = null;
         try {
