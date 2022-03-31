@@ -39,6 +39,14 @@ storage:
   #userid: dynmap
   #password: dynmap
   #prefix: ""
+  #
+  # AWS S3 backet web site
+  #type: aws_s3
+  #bucketname: "dynmap-bucket-name"
+  #region: us-east-1
+  #aws_access_key_id: "<aws-access-key-id>"
+  #aws_secret_access_key: "<aws-secret-access-key>"  
+  #prefix: ""
 
 components:
   - class: org.dynmap.ClientConfigurationComponent
@@ -383,6 +391,7 @@ grayplayerswhenhidden: true
 #    X-Custom-Header-Of-Mine: "MyHeaderValue"
 
 # Trusted proxies for web server - which proxy addresses are trusted to supply valid X-Forwarded-For fields
+#   This now supports both IP address, and subnet ranges (e.g. 192.168.1.0/24 or 202.24.0.0/14 )
 trusted-proxies:
   - "127.0.0.1"
   - "0:0:0:0:0:0:0:1"

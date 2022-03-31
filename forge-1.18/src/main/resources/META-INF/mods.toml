@@ -21,6 +21,6 @@ Dynamic, Google-maps style rendered maps for your Minecraft server
 [[dependencies.dynmap]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.18,1.19)"
+    versionRange="[1.18,1.18.2)"
     ordering="NONE"
     side="SERVER"

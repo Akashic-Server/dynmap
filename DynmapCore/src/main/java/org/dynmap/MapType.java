@@ -30,13 +30,15 @@ public abstract class MapType {
     }
     
     public enum ImageEncoding {
-        PNG("png", "image/png"), JPG("jpg", "image/jpeg"), WEBP("webp", "image/webp");
+        PNG("png", "image/png", true), JPG("jpg", "image/jpeg", false), WEBP("webp", "image/webp", true);
         public final String ext;
         public final String mimetype;
+        public final boolean hasAlpha;
         
-        ImageEncoding(String ext, String mime) {
+        ImageEncoding(String ext, String mime, boolean has_alpha) {
             this.ext = ext;
             this.mimetype = mime;
+            this.hasAlpha = has_alpha;
         }
         public String getFileExt() { return ext; }
         public String getContentType() { return mimetype; }
@@ -45,6 +47,15 @@ public abstract class MapType {
             ImageEncoding[] v = values();
             if ((ix >= 0) && (ix < v.length))
                 return v[ix];
+            return null;
+        }
+        public static ImageEncoding fromContentType(String ct) {
+            ImageEncoding[] v = values();
+            for (int i = 0; i < v.length; i++) {
+                if (v[i].mimetype.equalsIgnoreCase(ct)) {
+                    return v[i];
+                }
+            }
             return null;
         }
         public static ImageEncoding fromExt(String x) {
@@ -115,6 +126,8 @@ public abstract class MapType {
 
     public abstract List<DynmapChunk> getRequiredChunks(MapTile tile);
     
+    public abstract int getTileSize();
+
     public void buildClientConfiguration(JSONObject worldObject, DynmapWorld w) {
     }
 
