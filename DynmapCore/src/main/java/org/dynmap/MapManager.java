@@ -293,6 +293,7 @@ public class MapManager {
         boolean pausedforworld = false;
         boolean updaterender = false;
         boolean resume = false;
+        boolean resumeInitDone = false;
         boolean quiet = false;
         String mapname;
         AtomicLong total_render_ns = new AtomicLong(0L);
@@ -311,32 +312,6 @@ public class MapManager {
                 rendertype = RENDERTYPE_FULLRENDER;
             }
             this.resume = resume;
-
-            final CountDownLatch latch = new CountDownLatch(1);
-
-            if (resume) { // if resume render
-                final MapStorage ms = world.getMapStorage();
-                ms.enumMapBaseTiles(world, map, new MapStorageBaseTileEnumCB() {
-                    @Override
-                    public void tileFound(MapStorageTile tile, MapType.ImageEncoding enc) {
-                        String tileId = String.format("%s_%s_%d_%d", tile.world.getName(), tile.map.getName(), tile.x, tile.y);
-                        //sender.sendMessage("Tile found: " + tileId);
-                        storedTileIds.add(tileId);
-                    }
-                }, new MapStorageTileSearchEndCB() {
-                    @Override
-                    public void searchEnded() {
-                        latch.countDown();
-                    }
-                });
-
-                try {
-                    latch.await(10, TimeUnit.SECONDS);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    sender.sendMessage(e.toString());
-                }
-            }
         }
         
         /* Full world, all maps render, with optional render radius */
@@ -528,6 +503,27 @@ public class MapManager {
             	}
             	return;
             }
+            // If doing resume, load existing tile IDs here (constructor was stupid, and caused timeouts for non-trivial maps - need to check PRs better....
+            if (resume && (!resumeInitDone)) { // if resume render AND init not completed
+                sendMessage(String.format("Scanning map to find existing tiles for resume..."));
+                final MapStorage ms = world.getMapStorage();
+                ms.enumMapBaseTiles(world, map, new MapStorageBaseTileEnumCB() {
+                    @Override
+                    public void tileFound(MapStorageTile tile, MapType.ImageEncoding enc) {
+                        String tileId = String.format("%s_%s_%d_%d", tile.world.getName(), tile.map.getName(), tile.x, tile.y);
+                        //sender.sendMessage("Tile found: " + tileId);
+                        storedTileIds.add(tileId);
+                    }
+                }, new MapStorageTileSearchEndCB() {
+                    @Override
+                    public void searchEnded() {
+                    	
+                    }
+                });
+                sendMessage(String.format("Scan complete - starting render"));
+                resumeInitDone = true;	// Only due on first run
+            }
+            
             if(tile0 == null) {    /* Not single tile render */
                 if (saverestorepending && world.isLoaded() && (savependingperiod > 0) && ((lastPendingSaveTS + (1000 *savependingperiod))  < System.currentTimeMillis())) {
                     savePending(this.world, true);    // Save the pending data for the given world

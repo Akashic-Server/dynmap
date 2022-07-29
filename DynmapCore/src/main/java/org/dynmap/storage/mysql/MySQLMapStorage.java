@@ -85,6 +85,8 @@ public class MySQLMapStorage extends MapStorage {
             } catch (SQLException x) {
             	logSQLException("Tile exists error", x);
                 err = true;
+            } catch (StorageShutdownException x) {
+            	err = true;
             } finally {
                 releaseConnection(c, err);
             }
@@ -110,6 +112,8 @@ public class MySQLMapStorage extends MapStorage {
             } catch (SQLException x) {
             	logSQLException("Tile matches hash error", x);
                 err = true;
+            } catch (StorageShutdownException x) {
+            	err = true;
             } finally {
                 releaseConnection(c, err);
             }
@@ -140,6 +144,8 @@ public class MySQLMapStorage extends MapStorage {
             } catch (SQLException x) {
             	logSQLException("Tile read error", x);
                 err = true;
+            } catch (StorageShutdownException x) {
+            	err = true;
             } finally {
                 releaseConnection(c, err);
             }
@@ -196,6 +202,8 @@ public class MySQLMapStorage extends MapStorage {
             } catch (SQLException x) {
             	logSQLException("Tile write error", x);
                 err = true;
+            } catch (StorageShutdownException x) {
+            	err = true;
             } finally {
                 releaseConnection(c, err);
             }
@@ -382,6 +390,8 @@ public class MySQLMapStorage extends MapStorage {
             stmt.close();
         } catch (SQLException x) {
             err = true;
+        } catch (StorageShutdownException x) {
+        	err = true;
         } finally {
             if (c != null) { releaseConnection(c, err); }
         }
@@ -421,6 +431,8 @@ public class MySQLMapStorage extends MapStorage {
         } catch (SQLException x) {
         	logSQLException("Error loading map table", x);
             err = true;
+        } catch (StorageShutdownException x) {
+        	err = true;
         } finally {
             releaseConnection(c, err);
             c = null;
@@ -460,6 +472,8 @@ public class MySQLMapStorage extends MapStorage {
                 } catch (SQLException x) {
                 	logSQLException("Error updating Maps table", x);
                     err = true;
+                } catch (StorageShutdownException x) {
+                	err = true;
                 } finally {
                     releaseConnection(c, err);
                 }
@@ -492,6 +506,9 @@ public class MySQLMapStorage extends MapStorage {
             	logSQLException("Error creating tables", x);
                 err = true;
                 return false;
+            } catch (StorageShutdownException x) {
+            	err = true;
+            	return false;
             } finally {
                 releaseConnection(c, err);
                 c = null;
@@ -509,6 +526,9 @@ public class MySQLMapStorage extends MapStorage {
             	logSQLException("Error updating tables to version=2", x);
                 err = true;
                 return false;
+            } catch (StorageShutdownException x) {
+            	err = true;
+            	return false;
             } finally {
                 releaseConnection(c, err);
                 c = null;
@@ -527,6 +547,9 @@ public class MySQLMapStorage extends MapStorage {
             	logSQLException("Error updating tables to version=3", x);
                 err = true;
                 return false;
+            } catch (StorageShutdownException x) {
+            	err = true;
+            	return false;
             } finally {
                 releaseConnection(c, err);
                 c = null;
@@ -545,6 +568,9 @@ public class MySQLMapStorage extends MapStorage {
             	logSQLException("Error updating tables to version=4", x);
                 err = true;
                 return false;
+            } catch (StorageShutdownException x) {
+            	err = true;
+            	return false;
             } finally {
                 releaseConnection(c, err);
                 c = null;
@@ -579,6 +605,9 @@ public class MySQLMapStorage extends MapStorage {
             	logSQLException("Error updating tables to version=5", x);
                 err = true;
                 return false;
+            } catch (StorageShutdownException x) {
+            	err = true;
+            	return false;
             } finally {
                 releaseConnection(c, err);
                 c = null;
@@ -595,6 +624,9 @@ public class MySQLMapStorage extends MapStorage {
             	logSQLException("Error updating tables to version=5", x);
                 err = true;
                 return false;
+            } catch (StorageShutdownException x) {
+            	err = true;
+            	return false;
             } finally {
                 releaseConnection(c, err);
                 c = null;
@@ -607,8 +639,9 @@ public class MySQLMapStorage extends MapStorage {
         return true;
     }
         
-    private Connection getConnection() throws SQLException {
+    private Connection getConnection() throws SQLException, StorageShutdownException {
         Connection c = null;
+        if (isShutdown) { throw new StorageShutdownException(); }
         synchronized (cpool) {
             while (c == null) {
                 for (int i = 0; i < cpool.length; i++) {    // See if available connection
@@ -759,25 +792,36 @@ public class MySQLMapStorage extends MapStorage {
         }
         try {
             c = getConnection();
-            // Query tiles for given mapkey
-            Statement stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT x,y,zoom,Format FROM " + tableTiles + " WHERE MapID=" + mapkey + ";");
-            while (rs.next()) {
-                StorageTile st = new StorageTile(world, map, rs.getInt("x"), rs.getInt("y"), rs.getInt("zoom"), var);
-                final MapType.ImageEncoding encoding = MapType.ImageEncoding.fromOrd(rs.getInt("Format"));
-                if(cb != null)
-                    cb.tileFound(st, encoding);
-                if(cbBase != null && st.zoom == 0)
-                    cbBase.tileFound(st, encoding);
-                st.cleanup();
+            boolean done = false;
+            int limit = 100;
+            int offset = 0;
+            while (!done) {
+	            // Query tiles for given mapkey
+	            Statement stmt = c.createStatement();
+	            ResultSet rs = stmt.executeQuery(String.format("SELECT x,y,zoom,Format FROM %s WHERE MapID=%d OFFSET %d LIMIT %d;", tableTiles, mapkey, offset, limit));
+	            int cnt = 0;
+	            while (rs.next()) {
+	                StorageTile st = new StorageTile(world, map, rs.getInt("x"), rs.getInt("y"), rs.getInt("zoom"), var);
+	                final MapType.ImageEncoding encoding = MapType.ImageEncoding.fromOrd(rs.getInt("Format"));
+	                if(cb != null)
+	                    cb.tileFound(st, encoding);
+	                if(cbBase != null && st.zoom == 0)
+	                    cbBase.tileFound(st, encoding);
+	                st.cleanup();
+	                cnt++;
+	            }
+	            rs.close();
+	            stmt.close();
+	            if (cnt < limit) done = true;
+	            offset += cnt;
             }
             if(cbEnd != null)
                 cbEnd.searchEnded();
-            rs.close();
-            stmt.close();
         } catch (SQLException x) {
         	logSQLException("Tile enum error", x);
             err = true;
+        } catch (StorageShutdownException x) {
+        	err = true;
         } finally {
             releaseConnection(c, err);
         }
@@ -816,6 +860,8 @@ public class MySQLMapStorage extends MapStorage {
         } catch (SQLException x) {
         	logSQLException("Tile purge error", x);
             err = true;
+        } catch (StorageShutdownException x) {
+        	err = true;
         } finally {
             releaseConnection(c, err);
         }
@@ -855,6 +901,8 @@ public class MySQLMapStorage extends MapStorage {
         } catch (SQLException x) {
         	logSQLException("Face write error", x);
             err = true;
+        } catch (StorageShutdownException x) {
+        	err = true;
         } finally {
             releaseConnection(c, err);
         }
@@ -882,6 +930,8 @@ public class MySQLMapStorage extends MapStorage {
         } catch (SQLException x) {
         	logSQLException("Face reqd error", x);
             err = true;
+        } catch (StorageShutdownException x) {
+        	err = true;
         } finally {
             releaseConnection(c, err);
         }
@@ -907,6 +957,8 @@ public class MySQLMapStorage extends MapStorage {
         } catch (SQLException x) {
         	logSQLException("Face exists error", x);
             err = true;
+        } catch (StorageShutdownException x) {
+        	err = true;
         } finally {
             releaseConnection(c, err);
         }
@@ -954,6 +1006,8 @@ public class MySQLMapStorage extends MapStorage {
         } catch (SQLException x) {
         	logSQLException("Marker write error", x);
             err = true;
+        } catch (StorageShutdownException x) {
+        	err = true;
         } finally {
             if (rs != null) { try { rs.close(); } catch (SQLException sx) {} }
             if (stmt != null) { try { stmt.close(); } catch (SQLException sx) {} }
@@ -981,6 +1035,8 @@ public class MySQLMapStorage extends MapStorage {
         } catch (SQLException x) {
         	logSQLException("Marker read error", x);
             err = true;
+        } catch (StorageShutdownException x) {
+        	err = true;
         } finally {
             releaseConnection(c, err);
         }
@@ -1027,6 +1083,8 @@ public class MySQLMapStorage extends MapStorage {
         } catch (SQLException x) {
         	logSQLException("Marker file write error", x);
             err = true;
+        } catch (StorageShutdownException x) {
+        	err = true;
         } finally {
             if (rs != null) { try { rs.close(); } catch (SQLException sx) {} }
             if (stmt != null) { try { stmt.close(); } catch (SQLException sx) {} }
@@ -1054,6 +1112,8 @@ public class MySQLMapStorage extends MapStorage {
         } catch (SQLException x) {
         	logSQLException("Marker file read error", x);
             err = true;
+        } catch (StorageShutdownException x) {
+        	err = true;
         } finally {
             releaseConnection(c, err);
         }
@@ -1110,6 +1170,8 @@ public class MySQLMapStorage extends MapStorage {
         } catch (SQLException x) {
         	logSQLException("Standalone file read error", x);
             err = true;
+        } catch (StorageShutdownException x) {
+        	err = true;
         } finally {
             releaseConnection(c, err);
         }
@@ -1160,6 +1222,8 @@ public class MySQLMapStorage extends MapStorage {
         } catch (SQLException x) {
         	logSQLException("Standalone file write error", x);
             err = true;
+        } catch (StorageShutdownException x) {
+        	err = true;
         } finally {
             if (rs != null) { try { rs.close(); } catch (SQLException sx) {} }
             if (stmt != null) { try { stmt.close(); } catch (SQLException sx) {} }

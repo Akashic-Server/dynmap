@@ -34,6 +34,7 @@ public class ChunkVersionHDShader implements HDShader {
 
     	}
     };
+    // Mapping from https://minecraft.fandom.com/wiki/Data_version
     final static DataVersionMap[] versionmap = {
     	new DataVersionMap(0, "unknown", 0x202020),
     	new DataVersionMap(1519, "1.13.0", 0xF9E79F),
@@ -57,6 +58,9 @@ public class ChunkVersionHDShader implements HDShader {
     	new DataVersionMap(2730, "1.17.1", 0xEB984E),
     	new DataVersionMap(2860, "1.18.0", 0xA3E4D7),
     	new DataVersionMap(2865, "1.18.1", 0x48C9B0),
+    	new DataVersionMap(2975, "1.18.2", 0x38bfa5),
+    	new DataVersionMap(3105, "1.19",   0xd56f82),
+    	new DataVersionMap(3116, "1.19.1", 0xe196a4),
     };
     final static Color unknown_color = new Color(255, 255, 255);
     
