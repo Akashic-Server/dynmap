@@ -138,7 +138,11 @@ public class PostgreSQLMapStorage extends MapStorage {
                     rslt.lastModified = rs.getLong("LastUpdate");
                     rslt.format = MapType.ImageEncoding.fromOrd(rs.getInt("Format"));
                     byte[] img = rs.getBytes("Image");
-                    rslt.image = new BufferInputStream(img);
+                    if (img == null) {
+                    	rslt = null;
+                	} else {
+                		rslt.image = new BufferInputStream(img);
+                	}
                 }
                 rs.close();
                 stmt.close();
@@ -704,7 +708,7 @@ public class PostgreSQLMapStorage extends MapStorage {
             while (!done) {
 	            // Query tiles for given mapkey
 	            Statement stmt = c.createStatement();
-	            ResultSet rs = stmt.executeQuery(String.format("SELECT x,y,zoom,Format FROM %s WHERE MapID=%d OFFSET %d LIMIT %d;", tableTiles, mapKey, offset, limit));
+	            ResultSet rs = stmt.executeQuery(String.format("SELECT x,y,zoom,Format FROM %s WHERE MapID=%d OFFSET %d LIMIT %d;", tableTiles, mapkey, offset, limit));
 	            int cnt = 0;
 	            while (rs.next()) {
 	                StorageTile st = new StorageTile(world, map, rs.getInt("x"), rs.getInt("y"), rs.getInt("zoom"), var);
