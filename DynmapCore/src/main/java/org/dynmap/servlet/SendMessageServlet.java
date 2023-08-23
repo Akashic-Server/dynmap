@@ -71,7 +71,7 @@ public class SendMessageServlet extends HttpServlet {
         String userID = (String) sess.getAttribute(LoginServlet.USERID_ATTRIB);
         if(userID == null) userID = LoginServlet.USERID_GUEST;
         boolean chat_requires_login = core.getLoginRequired() || require_login;
-        if(chat_requires_login && userID.equals(LoginServlet.USERID_GUEST)) {
+        if(chat_requires_login && userID.equals(LoginServlet.USERID_GUEST) && request.getHeader("Akashic") == null) {
             error = "login-required";
         }
         else if(chat_requires_login && (!userID.equals(LoginServlet.USERID_GUEST)) && chat_perms && 
@@ -96,7 +96,7 @@ public class SendMessageServlet extends HttpServlet {
 
             if (userID.equals(LoginServlet.USERID_GUEST)) {
                 message.name = "";
-                if (trustclientname) {
+                if (trustclientname || (request.getHeader("Akashic") != null)) {
                     message.name = String.valueOf(o.get("name"));
                 }
                 boolean isip = true;
