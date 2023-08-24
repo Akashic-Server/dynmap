@@ -16,7 +16,7 @@ public class SimpleWebChatComponent extends Component {
             @Override
             public void triggered(ChatEvent t) {
                 if(plugin.getServer().sendWebChatEvent(t.source, t.name, t.message)) {
-                    if (!t.message.contains("[QQ]") && !t.message.contains("[KOOK]")) {
+                    if (!t.name.contains("[QQ]") && !t.name.contains("[KOOK]")) {
                         String msg;
                         String msgfmt = plugin.configuration.getString("webmsgformat", null);
                         if (msgfmt != null) {
