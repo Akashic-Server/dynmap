@@ -25,7 +25,9 @@ public class SimpleWebChatComponent extends Component {
                     else {
                         msg = unescapeString(plugin.configuration.getString("webprefix", "\u00A72[WEB] ")) + t.name + ": " + unescapeString(plugin.configuration.getString("websuffix", "\u00A7f")) + t.message;
                     }
-                    plugin.getServer().broadcastMessage(msg);
+                    if (!t.message.contains("[QQ]") && !t.message.contains("[KOOK]")) {
+                        plugin.getServer().broadcastMessage(msg);
+                    }
                     if (core.mapManager != null) {
                         core.mapManager.pushUpdate(new Client.ChatMessage("web", null, t.name, t.message, null));
                     }
