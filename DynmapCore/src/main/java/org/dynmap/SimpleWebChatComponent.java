@@ -16,16 +16,15 @@ public class SimpleWebChatComponent extends Component {
             @Override
             public void triggered(ChatEvent t) {
                 if(plugin.getServer().sendWebChatEvent(t.source, t.name, t.message)) {
-                    String msg;
-                    String msgfmt = plugin.configuration.getString("webmsgformat", null);
-                    if(msgfmt != null) {
-                        msgfmt = unescapeString(msgfmt);
-                        msg = msgfmt.replace("%playername%", t.name).replace("%message%", t.message);
-                    }
-                    else {
-                        msg = unescapeString(plugin.configuration.getString("webprefix", "\u00A72[WEB] ")) + t.name + ": " + unescapeString(plugin.configuration.getString("websuffix", "\u00A7f")) + t.message;
-                    }
                     if (!t.message.contains("[QQ]") && !t.message.contains("[KOOK]")) {
+                        String msg;
+                        String msgfmt = plugin.configuration.getString("webmsgformat", null);
+                        if (msgfmt != null) {
+                            msgfmt = unescapeString(msgfmt);
+                            msg = msgfmt.replace("%playername%", t.name).replace("%message%", t.message);
+                        } else {
+                            msg = unescapeString(plugin.configuration.getString("webprefix", "\u00A72[WEB] ")) + t.name + ": " + unescapeString(plugin.configuration.getString("websuffix", "\u00A7f")) + t.message;
+                        }
                         plugin.getServer().broadcastMessage(msg);
                     }
                     if (core.mapManager != null) {
