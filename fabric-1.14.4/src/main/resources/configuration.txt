@@ -80,6 +80,8 @@ components:
   #  hideifundercover: 14
   #  # (Optional) if true, players that are crouching/sneaking will be hidden 
     hideifsneaking: false
+    # optional, if true, players that are in spectator mode will be hidden
+    hideifspectator: false
     # If true, player positions/status is protected (login with ID with dynmap.playermarkers.seeall permission required for info other than self)
     protected-player-info: false
     # If true, hide players with invisibility potion effects active
@@ -326,6 +328,9 @@ update-webpath-files: true
 
 # The path were the /dynmapexp command exports OBJ ZIP files
 exportpath: export
+
+# The path where files can be imported for /dmarker commands
+importpath: import
 
 # The network-interface the webserver will bind to (0.0.0.0 for all interfaces, 127.0.0.1 for only local access).
 # If not set, uses same setting as server in server.properties (or 0.0.0.0 if not specified)
