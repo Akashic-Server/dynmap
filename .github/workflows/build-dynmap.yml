@@ -35,10 +35,5 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       with:
-        name: Dynmap-spigot.jar
-        path: target/*spigot.jar
-    
-    - uses: actions/upload-artifact@v2
-      with:
-        name: Dynmap-spigot.jar.MD5
-        path: target/*spigot.jar.MD5
+        name: target
+        path: target
