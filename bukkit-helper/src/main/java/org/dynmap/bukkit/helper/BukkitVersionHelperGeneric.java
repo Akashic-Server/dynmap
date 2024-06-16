@@ -24,6 +24,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 
+
 /**
  * Helper for isolation of bukkit version specific issues
  */
@@ -456,7 +457,8 @@ public abstract class BukkitVersionHelperGeneric extends BukkitVersionHelper {
     /**
      * Read tile entity NBT
      */
-    public Object readTileEntityNBT(Object te) {
+    @Override
+    public Object readTileEntityNBT(Object te, org.bukkit.World w) {
         if(nbttagcompound == null) return null;
         Object nbt = null;
         try {

@@ -127,7 +127,7 @@ public class BukkitVersionHelperGlowstone extends BukkitVersionHelper {
     }
 
     @Override
-    public Object readTileEntityNBT(Object te) {
+    public Object readTileEntityNBT(Object te, org.bukkit.World w) {
         // TODO Auto-generated method stub
         return null;
     }

@@ -362,7 +362,7 @@ public class BukkitVersionHelperSpigot120 extends BukkitVersionHelper {
 	}
 
 	@Override
-	public Object readTileEntityNBT(Object te) {
+	public Object readTileEntityNBT(Object te, org.bukkit.World world) {
 		TileEntity tileent = (TileEntity) te;
 		NBTTagCompound nbt = tileent.n();
         return nbt;

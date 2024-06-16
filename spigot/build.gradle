@@ -85,6 +85,12 @@ dependencies {
     implementation(project(':bukkit-helper-120-4')) {
     	transitive = false
     }
+    implementation(project(':bukkit-helper-120-5')) {
+    	transitive = false
+    }
+    implementation(project(':bukkit-helper-121')) {
+        transitive = false
+    }
 }
 
 processResources {
@@ -99,7 +105,7 @@ processResources {
 }
 
 jar {
-    classifier = 'unshaded'
+    archiveClassifier = 'unshaded'
 }
 
 shadowJar {
@@ -124,11 +130,13 @@ shadowJar {
         include(dependency(':bukkit-helper-120'))
         include(dependency(':bukkit-helper-120-2'))
         include(dependency(':bukkit-helper-120-4'))
+        include(dependency(':bukkit-helper-120-5'))
+        include(dependency(':bukkit-helper-121'))
     }
     relocate('org.bstats', 'org.dynmap.bstats')
-    destinationDir = file '../target'
-    archiveName = "Dynmap-${parent.version}-spigot.jar"
-    classifier = ''
+    destinationDirectory = file '../target'
+    archiveBaseName = "Dynmap"
+    archiveClassifier = 'spigot'
 }
 shadowJar.doLast {
     task ->

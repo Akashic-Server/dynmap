@@ -101,7 +101,7 @@ public abstract class BukkitVersionHelper {
     /**
      * Read tile entity NBT
      */
-    public abstract Object readTileEntityNBT(Object te);
+    public abstract Object readTileEntityNBT(Object te, World world);
     /**
      * Get field value from NBT compound
      */

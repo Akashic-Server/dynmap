@@ -899,8 +899,8 @@ public abstract class AbstractMapChunkCache extends MapChunkCache {
                             int cz = te_z & 0xF;
                             String[] te_fields = HDBlockModels.getTileEntityFieldsNeeded(ss.getBlockType(cx, te_y, cz));
                             if(te_fields != null) {
-                                Object nbtcompound = BukkitVersionHelper.helper.readTileEntityNBT(t);
-                                
+                                //Object nbtcompound = BukkitVersionHelper.helper.readTileEntityNBT(t);
+                            	Object nbtcompound = BukkitVersionHelper.helper.readTileEntityNBT(t, this.w);
                                 vals.clear();
                                 for(String id: te_fields) {
                                     Object val = BukkitVersionHelper.helper.getFieldValue(nbtcompound, id);

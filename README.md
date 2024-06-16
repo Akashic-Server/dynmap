@@ -9,9 +9,10 @@
 * [Where to go for questions and discussions](#where-to-go-for-questions-and-discussions)
 * [Where to go to make donations](#where-to-go-to-make-donations)
 # How to build
-Dynmap 3.x+ uses Gradle for building support for all platforms, with all resulting artifacts produced in the /targets directory.  Due to Minecraft 1.18.x+ requirements, the developer's
-default JDK must be a JDK 17 (or later) versions - older versions will still be compiled
-to run on the default JDK for those platforms (JDK 8, or JDK 16 for 1.17.x), and common libraries are built JDK 8.
+Dynmap 3.x+ uses Gradle v8.7 for building support for all platforms, with all resulting artifacts produced in the /targets directory.  Due to Minecraft 1.18.x+ requirements, the developer's
+default JDK must be a JDK 21 version - older versions will still be compiled
+to run on the default JDK for those platforms (JDK 8 for 1.16 and earlier, JDK 16 for 1.17.x, JDK 17 for 1.18 to 1.20.4, JDK 21 for 1.20.5+), and 
+common libraries are built using JDK 8.
 
 To build and get all jars in `target/`, run:
 
@@ -45,37 +46,18 @@ The following target platforms are supported, and you can find them at the links
 
 | Server type  | Version | Dynmap JAR | Where? |
 | ------------ | ------- | ---------- | ------ |
-| Spigot/PaperMC | ≤1.20.2  | `Dynmap-<version>-spigot.jar` | [SpigotMC](https://www.spigotmc.org/resources/dynmap.274/) |
-| Spigot/PaperMC | ≤1.20.2 | `Dynmap-<version>-spigot.jar` | [Bukkit](https://dev.bukkit.org/projects/dynmap) |
-| Forge | 1.12.2 | `Dynmap-<version>-forge-1.12.2.jar` | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge)|
-| Forge | 1.14.4 | `Dynmap-<version>-forge-1.14.4.jar` | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge)|
-| Forge | 1.15.2 | `Dynmap-<version>-forge-1.15.2.jar` | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge)|
-| Forge | 1.16.5 | `Dynmap-<version>-forge-1.16.5.jar` | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge) |
-| Forge | 1.17.1 | `Dynmap-<version>-forge-1.17.1.jar` | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge) |
-| Forge | 1.18.2 | `Dynmap-<version>-forge-1.18.2.jar`   | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge) |
-| Forge | 1.19, 1.19.1 | `Dynmap-<version>-forge-1.19.jar`   | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge) |
-| Forge | 1.19.2 | `Dynmap-<version>-forge-1.19.2.jar`   | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge) |
-| Forge | 1.19.3, 1.19.4 | `Dynmap-<version>-forge-1.19.3.jar`   | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge) |
-| Forge | 1.20, 1.20.1 | `Dynmap-<version>-forge-1.20.jar`   | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge) |
-| Forge | 1.20.2 | `Dynmap-<version>-forge-1.20.2.jar`   | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge) |
-| Fabric | 1.15.2 | `Dynmap-<version>-fabric-1.15.2.jar` | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge) |
-| Fabric | 1.16.4, 1.16.5 | `Dynmap-<version>-fabric-1.16.4.jar` | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge) |
-| Fabric | 1.17.1 | `Dynmap-<version>-fabric-1.17.1.jar` | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge) |
-| Fabric | 1.18.2 | `Dynmap-<version>-fabric-1.18.2.jar`   | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge) |
-| Fabric | 1.19 | `Dynmap-<version>-fabric-1.19.jar`   | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge) |
-| Fabric | 1.19.1, 1.19.2 | `Dynmap-<version>-fabric-1.19.1.jar`   | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge) |
-| Fabric | 1.19.3 | `Dynmap-<version>-fabric-1.19.3.jar`   | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge) |
-| Fabric | 1.19.4 | `Dynmap-<version>-fabric-1.19.4.jar`   | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge) |
-| Fabric | 1.20, 1.20.1 | `Dynmap-<version>-fabric-1.20.jar`   | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge) |
-| Fabric | 1.20.2 | `Dynmap-<version>-fabric-1.20.2.jar`   | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge) |
+| Spigot/PaperMC | ≤1.20.6  | `Dynmap-<version>-spigot.jar` | [SpigotMC](https://www.spigotmc.org/resources/dynmap%C2%AE.274/) |
+| Spigot/PaperMC | ≤1.20.6 | `Dynmap-<version>-spigot.jar` | [Modrinth](https://modrinth.com/plugin/dynmap/versions?l=paper&l=spigot) |
+| Forge | 1.12.2 - 1.20.x | `Dynmap-<version>-forge-<MC_VERSION>.jar` | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge) |
+| Fabric | 1.15.2 - 1.20.x | `Dynmap-<version>-fabric-<MC_VERSION>.jar` | [Curseforge](https://www.curseforge.com/minecraft/mc-mods/dynmapforge) |
     
 # Data Storage
 Dynmap supports the following storage backends:
 - Flat files: The default for a new installation
 - MySQL†
 - SQLite†
-- PostgreSQL (JDBC driver for this is now bundled with the Dynmap JAR)
-- MariaDB - is compatible with MySQL
+- PostgreSQL (JDBC driver for this is bundled with the Dynmap JAR)
+- MariaDB - is compatible with MySQL, set `storage-type` to `mysql` for it to be recognised or inject the MariaDB driver classes.
 - AWS S3 (allows S3 bucket to be used for storage AND as web site host)
 - †Note: drivers for SQL are usually included for Spigot and its derivatives but not included with other platforms or Dynmap. For Forge and Fabric servers we recommend Kosma's [SQLite mod](https://www.curseforge.com/minecraft/mc-mods/sqlite-jdbc) or [MySQL mod](https://www.curseforge.com/minecraft/mc-mods/mysql-jdbc) to add the needed drivers. Additionally, injecting driver classes into jar file will be recognized and supported.
 

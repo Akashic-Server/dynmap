@@ -5,11 +5,11 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6.+', changing: true
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'com.github.johnrengelman.shadow'
+//apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'eclipse'
 
 eclipse {
@@ -60,8 +60,9 @@ shadowJar {
         exclude("META-INF/maven/**")
         exclude("META-INF/services/**")
     }
-    archiveName = "Dynmap-${parent.version}-forge-1.17.1.jar"
-    destinationDir = file '../target'
+    archiveBaseName = "Dynmap"
+    archiveClassifier = "forge-1.17.1"
+    destinationDirectory = file '../target'
 }
 
 shadowJar.doLast {
@@ -79,7 +80,7 @@ reobf {
 
 task deobfJar(type: Jar) {
     from sourceSets.main.output
-    classifier = 'dev'
+    archiveClassifier = 'dev'
 }
 
 artifacts {

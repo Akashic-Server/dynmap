@@ -16,15 +16,15 @@ dependencies {
 }
 
 jar {
-   classifier = 'unshaded'
+   archiveClassifier  = 'unshaded'
 }
 
 shadowJar {
     dependencies {
         include(dependency(":DynmapCoreAPI"))
 	}
-    destinationDir = file '../target'
-    classifier = ''
+    destinationDirectory = file '../target'
+    archiveClassifier  = ''
 }
 
 artifacts {

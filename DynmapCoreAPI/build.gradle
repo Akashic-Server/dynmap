@@ -11,7 +11,7 @@ sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = co
 description = "DynmapCoreAPI"
 
 jar {
-    destinationDir = file '../target'
+    destinationDirectory = file '../target'
 }
 
 artifacts {

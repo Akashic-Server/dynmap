@@ -48,7 +48,7 @@ processResources {
 }
 
 jar {
-   classifier = 'unshaded'
+   archiveClassifier = 'unshaded'
 }
 
 shadowJar {
@@ -79,8 +79,8 @@ shadowJar {
 	relocate('org.postgresql', 'org.dynmap.org.postgresql')
 	relocate('io.github.linktosriram.s3lite', 'org.dynmap.s3lite')    
 	
-    destinationDir = file '../target'
-    classifier = ''
+    destinationDirectory = file '../target'
+    archiveClassifier = ''
 }
 
 artifacts {
