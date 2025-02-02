@@ -6,7 +6,9 @@ import net.minecraft.world.level.biome.BiomeBase;
 import net.minecraft.world.level.biome.BiomeFog;
 import net.minecraft.world.level.chunk.Chunk;
 import net.minecraft.world.level.chunk.storage.SerializableChunkData;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_21_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_21_R3.CraftWorld;
 import org.dynmap.DynmapChunk;
 import org.dynmap.bukkit.helper.BukkitWorld;
@@ -17,7 +19,10 @@ import org.dynmap.common.chunk.GenericMapChunkCache;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 /**
  * Container for managing chunks - dependent upon using chunk snapshots, since rendering is off server thread
@@ -31,6 +36,22 @@ public class MapChunkCache121_4 extends GenericMapChunkCache {
         super(cc);
     }
 
+    @Override
+    protected Supplier<GenericChunk> getLoadedChunkAsync(DynmapChunk chunk) {
+        CompletableFuture<SerializableChunkData> chunkData = CompletableFuture.supplyAsync(() -> {
+            CraftWorld cw = (CraftWorld) w;
+            Chunk c = cw.getHandle().getChunkIfLoaded(chunk.x, chunk.z);
+            if (c == null || !c.q) { //!c.loaded
+                return null;
+            }
+            return SerializableChunkData.a(cw.getHandle(), c); //SerializableChunkData.copyOf
+        }, ((CraftServer) Bukkit.getServer()).getServer());
+        return () -> {
+            NBTTagCompound nbt = chunkData.join().a(); // SerializableChunkData.write
+            return parseChunkFromNBT(new NBT.NBTCompound(nbt));
+        };
+    }
+
     protected GenericChunk getLoadedChunk(DynmapChunk chunk) {
         CraftWorld cw = (CraftWorld) w;
         if (!cw.isChunkLoaded(chunk.x, chunk.z)) return null;
@@ -39,6 +60,13 @@ public class MapChunkCache121_4 extends GenericMapChunkCache {
         SerializableChunkData chunkData = SerializableChunkData.a(cw.getHandle(), c); //SerializableChunkData.copyOf
         NBTTagCompound nbt = chunkData.a(); // SerializableChunkData.write
         return nbt != null ? parseChunkFromNBT(new NBT.NBTCompound(nbt)) : null;
+    }
+
+    @Override
+    protected Supplier<GenericChunk> loadChunkAsync(DynmapChunk chunk) {
+        CraftWorld cw = (CraftWorld) w;
+        CompletableFuture<Optional<NBTTagCompound>> genericChunk = cw.getHandle().m().a.d(new ChunkCoordIntPair(chunk.x, chunk.z)); // WorldServer.getChunkSource().chunkMap.read(new ChunkCoordIntPair(chunk.x, chunk.z))
+        return () -> genericChunk.join().map(NBT.NBTCompound::new).map(this::parseChunkFromNBT).orElse(null);
     }
 
     protected GenericChunk loadChunk(DynmapChunk chunk) {

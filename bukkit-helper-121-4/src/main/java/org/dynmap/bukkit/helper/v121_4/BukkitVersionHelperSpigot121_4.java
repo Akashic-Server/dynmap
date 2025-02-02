@@ -67,7 +67,7 @@ public class BukkitVersionHelperSpigot121_4 extends BukkitVersionHelper {
 
     @Override
     public boolean isUnsafeAsync() {
-        return true;
+        return false;
     }
 
      /**
