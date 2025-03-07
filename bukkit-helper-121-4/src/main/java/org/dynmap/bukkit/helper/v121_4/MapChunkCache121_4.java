@@ -38,18 +38,15 @@ public class MapChunkCache121_4 extends GenericMapChunkCache {
 
     @Override
     protected Supplier<GenericChunk> getLoadedChunkAsync(DynmapChunk chunk) {
-        CompletableFuture<SerializableChunkData> chunkData = CompletableFuture.supplyAsync(() -> {
+        CompletableFuture<Optional<SerializableChunkData>> chunkData = CompletableFuture.supplyAsync(() -> {
             CraftWorld cw = (CraftWorld) w;
             Chunk c = cw.getHandle().getChunkIfLoaded(chunk.x, chunk.z);
-            if (c == null || !c.q) { //!c.loaded
-                return null;
+            if (c == null || !c.q) { // !c.loaded
+                return Optional.empty();
             }
-            return SerializableChunkData.a(cw.getHandle(), c); //SerializableChunkData.copyOf
+            return Optional.of(SerializableChunkData.a(cw.getHandle(), c)); // SerializableChunkData.copyOf
         }, ((CraftServer) Bukkit.getServer()).getServer());
-        return () -> {
-            NBTTagCompound nbt = chunkData.join().a(); // SerializableChunkData.write
-            return parseChunkFromNBT(new NBT.NBTCompound(nbt));
-        };
+        return () -> chunkData.join().map(SerializableChunkData::a).map(NBT.NBTCompound::new).map(this::parseChunkFromNBT).orElse(null); // SerializableChunkData::write
     }
 
     protected GenericChunk getLoadedChunk(DynmapChunk chunk) {
