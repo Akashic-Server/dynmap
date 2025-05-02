@@ -6,8 +6,6 @@ on:
   push:
   pull_request:
   workflow_dispatch:
-  schedule:
-    - cron: '00 18 * * *'
 
 
 jobs:
@@ -33,7 +31,7 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew --refresh-dependencies && ./gradlew clean build
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: target
         path: target
