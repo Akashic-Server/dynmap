@@ -1,3 +1,22 @@
+:root {
+  --colour-highlight: oklch(0.56 0.16 142.24);
+  --smokey-white: oklch(0.99 0 0);
+  --gunmetal: oklch(0.29 0.02 277.99);
+  --charcoal-grey: oklch(0.34 0.03 273.24);
+  --ship-grey: oklch(0.36 0.02 278.37);
+  --vampire-grey: oklch(0.45 0.02 278.64);
+  --cool-grey: oklch(0.72 0.02 270.22);
+  --slate-grey: oklch(0.6 0.02 264.54);
+  --status-error: oklch(0.51 0.12 22.01);
+}
+
+.montserrat-font {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
 /* TILE DEBUGGING */
 /*.leaflet-tile {
 	margin: -1;
@@ -1019,46 +1038,227 @@
 
 /* Login/register panel */
 .dynmaplogin {
-    text-align: center;
-    width: 100%;
-    font-weight: bold;
-    color: #FFFFFF;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  width: 100%;
+  font-weight: bold;
+  color: #FFFFFF;
+  background: var(--vampire-grey);
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  box-sizing: border-box;
+
+  & * {
+    box-sizing: border-box;
+  }
+
+  .container {
+    --outer-margin: 2rem;
+    container-type: inline-size;
+    container-name: container;
+    position: relative;
+    width: calc(100% - var(--outer-margin) * 2);
+    max-width: 960px;
+    padding: 3rem;
+    margin: var(--outer-margin);
+    padding-block-start: 3rem;
+    border-radius: 20px;
+    /*background-image: url("https://wallpapersok.com/images/file/minecraft-landscape-with-cloudy-sky-b9nxzmdukp1j51zq.jpg"); */
+    background-color: var(--gunmetal);
+    box-shadow: 0px 30px 30px -5px var(--ship-grey);
+
+    &::before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      content: '';
+      display: flex;
+      width: 100%;
+      height: 100%;
+      background: url("https://cdn.modrinth.com/data/fRQREgAc/2eaa1e6a6fa03e485a319a628d6b29ba382855b4_96.webp");
+      background-position: right 1rem;
+      background-repeat: no-repeat;
+      background-size: 25%;
+      pointer-events: none;
+      opacity: 0.4;
+      mix-blend-mode: overlay;
+    }
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--smokey-white);
+
+    span {
+      color: var(--colour-highlight);
+    }
+  }
+  h3 {
+    margin: 0;
+    margin-block-end: 5rem;
+    padding-right: 40px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--cool-grey);
+    text-transform: uppercase;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 5px;
+    text-decoration-color: var(--colour-highlight);
+
+    &:has(~ .statusmessage > div) {
+      margin-block-end: 3rem;
+    }
+  }
+
+  p {
+    line-height: 1.4;
+  }
+
+  a {
+    color: var(--colour-highlight);
+  }
+
+  code {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    padding: 4px 6px;
     background: #000000;
-}
+    border-radius: 5px;
+  }
 
-table.loginregister {
-    color: #ffffff;
-    border: 1px solid rgba(64,64,64,0.6);
-    background: #bbb;
-    font-weight: bold;
-    margin: auto;
-}
+  .loginregister {
+    font-size: 1rem;
 
-td.login {
-    vertical-align: top;
-	color: #000000;
-	background-color: #bbb;
-    border: 1px solid rgba(64,64,64,0.6);
-    font-weight: bold;
-    margin: 2em;
-    width: 40em;
-}
+    &:has(#register-form:target) #login-form {
+      display: none;
+    }
 
-td.register {
-    vertical-align: top;
-	color: #000000;
-	background-color: #bbb;
-    border: 1px solid rgba(64,64,64,0.6);
-    font-weight: bold;
-    margin: 2em;
-    width: 40em;
+    #login-form { }
+
+    #register-form {
+      display: none;
+      &:target {
+        display: block;
+      }
+    }
+    input { 
+      width: 100%;
+      padding: 0;
+      font-size: 1rem;
+      color: var(--smokey-white);
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-weight: 500;
+      &::placeholder {
+        opacity: 0.1;
+        color: var(--smokey-white);
+
+      }
+      &:focus-visible {
+        background: none;
+        border: none;
+        outline: none;
+      }
+      &:is(:-webkit-autofill, :autofill) {
+        border: none;
+      }
+      
+      &[type="submit"] {
+        max-width: 20ch;
+        padding-block: 1rem;
+        padding-inline: 2rem;
+        background-color: var(--colour-highlight);
+        border-radius: calc(infinity * 1px);
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: .2s background ease;
+        &:hover {
+          background-color: oklch(from var(--colour-highlight) calc(l - 0.04) c h);
+        }
+        &:focus-visible {
+          border: 2px solid var(--smokey-white);
+        }
+      }
+    }
+
+    label {
+      margin-block-end: .2rem;
+      color: var(--slate-grey);
+      font-size: 0.813rem;
+      font-weight: 400;
+    }
+  }
+
+  form {
+    display: grid;
+    grid-template-columns: minmax(100px, 1fr);
+    gap: 2rem;
+    max-width: 60ch;
+
+    p {
+      grid-column: 1 / -1;
+    }
+  }
+  .form-item {
+    position: relative;
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    padding-block: 1rem;
+    padding-inline: 2rem;
+    background-color: var(--charcoal-grey);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    transition: border .5s ease;
+    &:focus-within {
+      border: 2px solid var(--colour-highlight);
+      color: black;
+    }
+  }
+
+  @container (width > 400px) {
+    form {
+      grid-template-columns: repeat(2, minmax(100px, 1fr));
+      
+    }
+
+    .form-item.shortened {
+      grid-column: 1;
+      + .shortened {
+        grid-column: 2;
+      }
+    }
+
+    h3 {
+      padding: 0;
+    }
+  }
 }
 
 div.statusmessage {
-	color: #FF0000;
-    font-weight: bold;
-    font-size: 24px;
-	
+  position: relative;
+  z-index: 2;
+  &:empty {
+    display: none;
+  }
+  > div {
+  margin-block-end: 2rem;
+  padding: 1rem;
+  color: var(--smokey-white);
+  font-weight: bold;
+  font-size: 16px;
+  background: linear-gradient(90deg, var(--status-error) 30%, transparent 80%);
+  font-weight: 300;
+  border-radius: 5px;
 }
 
 .logincontainer {
