@@ -44,7 +44,7 @@ public class Helper {
                 BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v121_7.BukkitVersionHelperSpigot121_7");
             }
             else if (v.contains("(MC: 1.21.6")) {
-                BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v121_6.BukkitVersionHelperSpigot121_6");
+                BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v121_7.BukkitVersionHelperSpigot121_7");
             }
             else if (v.contains("(MC: 1.21.5")) {
                 BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v121_5.BukkitVersionHelperSpigot121_5");

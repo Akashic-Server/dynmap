@@ -173,8 +173,8 @@ public class BukkitVersionHelperSpigot121_7 extends BukkitVersionHelper {
 			bld.setBaseState(lastbs).setStateIndex(idx).setBlockName(bname).setStateName(sb).setAttenuatesLight(lightAtten);
 			if (bd.e()) { bld.setSolid(); } // BlockBehaviour$BlockStateBase.isSolid
 			if (bd.l()) { bld.setAir(); } // BlockBehaviour$BlockStateBase.isAir
-			if (bd.a(TagsBlock.t)) { bld.setLog(); } // BlockBehaviour$BlockStateBase.is(OVERWORLD_NATURAL_LOGS)
-			if (bd.a(TagsBlock.Q)) { bld.setLeaves(); } // BlockBehaviour$BlockStateBase.is(LEAVES)
+			if (bd.a(TagsBlock.an)) { bld.setLog(); } // BlockBehaviour$BlockStateBase.is(OVERWORLD_NATURAL_LOGS)
+			if (bd.a(TagsBlock.L)) { bld.setLeaves(); } // BlockBehaviour$BlockStateBase.is(LEAVES)
 			// BlockBehaviour$BlockStateBase.getFluidState.isEmpty(), BlockBehaviour$BlockStateBase.getBlock
 			if (!bd.y().c() && !(bd.b() instanceof BlockFluids)) { // Test if fluid type for block is not empty
 				bld.setWaterlogged();
@@ -351,7 +351,7 @@ public class BukkitVersionHelperSpigot121_7 extends BukkitVersionHelper {
 	public Object readTileEntityNBT(Object te, World w) {
 		TileEntity tileent = (TileEntity) te;
 		CraftWorld cw = (CraftWorld) w;
-		return tileent.a(cw.getHandle().K_()); // TileEntity.saveCustomOnly ; LevelReader.registryAccess
+		return tileent.d(cw.getHandle().K_()); // TileEntity.saveCustomOnly ; LevelReader.registryAccess
 	}
 
 	@Override
