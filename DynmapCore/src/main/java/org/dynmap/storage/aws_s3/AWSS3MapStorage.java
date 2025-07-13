@@ -138,9 +138,9 @@ public class AWSS3MapStorage extends MapStorage {
         			s3.deleteObject(req);
         		}
         		else {
-        			PutObjectRequest req = PutObjectRequest.builder().bucketName(bucketname).key(baseKey).contentType(map.getImageFormat().getEncoding().getContentType())
+        		    PutObjectRequest req = PutObjectRequest.builder().bucketName(bucketname).key(baseKey).contentType(map.getImageFormat().getEncoding().getContentType())
         					.addMetadata("x-dynmap-hash", Long.toHexString(hash)).addMetadata("x-dynmap-ts", Long.toString(timestamp)).build();
-        			s3.putObject(req, RequestBody.fromBytes(encImage.buf));
+                    s3.putObject(req, RequestBody.fromBytes(Arrays.copyOf(encImage.buf, encImage.len)));
         		}
     			done = true;
             } catch (S3Exception x) {
@@ -407,7 +407,7 @@ public class AWSS3MapStorage extends MapStorage {
 	    		}
 	    		if (result.isTruncated()) {	// If more, build continuiation request
 	    	    	req = ListObjectsV2Request.builder().bucketName(bucketname)
-	    	    			.prefix(basekey).delimiter("").maxKeys(1000).continuationToken(result.getContinuationToken()).encodingType("url").requestPayer("requester").build();
+	    	    			.prefix(basekey).delimiter("").maxKeys(1000).continuationToken(result.getNextContinuationToken()).encodingType("url").requestPayer("requester").build();
 	    		}
 	    		else {	// Else, we're done
 	    			done = true;
@@ -480,7 +480,7 @@ public class AWSS3MapStorage extends MapStorage {
 	    		}
 	    		if (result.isTruncated()) {	// If more, build continuiation request
 	    	    	req = ListObjectsV2Request.builder().bucketName(bucketname)
-	    	    			.prefix(basekey).delimiter("").maxKeys(1000).continuationToken(result.getContinuationToken()).encodingType("url").requestPayer("requester").build();
+	    	    			.prefix(basekey).delimiter("").maxKeys(1000).continuationToken(result.getNextContinuationToken()).encodingType("url").requestPayer("requester").build();
 	    		}
 	    		else {	// Else, we're done
 	    			done = true;
@@ -529,7 +529,7 @@ public class AWSS3MapStorage extends MapStorage {
     		}
     		else {
     			PutObjectRequest req = PutObjectRequest.builder().bucketName(bucketname).key(baseKey).contentType("image/png").build();
-    			s3.putObject(req, RequestBody.fromBytes(encImage.buf));
+                s3.putObject(req, RequestBody.fromBytes(Arrays.copyOf(encImage.buf, encImage.len)));
     		}
 			done = true;
         } catch (S3Exception x) {
@@ -582,7 +582,7 @@ public class AWSS3MapStorage extends MapStorage {
     		}
     		else {
        			PutObjectRequest req = PutObjectRequest.builder().bucketName(bucketname).key(baseKey).contentType("image/png").build();
-    			s3.putObject(req, RequestBody.fromBytes(encImage.buf));
+                s3.putObject(req, RequestBody.fromBytes(Arrays.copyOf(encImage.buf, encImage.len)));
     		}
 			done = true;
         } catch (S3Exception x) {
@@ -611,8 +611,8 @@ public class AWSS3MapStorage extends MapStorage {
 			    s3.deleteObject(delreq);
     		}
     		else {
-       			PutObjectRequest req = PutObjectRequest.builder().bucketName(bucketname).key(baseKey).contentType("application/json").build();
-    			s3.putObject(req, RequestBody.fromBytes(content.getBytes(StandardCharsets.UTF_8)));
+                PutObjectRequest req = PutObjectRequest.builder().bucketName(bucketname).key(baseKey).contentType("application/json").build();
+                s3.putObject(req, RequestBody.fromString(content));
     		}
 			done = true;
         } catch (S3Exception x) {
@@ -745,7 +745,7 @@ public class AWSS3MapStorage extends MapStorage {
     				ct = "application/x-javascript";
     			}
        			PutObjectRequest req = PutObjectRequest.builder().bucketName(bucketname).key(baseKey).contentType(ct).build();
-    			s3.putObject(req, RequestBody.fromBytes(content.buf));
+                s3.putObject(req, RequestBody.fromBytes(Arrays.copyOf(content.buf, content.len)));
         		standalone_cache.put(fileid, digest);
     		}
 			done = true;
