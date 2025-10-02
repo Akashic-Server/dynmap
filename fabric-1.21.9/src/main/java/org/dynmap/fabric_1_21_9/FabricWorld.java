@@ -2,6 +2,7 @@ package org.dynmap.fabric_1_21_9;
 
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.WorldProperties.SpawnPoint;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.LightType;
@@ -96,7 +97,7 @@ public class FabricWorld extends DynmapWorld {
     @Override
     public DynmapLocation getSpawnLocation() {
         if (world != null) {
-            BlockPos spawnPos = world.getLevelProperties().getSpawnPos();
+            BlockPos spawnPos = world.getLevelProperties().getSpawnPoint().getPos().toImmutable();
             spawnloc.x = spawnPos.getX();
             spawnloc.y = spawnPos.getY();
             spawnloc.z = spawnPos.getZ();

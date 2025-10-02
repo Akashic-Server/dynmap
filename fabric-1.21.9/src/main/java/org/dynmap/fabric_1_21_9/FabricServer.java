@@ -1,6 +1,5 @@
 package org.dynmap.fabric_1_21_9;
 
-import com.mojang.authlib.GameProfile;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.block.AbstractSignBlock;
@@ -14,6 +13,7 @@ import net.minecraft.server.BannedPlayerList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.PlayerConfigEntry;
 import net.minecraft.text.Text;
 import net.minecraft.util.UserCache;
 import net.minecraft.util.Util;
@@ -63,9 +63,8 @@ public class FabricServer extends DynmapServerInterface {
         this.biomeRegistry = server.getRegistryManager().getOrThrow(RegistryKeys.BIOME);
     }
 
-    private Optional<GameProfile> getProfileByName(String player) {
-        UserCache cache = server.getUserCache();
-        return cache.findByName(player);
+    private Optional<PlayerConfigEntry> getProfileByName(String playerName) {
+        return Optional.ofNullable(PlayerConfigEntry.fromNickname(playerName));
     }
 
     public final Registry<Biome> getBiomeRegistry() {
@@ -202,12 +201,10 @@ public class FabricServer extends DynmapServerInterface {
     public boolean isPlayerBanned(String pid) {
         PlayerManager scm = server.getPlayerManager();
         BannedPlayerList bl = scm.getUserBanList();
-        try {
-            return bl.contains(getProfileByName(pid).get());
-        } catch (NoSuchElementException e) {
-            /* If this profile doesn't exist, default to "banned" for good measure. */
-            return true;
-        }
+
+        return getProfileByName(pid)
+            .map(profile -> bl.get(profile) != null)
+            .orElse(true);
     }
 
     @Override

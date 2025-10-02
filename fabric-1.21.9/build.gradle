@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.10.5'
+	id 'fabric-loom' version '1.11-SNAPSHOT'
 }
 
 archivesBaseName = "Dynmap"
@@ -8,7 +8,7 @@ group = parent.group
 
 eclipse {
     project {
-        name = "Dynmap(Fabric-1.21.6)"
+        name = "Dynmap(Fabric-1.21.9)"
     }
 }
 
@@ -34,7 +34,8 @@ dependencies {
 
     shadow project(path: ':DynmapCore', configuration: 'shadow')
 
-    modCompileOnly "me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
+    // modCompileOnly "me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
+    modCompileOnly files("../libs/fabric-permissions-api-0.1.jar")
     compileOnly 'net.luckperms:api:5.4'
 }
 

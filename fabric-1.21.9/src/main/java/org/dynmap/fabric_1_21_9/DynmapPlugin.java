@@ -259,7 +259,7 @@ public class DynmapPlugin {
         }
 
         // TODO: Consider whether cheats are enabled for integrated server
-        return server.isSingleplayer() && server.isHost(server.getPlayerManager().getPlayer(player).getGameProfile());
+        return server.isSingleplayer() && server.isHost(server.getPlayerManager().getPlayer(player).getPlayerConfigEntry());
     }
 
     boolean hasPerm(PlayerEntity psender, String permission) {

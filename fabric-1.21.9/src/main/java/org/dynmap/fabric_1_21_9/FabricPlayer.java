@@ -44,7 +44,7 @@ public class FabricPlayer extends FabricCommandSender implements DynmapPlayer {
             uuid = this.player.getUuid();
             GameProfile prof = this.player.getGameProfile();
             if (prof != null) {
-                Property textureProperty = Iterables.getFirst(prof.getProperties().get("textures"), null);
+                Property textureProperty = Iterables.getFirst(prof.properties().get("textures"), null);
 
                 if (textureProperty != null) {
                     DynmapPlugin.TexturesPayload result = null;
@@ -99,8 +99,8 @@ public class FabricPlayer extends FabricCommandSender implements DynmapPlayer {
             return null;
         }
 
-        Vec3d pos = player.getPos();
-        return FabricAdapter.toDynmapLocation(plugin, player.getWorld(), pos.getX(), pos.getY(), pos.getZ());
+        // Vec3d pos = player.movement;
+        return FabricAdapter.toDynmapLocation(plugin, player.getEntityWorld(), player.getX(), player.getY(), player.getZ());
     }
 
     @Override
@@ -109,7 +109,7 @@ public class FabricPlayer extends FabricCommandSender implements DynmapPlayer {
             return null;
         }
 
-        World world = player.getWorld();
+        World world = player.getEntityWorld();
         if (world != null) {
             return plugin.getWorld(world).getName();
         }
