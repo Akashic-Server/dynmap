@@ -1091,7 +1091,9 @@ public class DynmapPlugin extends JavaPlugin implements DynmapAPI {
         }
         
         /* Disable core */
-        core.disableCore();
+	    if (core != null) {
+		    core.disableCore();
+	    }
 
         if(SnapshotCache.sscache != null) {
         	SnapshotCache.sscache.cleanup();
