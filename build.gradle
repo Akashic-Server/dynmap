@@ -36,8 +36,6 @@ allprojects  {
               password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
           }
      }
-     maven { url "https://oss.sonatype.org/content/repositories/releases" }
-     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
      maven { url "https://repo.mikeprimm.com" }
      maven { url "https://repo.maven.apache.org/maven2" }
      maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
