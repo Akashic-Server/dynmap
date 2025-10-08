@@ -1,6 +1,0 @@
-Source: https://github.com/lucko/fabric-permissions-api/releases/download/v0.1/fabric-permissions-api-v0.1.jar
-Version: 0.1
-Author: lucko
-License: MIT
-SHA256: eafed55e6d2ee49c7be89bdc7378433521f65c3ca3100d43aaf50cfecd48ec77
-Downloaded on: 2025-10-08
