@@ -30,6 +30,9 @@ jobs:
 
     - name: Build with Gradle
       run: ./gradlew --refresh-dependencies && ./gradlew clean build
+      env:
+        USERNAME: ${{ github.actor }}
+        TOKEN: ${{ secrets.TOKEN }}
 
     - uses: actions/upload-artifact@v4
       with:
