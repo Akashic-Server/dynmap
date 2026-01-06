@@ -1,4 +1,4 @@
-package org.dynmap.bukkit.helper.v121_5;
+package org.dynmap.bukkit.helper.v121_10;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.level.ChunkCoordIntPair;
@@ -8,8 +8,8 @@ import net.minecraft.world.level.chunk.Chunk;
 import net.minecraft.world.level.chunk.storage.SerializableChunkData;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_21_R4.CraftServer;
-import org.bukkit.craftbukkit.v1_21_R4.CraftWorld;
+import org.bukkit.craftbukkit.v1_21_R6.CraftServer;
+import org.bukkit.craftbukkit.v1_21_R6.CraftWorld;
 import org.dynmap.DynmapChunk;
 import org.dynmap.bukkit.helper.BukkitWorld;
 import org.dynmap.common.BiomeMap;
@@ -27,12 +27,12 @@ import java.util.function.Supplier;
 /**
  * Container for managing chunks - dependent upon using chunk snapshots, since rendering is off server thread
  */
-public class MapChunkCache121_5 extends GenericMapChunkCache {
+public class MapChunkCache121_10 extends GenericMapChunkCache {
 	private World w;
 	/**
 	 * Construct empty cache
 	 */
-	public MapChunkCache121_5(GenericChunkCache cc) {
+	public MapChunkCache121_10(GenericChunkCache cc) {
 		super(cc);
 	}
 
@@ -41,7 +41,7 @@ public class MapChunkCache121_5 extends GenericMapChunkCache {
 		CompletableFuture<Optional<SerializableChunkData>> chunkData = CompletableFuture.supplyAsync(() -> {
 			CraftWorld cw = (CraftWorld) w;
 			Chunk c = cw.getHandle().getChunkIfLoaded(chunk.x, chunk.z);
-			if (c == null || !c.q) { // !c.loaded
+			if (c == null || !c.p) { // !LevelChunk.loaded
 				return Optional.empty();
 			}
 			return Optional.of(SerializableChunkData.a(cw.getHandle(), c)); // SerializableChunkData.copyOf
@@ -53,7 +53,7 @@ public class MapChunkCache121_5 extends GenericMapChunkCache {
 		CraftWorld cw = (CraftWorld) w;
 		if (!cw.isChunkLoaded(chunk.x, chunk.z)) return null;
 		Chunk c = cw.getHandle().getChunkIfLoaded(chunk.x, chunk.z);
-		if (c == null || !c.q) return null; // LevelChunk.loaded
+		if (c == null || !c.p) return null; // LevelChunk.loaded
 		SerializableChunkData chunkData = SerializableChunkData.a(cw.getHandle(), c); //SerializableChunkData.copyOf
 		NBTTagCompound nbt = chunkData.a(); // SerializableChunkData.write
 		return nbt != null ? parseChunkFromNBT(new NBT.NBTCompound(nbt)) : null;
@@ -62,7 +62,7 @@ public class MapChunkCache121_5 extends GenericMapChunkCache {
 	@Override
 	protected Supplier<GenericChunk> loadChunkAsync(DynmapChunk chunk) {
 		CraftWorld cw = (CraftWorld) w;
-		CompletableFuture<Optional<NBTTagCompound>> genericChunk = cw.getHandle().m().a.d(new ChunkCoordIntPair(chunk.x, chunk.z)); // WorldServer.getChunkSource().chunkMap.read(new ChunkCoordIntPair(chunk.x, chunk.z))
+		CompletableFuture<Optional<NBTTagCompound>> genericChunk = cw.getHandle().n().a.d(new ChunkCoordIntPair(chunk.x, chunk.z)); // WorldServer.getChunkSource().chunkMap.read(new ChunkCoordIntPair(chunk.x, chunk.z))
 		return () -> genericChunk.join().map(NBT.NBTCompound::new).map(this::parseChunkFromNBT).orElse(null);
 	}
 
@@ -73,7 +73,7 @@ public class MapChunkCache121_5 extends GenericMapChunkCache {
 		GenericChunk gc = null;
 		try {	// BUGBUG - convert this all to asyn properly, since now native async
 			nbt = cw.getHandle()
-					.m() // ServerLevel.getChunkSource
+					.n() // ServerLevel.getChunkSource
 					.a // ServerChunkCache.chunkMap
 					.d(cc) // ChunkStorage.read(ChunkPos)
 					.join().get();
