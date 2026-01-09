@@ -1,4 +1,4 @@
-package org.dynmap.forge_1_21_6;
+package org.dynmap.forge_1_21_11;
 
 import java.io.File;
 import java.io.InputStream;
@@ -40,13 +40,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import net.minecraft.server.players.GameProfileCache;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.UserBanList;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Pose;
@@ -57,6 +57,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
@@ -98,12 +99,12 @@ import org.dynmap.common.DynmapPlayer;
 import org.dynmap.common.DynmapServerInterface;
 import org.dynmap.common.DynmapListenerManager.EventType;
 import org.dynmap.common.chunk.GenericChunkCache;
-import org.dynmap.forge_1_21_6.DmapCommand;
-import org.dynmap.forge_1_21_6.DmarkerCommand;
-import org.dynmap.forge_1_21_6.DynmapCommand;
-import org.dynmap.forge_1_21_6.permissions.FilePermissions;
-import org.dynmap.forge_1_21_6.permissions.OpPermissions;
-import org.dynmap.forge_1_21_6.permissions.PermissionProvider;
+import org.dynmap.forge_1_21_11.DmapCommand;
+import org.dynmap.forge_1_21_11.DmarkerCommand;
+import org.dynmap.forge_1_21_11.DynmapCommand;
+import org.dynmap.forge_1_21_11.permissions.FilePermissions;
+import org.dynmap.forge_1_21_11.permissions.OpPermissions;
+import org.dynmap.forge_1_21_11.permissions.PermissionProvider;
 import org.dynmap.permissions.PermissionsHandler;
 import org.dynmap.renderer.DynmapBlockState;
 import org.dynmap.utils.DynmapLogger;
@@ -229,7 +230,7 @@ public class DynmapPlugin
                 baseidx = idx;
                 baseb = b;
     		}
-            ResourceLocation ui = BuiltInRegistries.BLOCK.getKey(b);
+            Identifier ui = BuiltInRegistries.BLOCK.getKey(b);
 
             if (ui == null) {
             	continue;
@@ -463,7 +464,7 @@ public class DynmapPlugin
     			return true;
     		}
     	}
-    	return (server.isSingleplayer() && player.equalsIgnoreCase(server.getSingleplayerProfile().getName()));
+    	return (server.isSingleplayer() && player.equalsIgnoreCase(server.getSingleplayerProfile().name()));
     }
     
     private boolean hasPerm(ServerPlayer psender, String permission) {  
@@ -524,10 +525,9 @@ public class DynmapPlugin
         public ForgeServer() {
         }
 
-        private GameProfile getProfileByName(String player) {
-            GameProfileCache cache = server.getProfileCache();
-            Optional<GameProfile> val = cache.get(player);
-            return val.isPresent() ? val.get() : null;
+        private NameAndId getNameAndIdByName(String player) {
+        	ServerPlayer p = server.getPlayerList().getPlayer(player);
+        	return (p != null) ? new NameAndId(p.getGameProfile()) : null;
         }
         
         @Override
@@ -640,7 +640,8 @@ public class DynmapPlugin
         public boolean isPlayerBanned(String pid)
         {
             UserBanList bl = server.getPlayerList().getBans();
-            return bl.isBanned(getProfileByName(pid));
+            NameAndId nid = getNameAndIdByName(pid);
+            return (nid != null) ? bl.isBanned(nid) : false;
         }
         
         @Override
@@ -804,7 +805,7 @@ public class DynmapPlugin
             if (scm == null) return Collections.emptySet();
             UserBanList bl = scm.getBans();
             if (bl == null) return Collections.emptySet();
-            if(bl.isBanned(getProfileByName(player))) {
+            if (isPlayerBanned(player)) {
                 return Collections.emptySet();
             }
             Set<String> rslt = hasOfflinePermissions(player, perms);
@@ -823,7 +824,7 @@ public class DynmapPlugin
             if (scm == null) return false;
             UserBanList bl = scm.getBans();
             if (bl == null) return false;
-            if(bl.isBanned(getProfileByName(player))) {
+            if (isPlayerBanned(player)) {
                 return false;
             }
             return hasOfflinePermission(player, perm);
@@ -914,10 +915,7 @@ public class DynmapPlugin
         }
 
         @SubscribeEvent
-		public void tickEvent(TickEvent.ServerTickEvent event)  {
-            if (event.phase == TickEvent.Phase.START) {
-                return;
-            }
+		public void tickEvent(TickEvent.ServerTickEvent.Post event)  {
             cur_tick_starttime = System.nanoTime();
             long elapsed = cur_tick_starttime - lasttick;
             lasttick = cur_tick_starttime;
@@ -1132,7 +1130,7 @@ public class DynmapPlugin
         		uuid = player.getUUID();
         		GameProfile prof = player.getGameProfile();
         		if (prof != null) {
-        	        Property textureProperty = Iterables.getFirst(prof.getProperties().get("textures"), null);
+        	        Property textureProperty = Iterables.getFirst(prof.properties().get("textures"), null);
 
         	        if (textureProperty != null) {
         	        	TexturesPayload result = null;
@@ -1412,7 +1410,7 @@ public class DynmapPlugin
         for (int i = 0; i < list.length; i++) {
             Biome bb = list[i];
             if (bb != null) {
-            	ResourceLocation regid = getBiomeReg().getKey(bb);
+            	Identifier regid = getBiomeReg().getKey(bb);
                 String id = regid.getPath();
                 String rl = regid.toString();
                 float tmp = bb.getBaseTemperature(), hum = bb.getModifiedClimateSettings().downfall();
@@ -1548,7 +1546,7 @@ public class DynmapPlugin
         
         /* Register tick handler */
         if(!tickregistered) {
-        	ServerTickEvent.BUS.addListener(fserver::tickEvent);
+        	ServerTickEvent.Post.BUS.addListener(fserver::tickEvent);
             tickregistered = true;
         }
 
@@ -1687,7 +1685,7 @@ public class DynmapPlugin
     }
 
     public class WorldTracker {
-        @SubscribeEvent(priority=Priority.LOWEST)
+        @SubscribeEvent(priority=Priority.MONITOR)
     	public void handleWorldLoad(LevelEvent.Load event) {
 			if(!core_enabled) return;
 			LevelAccessor w = event.getLevel();
@@ -1701,7 +1699,7 @@ public class DynmapPlugin
             	}
             }, 0);
     	}
-        @SubscribeEvent(priority=Priority.LOWEST)
+        @SubscribeEvent(priority=Priority.MONITOR)
     	public void handleWorldUnload(LevelEvent.Unload event) {
 			if(!core_enabled) return;
 			LevelAccessor w = event.getLevel();
@@ -1749,13 +1747,11 @@ public class DynmapPlugin
 				mapManager.touchVolume(fw.getName(), x, ymin, z, x+15, ymax, z+15, "chunkgenerate");
 			}
         }
-
-        @SubscribeEvent(priority=Priority.LOWEST)
+        
+        @SubscribeEvent(priority=Priority.MONITOR)
     	public void handleChunkLoad(ChunkEvent.Load event) {
-			if(!onchunkgenerate) return;
-
 			LevelAccessor w = event.getLevel();
-            if(!(w instanceof ServerLevel)) return;
+            if (!(w instanceof ServerLevel)) return;
 			ChunkAccess c = event.getChunk();
 			if ((c != null) && (c.getPersistedStatus() == ChunkStatus.FULL)) {
 				ForgeWorld fw = getWorld((ServerLevel)w, false);
@@ -1780,12 +1776,10 @@ public class DynmapPlugin
 			}
     	}
 
-        @SubscribeEvent(priority=Priority.LOWEST)
+        @SubscribeEvent(priority=Priority.MONITOR)
     	public void handleChunkUnload(ChunkEvent.Unload event) {
-			if(!onchunkgenerate) return;
-
 			LevelAccessor w = event.getLevel();
-            if(!(w instanceof ServerLevel)) return;
+            if (!(w instanceof ServerLevel)) return;
 			ChunkAccess c = event.getChunk();
 			if (c != null) {
 				ForgeWorld fw = getWorld((ServerLevel)w, false);
@@ -1798,12 +1792,10 @@ public class DynmapPlugin
 				}
 			}
     	}
-        @SubscribeEvent(priority=Priority.LOWEST)
+        @SubscribeEvent(priority=Priority.MONITOR)
     	public void handleChunkDataSave(ChunkDataEvent.Save event) {
-			if(!onchunkgenerate) return;
-
 			LevelAccessor w = event.getLevel();
-            if(!(w instanceof ServerLevel)) return;
+            if (!(w instanceof ServerLevel)) return;
 			ChunkAccess c = event.getChunk();
 			if (c != null) {
 				ForgeWorld fw = getWorld((ServerLevel)w, false);
@@ -1817,10 +1809,36 @@ public class DynmapPlugin
 				}
 			}
     	}
-        @SubscribeEvent(priority=Priority.LOWEST)
-        public void handleBlockEvent(BlockEvent event) {
+        @SubscribeEvent(priority=Priority.MONITOR)
+        public void handleBlockToolModificationEvent(BlockEvent.BlockToolModificationEvent event) {
+        	handleBlockEvent(event);
+        }
+        @SubscribeEvent(priority=Priority.MONITOR)
+        public void handleBreakEvent(BlockEvent.BreakEvent event) {
+        	handleBlockEvent(event);
+        }
+        @SubscribeEvent(priority=Priority.MONITOR)
+        public void handleCropGrowEvent(BlockEvent.CropGrowEvent event) {
+        	handleBlockEvent(event);
+        }
+        @SubscribeEvent(priority=Priority.MONITOR)
+        public void handleEntityPlaceEvent(BlockEvent.EntityPlaceEvent event) {
+        	handleBlockEvent(event);
+        }
+        @SubscribeEvent(priority=Priority.MONITOR)
+        public void handleFluidPlaceBlockEvent(BlockEvent.FluidPlaceBlockEvent event) {
+        	handleBlockEvent(event);
+        }
+        @SubscribeEvent(priority=Priority.MONITOR)
+        public void handleNeighborNotifyEvent(BlockEvent.NeighborNotifyEvent event) {
+        	handleBlockEvent(event);
+        }
+        @SubscribeEvent(priority=Priority.MONITOR)
+        public void handlePortalSpawnEvent(BlockEvent.PortalSpawnEvent event) {
+        	handleBlockEvent(event);
+        }
+        private void handleBlockEvent(BlockEvent event) {
         	if(!core_enabled) return;
-        	if(!onblockchange) return;
         	BlockUpdateRec r = new BlockUpdateRec();
         	r.w = event.getLevel();
             if(!(r.w instanceof ServerLevel)) return;  // band-aid to prevent errors in unsupported 'running in client' scenario
@@ -1851,7 +1869,22 @@ public class DynmapPlugin
         	onblockchange = true;
     	if ((worldTracker == null) && (onblockchange || onchunkpopulate || onchunkgenerate)) {
     		worldTracker = new WorldTracker();
-    		MinecraftForge.EVENT_BUS.register(worldTracker);
+    		LevelEvent.Load.BUS.addListener(worldTracker::handleWorldLoad);
+    		LevelEvent.Unload.BUS.addListener(worldTracker::handleWorldUnload);
+    		if (onchunkgenerate) {
+    			ChunkEvent.Load.BUS.addListener(worldTracker::handleChunkLoad);
+    			ChunkDataEvent.Save.BUS.addListener(worldTracker::handleChunkDataSave);
+    			ChunkEvent.LightingCalculated.BUS.addListener(worldTracker::handleChunkLightingCalculated);
+    		}
+    		if (onblockchange) {
+    			BlockEvent.BlockToolModificationEvent.BUS.addListener(worldTracker::handleBlockToolModificationEvent);
+    			BlockEvent.BreakEvent.BUS.addListener(worldTracker::handleBreakEvent);
+    			BlockEvent.CropGrowEvent.BUS.addListener(worldTracker::handleCropGrowEvent);
+    			BlockEvent.EntityPlaceEvent.BUS.addListener(worldTracker::handleEntityPlaceEvent);
+    			BlockEvent.FluidPlaceBlockEvent.BUS.addListener(worldTracker::handleFluidPlaceBlockEvent);
+    			BlockEvent.NeighborNotifyEvent.BUS.addListener(worldTracker::handleNeighborNotifyEvent);
+    			BlockEvent.PortalSpawnEvent.BUS.addListener(worldTracker::handlePortalSpawnEvent);
+    		}
     	}        
     	// Prime the known full chunks
         if (onchunkgenerate && (server.getAllLevels() != null)) { 
