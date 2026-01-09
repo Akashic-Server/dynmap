@@ -43,9 +43,10 @@ public class ChunkStatusHDShader implements HDShader {
 		new ChunkStatusMap("carvers", 0xFFEFD5);
 		new ChunkStatusMap("liquid_carvers", 0xF0E68C);
 		new ChunkStatusMap("features", 0xBDB76B);
+		new ChunkStatusMap("initialize_light", 0xAAA0AA);
 		new ChunkStatusMap("light", 0xDDA0DD);
-		new ChunkStatusMap("spawn", 0xFF00FF);
 		new ChunkStatusMap("heightmaps", 0x9370DB);
+		new ChunkStatusMap("spawn", 0xFF00FF);
 		new ChunkStatusMap("full", 0x32CD32);
     }
 
