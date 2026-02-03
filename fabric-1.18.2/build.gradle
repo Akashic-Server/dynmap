@@ -1,6 +1,6 @@
 
 plugins {
-	id 'fabric-loom' version '1.10.5'
+	id 'fabric-loom' version '1.13.6'
 }
 
 archivesBaseName = "Dynmap"
@@ -35,7 +35,7 @@ dependencies {
 
     shadow project(path: ':DynmapCore', configuration: 'shadow')
 
-    modCompileOnly "me.lucko:fabric-permissions-api:0.1-SNAPSHOT"
+    modCompileOnly "me.lucko:fabric-permissions-api:0.4.0"
     compileOnly 'net.luckperms:api:5.4'
 }
 

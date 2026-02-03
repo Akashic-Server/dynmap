@@ -54,12 +54,9 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.LiquidBlock;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
@@ -77,7 +74,6 @@ import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.listener.Priority;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
@@ -1727,6 +1723,33 @@ public class DynmapPlugin
             }
         }
         
+        private void touchChunk(ForgeWorld fw, ChunkAccess c, String cause) {
+			int ymax = Integer.MIN_VALUE;
+			int ymin = Integer.MAX_VALUE;
+			LevelChunkSection[] sections = c.getSections();
+			// If no sections, assume all
+			if (sections.length == 0) {
+				ymax = (c.getMaxSectionY()+1) << 4;
+				ymin = c.getMinSectionY() << 4;
+			}
+			else {
+				for(int i = 0; i < sections.length; i++) {
+					if((sections[i] != null) && (sections[i].hasOnlyAir() == false)) {
+						int sy = c.getSectionYFromSectionIndex(i) << 4;
+						if (sy < ymin) ymin = sy;
+						if ((sy+16) > ymax) ymax = sy + 16;
+					}
+				}
+			}
+			ChunkPos cp = c.getPos();
+			int x = cp.x << 4;
+			int z = cp.z << 4;
+			// If not empty AND not initial scan
+			if (ymax != Integer.MIN_VALUE) {
+				mapManager.touchVolume(fw.getName(), x, ymin, z, x+15, ymax, z+15, "chunkgenerate");
+			}
+        }
+
         @SubscribeEvent(priority=Priority.LOWEST)
     	public void handleChunkLoad(ChunkEvent.Load event) {
 			if(!onchunkgenerate) return;
@@ -1734,13 +1757,29 @@ public class DynmapPlugin
 			LevelAccessor w = event.getLevel();
             if(!(w instanceof ServerLevel)) return;
 			ChunkAccess c = event.getChunk();
-			if ((c != null) && (c.getPersistedStatus() == ChunkStatus.FULL) && (c instanceof LevelChunk)) {
+			if ((c != null) && (c.getPersistedStatus() == ChunkStatus.FULL)) {
 				ForgeWorld fw = getWorld((ServerLevel)w, false);
 				if (fw != null) {
 					addKnownChunk(fw, c.getPos());
 				}
 			}
     	}
+        @SubscribeEvent(priority=Priority.MONITOR)
+    	public void handleChunkLightingCalculated(ChunkEvent.LightingCalculated event) {
+			LevelAccessor w = event.getLevel();
+            if (!(w instanceof ServerLevel)) return;
+			ChunkAccess c = event.getChunk();
+			if (c != null) {
+				ForgeWorld fw = getWorld((ServerLevel)w, false);
+				if (fw != null) {
+					touchChunk(fw, c, "lighting");
+					if (c.getPersistedStatus() == ChunkStatus.FULL) {
+						addKnownChunk(fw, c.getPos());
+					}
+				}
+			}
+    	}
+
         @SubscribeEvent(priority=Priority.LOWEST)
     	public void handleChunkUnload(ChunkEvent.Unload event) {
 			if(!onchunkgenerate) return;
@@ -1753,23 +1792,7 @@ public class DynmapPlugin
 				ChunkPos cp = c.getPos();
 				if (fw != null) {
 					if (!checkIfKnownChunk(fw, cp)) {
-        				int ymax = Integer.MIN_VALUE;
-        				int ymin = Integer.MAX_VALUE;
-        				LevelChunkSection[] sections = c.getSections();
-        				for(int i = 0; i < sections.length; i++) {
-        					if((sections[i] != null) && (sections[i].hasOnlyAir() == false)) {
-        						int sy = c.getSectionYFromSectionIndex(i);
-        						if (sy < ymin) ymin = sy;
-        						if ((sy+16) > ymax) ymax = sy + 16;
-        					}
-        				}
-        				int x = cp.x << 4;
-        				int z = cp.z << 4;
-        				// If not empty AND not initial scan
-        				if (ymax != Integer.MIN_VALUE) {
-        					//Log.info(String.format("chunkkeyerate(unload)(%s,%d,%d,%d,%d,%d,%s)", fw.getName(), x, ymin, z, x+15, ymax, z+15));
-        					mapManager.touchVolume(fw.getName(), x, ymin, z, x+15, ymax, z+15, "chunkgenerate");
-        				}
+						touchChunk(fw, c, "unload");
 					}
 					removeKnownChunk(fw, cp);
 				}
@@ -1786,29 +1809,11 @@ public class DynmapPlugin
 				ForgeWorld fw = getWorld((ServerLevel)w, false);
 				ChunkPos cp = c.getPos();
 				if (fw != null) {
-					if (!checkIfKnownChunk(fw, cp)) {
-        				int ymax = Integer.MIN_VALUE;
-        				int ymin = Integer.MAX_VALUE;
-        				LevelChunkSection[] sections = c.getSections();
-        				for(int i = 0; i < sections.length; i++) {
-        					if((sections[i] != null) && (sections[i].hasOnlyAir() == false)) {
-        						int sy = c.getSectionYFromSectionIndex(i);
-        						if (sy < ymin) ymin = sy;
-        						if ((sy+16) > ymax) ymax = sy + 16;
-        					}
-        				}
-        				int x = cp.x << 4;
-        				int z = cp.z << 4;
-        				// If not empty AND not initial scan
-        				if (ymax != Integer.MIN_VALUE) {
-        					//Log.info(String.format("chunkkeyerate(save)(%s,%d,%d,%d,%d,%d,%s)", fw.getName(), x, ymin, z, x+15, ymax, z+15));
-        					mapManager.touchVolume(fw.getName(), x, ymin, z, x+15, ymax, z+15, "chunkgenerate");
-        				}
-        				// If cooked, add to known
-        				if ((c.getPersistedStatus() == ChunkStatus.FULL) && (c instanceof LevelChunk)) {
-        					addKnownChunk(fw, cp);
-        				}
-					}
+					touchChunk(fw, c, "datasave");
+    				// If cooked, add to known
+    				if (c.getPersistedStatus() == ChunkStatus.FULL) {
+    					addKnownChunk(fw, cp);
+    				}
 				}
 			}
     	}

@@ -89,7 +89,7 @@ public class MapChunkCache121_4 extends GenericMapChunkCache {
 
     @Override
     public int getFoliageColor(BiomeMap bm, int[] colormap, int x, int z) {
-		return bm.<BiomeBase>getBiomeObject().map(BiomeBase::h).flatMap(BiomeFog::e).orElse(colormap[bm.biomeLookup()]); // BiomeBase::getSpecialEffects, BiomeFog::skyColor
+		return bm.<BiomeBase>getBiomeObject().map(BiomeBase::h).flatMap(BiomeFog::e).orElse(colormap[bm.biomeLookup()]); // BiomeBase::getSpecialEffects, BiomeFog::getFoliageColorOverride
     }
 
     @Override

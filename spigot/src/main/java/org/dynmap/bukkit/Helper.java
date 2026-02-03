@@ -58,6 +58,9 @@ public class Helper {
             else if (v.contains("(MC: 1.21.9)") || v.contains("(MC: 1.21.10)")) {
 	            BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v121_10.BukkitVersionHelperSpigot121_10");
             }
+            else if (v.contains("(MC: 1.21.")) {	// Set up in case 1.21.12 works 'as is'
+	            BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v121_11.BukkitVersionHelperSpigot121_11");
+            }
             else if (v.contains("(MC: 1.20)") || v.contains("(MC: 1.20.1)")) {
             	BukkitVersionHelper.helper = loadVersionHelper("org.dynmap.bukkit.helper.v120.BukkitVersionHelperSpigot120");
             }
