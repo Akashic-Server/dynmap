@@ -2,6 +2,7 @@ package org.dynmap.common;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 
@@ -11,7 +12,9 @@ import org.dynmap.hdmap.HDBlockModels;
 public class BiomeMap {
 	public static final int NO_INDEX = -2;
     private static BiomeMap[] biome_by_index = new BiomeMap[256];
-    private static Map<String, BiomeMap> biome_by_rl = new HashMap<String, BiomeMap>();
+    private static Map<String, BiomeMap> biome_by_rl = new HashMap<String, BiomeMap>(256);
+    // Tracks registered IDs for O(1) uniqueness checks during initialization
+    private static final HashSet<String> biome_ids = new HashSet<String>(256);
     public static final BiomeMap NULL = new BiomeMap(-1, "NULL", 0.5, 0.5, 0xFFFFFF, 0, 0, null);
 
     public static final BiomeMap OCEAN = new BiomeMap(0, "OCEAN", "minecraft:ocean");
@@ -145,12 +148,17 @@ public class BiomeMap {
     }
 
     private static boolean isUniqueID(String id) {
-        for(int i = 0; i < biome_by_index.length; i++) {
-            if(biome_by_index[i] == null) continue;
-            if(biome_by_index[i].id.equals(id))
-                return false;
-        }
-        return true;
+        return !biome_ids.contains(id);
+    }
+
+    /**
+     * Encodes a grass/foliage color multiplier for efficient hot-path dispatch:
+     *   == 0              → 0 (passthrough: return raw value unchanged)
+     *   0 < val ≤ 0xFFFFFF → positive (blend: average with raw)
+     *   val > 0xFFFFFF    → -(val & 0xFFFFFF) (negative sentinel: fixed override color)
+     */
+    private static int encodeColorMult(int val) {
+        return (val > 0xFFFFFF) ? -(val & 0xFFFFFF) : val;
     }
     
     private static void resizeIfNeeded(int idx) {
@@ -171,8 +179,8 @@ public class BiomeMap {
         setTemperature(tmp);
         setRainfall(rain);
         this.watercolormult = waterColorMultiplier;
-        this.grassmult = grassmult;
-        this.foliagemult = foliagemult;
+        this.grassmult = encodeColorMult(grassmult);
+        this.foliagemult = encodeColorMult(foliagemult);
         // Handle null biome
         if (id == null) { id = "biome_" + idx; }
         id = id.toUpperCase().replace(' ', '_');
@@ -180,6 +188,7 @@ public class BiomeMap {
             id = id + "_" + idx;
         }
         this.id = id;
+        biome_ids.add(this.id);
         // If index is NO_INDEX, find one after the well known ones
         if (idx == NO_INDEX) {
         	idx = LAST_WELL_KNOWN;
@@ -235,21 +244,15 @@ public class BiomeMap {
     }
     
     public final int getModifiedGrassMultiplier(int rawgrassmult) {
-        if(grassmult == 0)
-            return rawgrassmult;
-        else if(grassmult > 0xFFFFFF)
-            return grassmult & 0xFFFFFF;
-        else
-            return ((rawgrassmult & 0xfefefe) + grassmult) / 2;
+        if (grassmult == 0) return rawgrassmult;          // common case: no override
+        if (grassmult < 0) return -grassmult;             // fixed color (pre-masked at set-time)
+        return ((rawgrassmult & 0xfefefe) + grassmult) >> 1;  // blend
     }
-    
+
     public final int getModifiedFoliageMultiplier(int rawfoliagemult) {
-        if(foliagemult == 0)
-            return rawfoliagemult;
-        else if(foliagemult > 0xFFFFFF)
-            return foliagemult & 0xFFFFFF;
-        else
-            return ((rawfoliagemult & 0xfefefe) + foliagemult) / 2;
+        if (foliagemult == 0) return rawfoliagemult;       // common case: no override
+        if (foliagemult < 0) return -foliagemult;          // fixed color (pre-masked at set-time)
+        return ((rawfoliagemult & 0xfefefe) + foliagemult) >> 1;  // blend
     }
     public final int getWaterColorMult() {
         return watercolormult;
@@ -278,10 +281,10 @@ public class BiomeMap {
         this.watercolormult = watercolormult;
     }
     public void setGrassColorMultiplier(int grassmult) {
-        this.grassmult = grassmult;
+        this.grassmult = encodeColorMult(grassmult);
     }
     public void setFoliageColorMultiplier(int foliagemult) {
-        this.foliagemult = foliagemult;
+        this.foliagemult = encodeColorMult(foliagemult);
     }
     public void setTemperature(double tmp) {
         if(tmp < 0.0) tmp = 0.0;
